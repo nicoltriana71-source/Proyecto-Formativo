@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StudNova IA - Vista Generada</title>
+    <link rel="stylesheet" href="vista_5478652d.css">
+</head>
+<body>
+
+<!-- Header / Navbar -->
+<header>
+<div class="brand">
+<div class="brand-icon">⚡</div>
+<div class="brand-text">
+<h1>AI × Database Mastery</h1>
+<p>Text-to-SQL • Vector Search • RAG • Agentes</p>
+</div>
+</div>
+<div class="header-widgets">
+<!-- Fatigue Control Button/Status -->
+<div class="widget-pill fatigue-container" id="fatigueBtn" title="Control de Fatiga y Pausa Activa">
+<span>🔋 Energía: <strong id="energyText">100%</strong></span>
+<div class="fatigue-bar-wrap">
+<div class="fatigue-fill" id="energyFill"></div>
+</div>
+</div>
+<!-- Pomodoro / Study Timer -->
+<div class="widget-pill">
+<span>⏱️ Sesión: <strong id="sessionTimer">00:00</strong></span>
+</div>
+</div>
+</header>
+<!-- Main Content Area -->
+<main class="dashboard">
+<!-- Sidebar Navigation & Modules -->
+<aside class="sidebar">
+<div class="stats-card">
+<div class="progress-title-row">
+<span style="font-weight: 700; font-size: 0.9rem;">Progreso del Plan</span>
+<span id="overallProgressText" style="font-weight: 800; color: var(--primary-light);">0%</span>
+</div>
+<div class="overall-progress-bar">
+<div class="overall-progress-fill" id="overallProgressFill"></div>
+</div>
+<div class="stats-grid">
+<div class="stat-box">
+<span id="completedLessonsCount">0 / 6</span>
+<strong>Lecciones</strong>
+</div>
+<div class="stat-box">
+<span id="quizScoreText">0 pts</span>
+<strong>Puntos XP</strong>
+</div>
+</div>
+</div>
+<!-- Modules Accordion -->
+<div class="modules-list" id="modulesList">
+<!-- Injected via JavaScript -->
+</div>
+</aside>
+<!-- Central Studio / Workstation -->
+<section class="content-area">
+<!-- Tabs Menu -->
+<div class="tabs-header">
+<button class="tab-btn active" onclick="switchTab('lesson')">📖 Contenido Teórico</button>
+<button class="tab-btn" onclick="switchTab('activity')">💻 Actividad Práctica</button>
+<button class="tab-btn" onclick="switchTab('evaluation')">✍️ Evaluación</button>
+</div>
+<!-- Tab 1: Lesson View -->
+<div class="tab-pane active" id="pane-lesson">
+<div class="lesson-header">
+<span class="meta-tag" id="lessonCategory">Módulo 1 • Básico</span>
+<h2 id="lessonTitle">Cargando lección...</h2>
+</div>
+<div class="lesson-body" id="lessonContent">
+<!-- Dynamic Lesson HTML Content -->
+</div>
+</div>
+<!-- Tab 2: Activity Playground -->
+<div class="tab-pane" id="pane-activity">
+<div class="lesson-header">
+<span class="meta-tag" style="color: var(--warning);">Laboratorio Práctico</span>
+<h2 id="activityTitle">Actividad</h2>
+<p id="activityDesc" style="color: var(--text-muted); margin-top: 0.5rem;"></p>
+</div>
+<div class="activity-box">
+<label id="editorLabel" style="font-size: 0.85rem; font-weight: 600; color: var(--text-muted);">Escribe la consulta / prompt adecuado:</label>
+<div class="code-editor-sim">
+<textarea class="editor-textarea" id="activityInput" placeholder="Escribe tu solución aquí..."></textarea>
+</div>
+<div style="display: flex; gap: 10px; align-items: center;">
+<button class="btn" onclick="runActivityCheck()">⚡ Ejecutar y Validar</button>
+<button class="btn btn-secondary" onclick="resetActivity()">Reiniciar</button>
+</div>
+<div class="console-output" id="consoleOutput">Terminal lista. Esperando ejecución...</div>
+</div>
+</div>
+<!-- Tab 3: Evaluation -->
+<div class="tab-pane" id="pane-evaluation">
+<div class="lesson-header">
+<span class="meta-tag" style="color: var(--success);">Comprobación de Conocimiento</span>
+<h2>Cuestionario de Evaluación</h2>
+<p style="color: var(--text-muted); margin-top: 0.5rem;">Responde para validar el módulo y ganar 50 XP.</p>
+</div>
+<div id="quizContainer">
+<!-- Dynamic Quiz Content -->
+</div>
+<button class="btn btn-success" id="submitQuizBtn" onclick="submitQuiz()">Validar Respuestas</button>
+</div>
+</section>
+</main>
+<!-- Fatigue / Rest Break Modal -->
+<div class="modal-overlay" id="fatigueModal">
+<div class="fatigue-modal">
+<h2 style="font-size: 1.5rem; margin-bottom: 0.5rem;">🧘 Control de Fatiga Activo</h2>
+<p style="color: var(--text-muted); font-size: 0.95rem;">Has acumulado tiempo de estudio continuo o tu energía ha bajado. Tómate 60 segundos para relajar la vista y respirar.</p>
+<div class="breathing-circle"></div>
+<h3 id="breathingText" style="color: var(--accent); margin-bottom: 1.5rem; font-size: 1.1rem;">Inhala...</h3>
+<div style="display: flex; justify-content: center; gap: 1rem;">
+<button class="btn" onclick="resumeFromBreak()">✨ Reanudar (Recargar Energía)</button>
+</div>
+</div>
+</div>
+<!-- Logic Script -->
+
+    <script src="vista_5478652d.js"></script>
+</body>
+</html>

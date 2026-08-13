@@ -3,107 +3,190 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>StudNova IA</title>
-    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <title>StudNova IA - Chat</title>
     <link rel="stylesheet" href="/ia/css.css">
 </head>
 <body>
 
-<div class="contenedor">
-
-    <header class="header">
-        <h1>StudNova IA</h1>
-        <p>Tu tutor virtual inteligente</p>
-    </header>
-
-    <main class="chat">
-        <div class="mensaje ia">
-            <div class="avatar">🤖</div>
-            <div class="contenido">
-                ¡Hola! Soy el asistente de StudNova. ¿En qué puedo ayudarte hoy?
-            </div>
+    <div class="contenedor">
+        
+        <!-- Header -->
+        <div class="header">
+            <h1>StudNova IA</h1>
+            <p>Tu asistente inteligente para generar planes de estudio interactivos</p>
         </div>
 
-        <div id="mensajes"></div>
-    </main>
+        <!-- Área de Chat -->
+        <div class="chat" id="chat-box">
+            
+            <!-- Mensaje inicial de bienvenida de la IA -->
+            <div class="mensaje">
+                <div class="avatar">🤖</div>
+                <div class="contenido">
+                    <p>¡Hola! Soy tu asistente de <strong>StudNova IA</strong>.</p>
+                    <p style="margin-top: 8px;">Dime qué materia, tecnología o tema quieres aprender (ejemplo: <em>"Crea un plan de 4 semanas para aprender Python con ejercicios y barras de progreso"</em>) y generaré una interfaz interactiva para ti.</p>
+                </div>
+            </div>
 
-    <footer class="escribir">
-        <textarea
-            id="pregunta"
-            placeholder="Escribe tu pregunta..."
-            rows="2"></textarea>
+        </div>
 
-        <button id="btnEnviar">
-            Enviar
-        </button>
-    </footer>
+        <!-- Barra inferior para escribir -->
+        <div class="escribir">
+            <textarea 
+                id="prompt-input" 
+                rows="2" 
+                placeholder="Escribe aquí el plan de estudio que deseas..." 
+                onkeydown="manejarEnter(event)"
+            ></textarea>
+            <button id="btn-enviar" onclick="enviarMensaje()">Generar</button>
+        </div>
 
-</div>
+    </div>
 
-<script>
-    const mensajeInput = document.getElementById('pregunta');
-    const botonEnviar = document.getElementById('btnEnviar');
-    const mensajes = document.getElementById('mensajes');
+    <!-- Lógica de interacción con Python y FastAPI -->
+    <script>
+        const chatBox = document.getElementById('chat-box');
+        const promptInput = document.getElementById('prompt-input');
+        const btnEnviar = document.getElementById('btn-enviar');
 
-    function agregarMensaje(texto, tipo) {
-        const div = document.createElement('div');
-        div.className = `mensaje ${tipo}`;
-
-        const avatar = document.createElement('div');
-        avatar.className = 'avatar';
-        avatar.textContent = tipo === 'usuario' ? '👤' : '🤖';
-
-        const contenido = document.createElement('div');
-        contenido.className = 'contenido';
-        contenido.textContent = texto;
-
-        div.appendChild(avatar);
-        div.appendChild(contenido);
-        mensajes.appendChild(div);
-        mensajes.scrollTop = mensajes.scrollHeight;
-    }
-
-    async function enviarMensaje() {
-        const texto = mensajeInput.value.trim();
-        if (!texto) return;
-
-        agregarMensaje(texto, 'usuario');
-        mensajeInput.value = '';
-        botonEnviar.disabled = true;
-
-        try {
-            const respuesta = await fetch('http://127.0.0.1:8000/ia/chat', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ mensaje: texto })
-            });
-
-            const data = await respuesta.json();
-
-            if (!respuesta.ok) {
-                throw new Error(data.detail || 'No se pudo obtener respuesta');
+        function manejarEnter(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                enviarMensaje();
             }
-
-            agregarMensaje(data.respuesta, 'ia');
-        } catch (error) {
-            agregarMensaje('Error: ' + error.message, 'ia');
-        } finally {
-            botonEnviar.disabled = false;
-            mensajeInput.focus();
         }
-    }
 
-    botonEnviar.addEventListener('click', enviarMensaje);
+        async function enviarMensaje() {
+            const texto = promptInput.value.trim();
+            if (!texto) return;
 
-    mensajeInput.addEventListener('keydown', (event) => {
-        if (event.key === 'Enter' && !event.shiftKey) {
-            event.preventDefault();
-            enviarMensaje();
+            // 1. Mensaje del Usuario
+            agregarMensajeUsuario(texto);
+            promptInput.value = '';
+            btnEnviar.disabled = true;
+            btnEnviar.style.opacity = '0.5';
+
+            // 2. Indicador de carga
+            const idCarga = agregarMensajeCarga();
+            scrollAlFondo();
+
+            try {
+                // 3. Llamada al endpoint de FastAPI (/api/ia/generar)
+                const respuesta = await fetch('/api/ia/generar', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ prompt: texto })
+                });
+
+                let datos;
+                const textoRespuesta = await respuesta.text();
+                try {
+                    datos = JSON.parse(textoRespuesta);
+                } catch {
+                    throw new Error(textoRespuesta || 'Error de comunicación con el servidor');
+                }
+
+                if (!respuesta.ok) {
+                    throw new Error(datos.detail || datos.error || 'Ocurrió un error al procesar');
+                }
+
+                // 4. Quitar carga y mostrar respuesta de la IA
+                removerElemento(idCarga);
+                agregarMensajeIA(datos);
+
+            } catch (error) {
+                removerElemento(idCarga);
+                agregarMensajeError(error.message);
+            } finally {
+                btnEnviar.disabled = false;
+                btnEnviar.style.opacity = '1';
+                promptInput.focus();
+                scrollAlFondo();
+            }
         }
-    });
-</script>
 
+        // Renderiza el mensaje que escribió el usuario
+        function agregarMensajeUsuario(texto) {
+            const div = document.createElement('div');
+            div.className = 'mensaje';
+            div.style.flexDirection = 'row-reverse';
+            div.innerHTML = `
+                <div class="avatar" style="background:#475569;">👤</div>
+                <div class="contenido" style="background:#2563eb;">
+                    <p>${escaparHTML(texto)}</p>
+                </div>
+            `;
+            chatBox.appendChild(div);
+        }
+
+        // Renderiza el estado de carga
+        function agregarMensajeCarga() {
+            const id = 'carga-' + Date.now();
+            const div = document.createElement('div');
+            div.className = 'mensaje';
+            div.id = id;
+            div.innerHTML = `
+                <div class="avatar">🤖</div>
+                <div class="contenido">
+                    <p>⏳ <em>StudNova IA está creando tu plan de estudio y separando el HTML, CSS y JS...</em></p>
+                </div>
+            `;
+            chatBox.appendChild(div);
+            return id;
+        }
+
+        // Renderiza la respuesta con la vista interactiva dentro del chat
+        function agregarMensajeIA(datos) {
+            const div = document.createElement('div');
+            div.className = 'mensaje';
+            div.innerHTML = `
+                <div class="avatar">🤖</div>
+                <div class="contenido" style="width: 80%;">
+                    <p>✨ <strong>¡Plan de estudio generado con éxito!</strong></p>
+                    <p style="margin-top: 5px; font-size: 14px; opacity: 0.9;">
+                        Archivo guardado: <code>${datos.nombre_archivo}.html</code>
+                    </p>
+
+                    <!-- Botón para ver en pantalla completa -->
+                    <div style="margin: 12px 0;">
+                        <a href="${datos.url_vista}" target="_blank" style="display:inline-block; padding: 8px 16px; background:#2563eb; color:white; text-decoration:none; border-radius:8px; font-weight:bold; font-size:14px;">
+                            ↗️ Abrir Plan en Pantalla Completa
+                        </a>
+                    </div>
+
+                    <!-- Previsualización interactiva en vivo -->
+                    <div style="border-radius: 10px; overflow: hidden; border: 1px solid #334155; margin-top: 10px;">
+                        <iframe src="${datos.url_vista}" style="width: 100%; height: 380px; border: none; background: white;"></iframe>
+                    </div>
+                </div>
+            `;
+            chatBox.appendChild(div);
+        }
+
+        function agregarMensajeError(mensaje) {
+            const div = document.createElement('div');
+            div.className = 'mensaje';
+            div.innerHTML = `
+                <div class="avatar" style="background:#dc2626;">⚠️</div>
+                <div class="contenido" style="background:#7f1d1d;">
+                    <p><strong>Error:</strong> ${escaparHTML(mensaje)}</p>
+                </div>
+            `;
+            chatBox.appendChild(div);
+        }
+
+        function removerElemento(id) {
+            const el = document.getElementById(id);
+            if (el) el.remove();
+        }
+
+        function scrollAlFondo() {
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+        function escaparHTML(str) {
+            return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+        }
+    </script>
 </body>
 </html>

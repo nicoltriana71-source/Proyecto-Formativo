@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StudNova IA - Vista Generada</title>
+    <link rel="stylesheet" href="vista_9d457803.css">
+</head>
+<body>
+
+<!-- Canvas interactivo de fondo -->
+<canvas id="bgCanvas"></canvas>
+<div class="wrapper">
+<!-- Header -->
+<header>
+<div class="logo">
+<div class="logo-dot"></div>
+<span>HOLA<span style="color:var(--accent-1)">.</span></span>
+</div>
+<div class="nav-controls">
+<button class="icon-btn" id="soundBtn" title="Activar/Desactivar Sonido">
+<svg viewbox="0 0 24 24">
+<polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+<path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+</svg>
+</button>
+</div>
+</header>
+<!-- Contenido Central -->
+<main>
+<section class="hero-text">
+<div class="badge">
+<div class="badge-pulse"></div>
+<span>Interacción en tiempo real</span>
+</div>
+<h1 class="title">
+                    ¡<span class="dynamic-word" id="greetingWord">Hola</span>!<br/>
+                    Bienvenido al futuro.
+                </h1>
+<p class="description">
+                    Una experiencia interactiva minimalista diseñada para conectar. Haz clic, explora los ambientes y crea saludos en tiempo real.
+                </p>
+<div class="cta-group">
+<button class="btn-primary" id="btnSaludar">
+<span>👋 Enviar un Saludo</span>
+</button>
+<button class="btn-secondary" id="btnExplorar">
+<span>✨ Cambiar Idioma</span>
+</button>
+</div>
+</section>
+<!-- Tarjetas Bento interactivas -->
+<section class="bento-container">
+<div class="interactive-card tilt-card" id="counterCard">
+<div class="card-header">
+<span class="card-title">Saludos Enviados</span>
+<span>⚡ En Vivo</span>
+</div>
+<div class="counter-number" id="saludoCount">1,024</div>
+<p style="color:var(--text-muted); font-size:0.85rem; margin-top:0.5rem;">
+                        Haz clic aquí para sumar tu energía a la red.
+                    </p>
+</div>
+<div class="interactive-card">
+<div class="card-header">
+<span class="card-title">Ambiente / Modo</span>
+</div>
+<div class="theme-pills">
+<button class="pill active" data-set-theme="default">Cósmico</button>
+<button class="pill" data-set-theme="warm">Cálido</button>
+<button class="pill" data-set-theme="emerald">Esmeralda</button>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer>
+<span>© <span id="year"></span> HOLA Studio. Hecho con pasión.</span>
+<span>Mueve el cursor para interactuar</span>
+</footer>
+</div>
+<!-- Toast emergente -->
+<div class="toast" id="toast">
+<span style="font-size: 1.2rem;">✨</span>
+<span id="toastMsg">¡Saludo emitido al mundo!</span>
+</div>
+
+    <script src="vista_9d457803.js"></script>
+</body>
+</html>

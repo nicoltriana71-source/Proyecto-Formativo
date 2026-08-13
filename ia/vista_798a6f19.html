@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StudNova IA - Vista Generada</title>
+    <link rel="stylesheet" href="vista_798a6f19.css">
+</head>
+<body>
+
+<div class="app-container">
+<!-- SIDEBAR: PLAN DE ESTUDIO -->
+<aside class="sidebar">
+<div class="brand">
+<div class="brand-icon">⚡</div>
+<div>
+<div class="brand-title">DB Architect</div>
+<div style="font-size: 0.7rem; color: var(--text-muted);">Plan de Básico a Experto</div>
+</div>
+</div>
+<ul class="module-list" id="moduleNavList">
+<!-- Generado dinámicamente con JS -->
+</ul>
+</aside>
+<!-- MAIN WORKSPACE: CONTENIDO, LABORATORIO Y TEST -->
+<main class="main-workspace">
+<!-- Global Metrics Header -->
+<div class="metrics-banner">
+<div class="metric-card">
+<span class="metric-label">Progreso Global</span>
+<span class="metric-value" id="globalProgressTxt">0%</span>
+<div class="progress-bar-container">
+<div class="progress-bar-value" id="globalProgressBar"></div>
+</div>
+</div>
+<div class="metric-card">
+<span class="metric-label">Puntos de Experiencia</span>
+<span class="metric-value" id="userXP" style="color: var(--accent-amber);">0 XP</span>
+</div>
+<div class="metric-card">
+<span class="metric-label">Módulos Completados</span>
+<span class="metric-value" id="completedModulesCount">0 / 6</span>
+</div>
+</div>
+<!-- Active Module Detail -->
+<section class="content-card" id="lessonCard">
+<div class="content-header">
+<div>
+<span class="module-badge badge-basic" id="lessonBadge">NIVEL BÁSICO</span>
+<h1 class="content-title" id="lessonTitle">Cargando módulo...</h1>
+</div>
+</div>
+<div class="topic-pills" id="lessonTags"></div>
+<div class="theory-body" id="lessonTheory"></div>
+<h3 class="section-subtitle">💡 Código y Sintaxis Clave</h3>
+<pre class="code-snippet" id="lessonCodeSnippet"></pre>
+<!-- Interactive SQL Sandbox -->
+<h3 class="section-subtitle">🛠️ Laboratorio Interactivo de Consulta</h3>
+<div class="editor-container">
+<div class="editor-header">
+<span>SQL_PLAYGROUND_V1.0.sql</span>
+<span id="editorStatus">Modo Ejecución</span>
+</div>
+<textarea class="sql-textarea" id="sqlQueryInput" placeholder="Escribe tu sentencia SQL aquí..."></textarea>
+</div>
+<div class="btn-group">
+<button class="btn" onclick="executeLaboratoryQuery()">▶ Ejecutar SQL</button>
+<button class="btn btn-secondary" onclick="resetEditor()">Restablecer</button>
+</div>
+<div class="result-console" id="queryConsole"></div>
+<!-- Evaluaciones / Quiz -->
+<h3 class="section-subtitle" style="margin-top: 32px;">📝 Test de Validación Rápida</h3>
+<div id="quizContainer">
+<!-- Dinámico -->
+</div>
+<div style="margin-top: 24px; display: flex; justify-content: space-between;">
+<button class="btn btn-secondary" onclick="navigateModule(-1)">← Anterior</button>
+<button class="btn" onclick="navigateModule(1)">Siguiente Módulo →</button>
+</div>
+</section>
+</main>
+<!-- RIGHT PANEL: CONTROL DE FATIGA Y SEGUIMIENTO -->
+<aside class="right-panel">
+<!-- Widget de Control de Fatiga -->
+<div class="widget-box">
+<div class="widget-title">
+<span>🧠 Control de Fatiga</span>
+<span id="sessionModeLabel" style="font-size: 0.75rem; color: var(--accent-green);">Concentración</span>
+</div>
+<div class="timer-display" id="timerValue">25:00</div>
+<div class="btn-group" style="justify-content: center; margin-bottom: 8px;">
+<button class="btn" id="startTimerBtn" onclick="toggleTimer()">Iniciar</button>
+<button class="btn btn-secondary" onclick="resetTimer()">Reiniciar</button>
+</div>
+<div class="fatigue-indicator">
+<span>Nivel de Cansancio Ocular:</span>
+<div style="display:flex; align-items:center; gap:6px;">
+<div class="fatigue-status-dot" id="fatigueDot"></div>
+<span id="fatigueText">Óptimo</span>
+</div>
+</div>
+<div class="rest-alert" id="restAlertBox">
+<h4 style="font-size: 0.85rem; color: var(--accent-rose); margin-bottom: 4px;">⚠️ ¡Alerta de Fatiga!</h4>
+<p id="restAlertDesc" style="font-size: 0.75rem; color: var(--text-muted);">
+                        Aplica la regla 20-20-20: Mira un objeto a 6 metros durante 20 segundos para relajar tu vista.
+                    </p>
+<button class="btn btn-secondary" onclick="dismissAlert()" style="font-size: 0.7rem; padding: 4px 8px; margin-top: 8px;">Entendido</button>
+</div>
+</div>
+<!-- Logros y Recompensas -->
+<div class="widget-box">
+<div class="widget-title">
+<span>🏆 Insignias DB Master</span>
+<span id="badgeScore" style="font-size: 0.75rem; color: var(--text-muted);">0/4</span>
+</div>
+<div class="badge-grid">
+<div class="badge-slot" id="badge-0" title="Novato SQL">🌱</div>
+<div class="badge-slot" id="badge-1" title="Maestro de la Normalización">📐</div>
+<div class="badge-slot" id="badge-2" title="Optimizador de Índices">⚡</div>
+<div class="badge-slot" id="badge-3" title="Arquitecto NoSQL &amp; Cloud">☁️</div>
+</div>
+</div>
+<!-- Tareas del Módulo Actual -->
+<div class="widget-box">
+<div class="widget-title">
+<span>📋 Objetivos de la Sesión</span>
+</div>
+<ul class="task-list" id="moduleTasksList">
+<!-- Dinámico -->
+</ul>
+</div>
+</aside>
+</div>
+
+    <script src="vista_798a6f19.js"></script>
+</body>
+</html>
