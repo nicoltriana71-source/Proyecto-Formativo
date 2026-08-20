@@ -1,0 +1,161 @@
+{
+  "experto": "Profesor experto en física moderna, astrofísica y cosmología.",
+  "titulo": "Explorando el Espacio-Tiempo: Introducción a la Relatividad",
+  "descripcion": "Un recorrido progresivo desde los conceptos clásicos de la física hasta las revolucionarias teorías de la Relatividad Especial y General de Einstein.",
+  "materia": "Física Moderna",
+  "recomendacion_fatiga": "Estudia durante 45 minutos y realiza una pausa activa de 10 minutos para asimilar los conceptos abstractos.",
+  "tiempo_sesion_minutos": 45,
+  "racha": {
+    "dias_iniciales": 0,
+    "mensaje": "🔥 ¡Comienza tu racha de aprendizaje de física!",
+    "regla_mantenimiento": "Completa una lección al día para afianzar estos conceptos espaciales."
+  },
+  "progreso_inicial": {
+    "porcentaje": 0,
+    "modulos_completados": 0,
+    "actividades_completadas": 0,
+    "quizzes_completados": 0,
+    "evaluaciones_completadas": 0,
+    "tiempo_estudiado_minutos": 0
+  },
+  "modulos": [
+    {
+      "id": "modulo_1",
+      "titulo": "Los Pilares de la Relatividad Especial",
+      "nivel_tag": "Fundamentos",
+      "nivel_clase": "Nivel 1",
+      "objetivo": "Comprender la constancia de la velocidad de la luz y el concepto de la dilatación del tiempo.",
+      "teoria": "Antes de Einstein, la física asumía que el tiempo y el espacio eran absolutos. Sin embargo, en 1905, Einstein postuló dos principios fundamentales: 1) Las leyes de la física son las mismas en todos los sistemas de referencia inerciales. 2) La velocidad de la luz en el vacío (c) es constante para todos los observadores, sin importar su movimiento. Esto lleva a consecuencias asombrosas: el tiempo corre más lento para un objeto en movimiento rápido (dilatación del tiempo) y la longitud se contrae en la dirección del movimiento.",
+      "actividades": [
+        {
+          "titulo": "Análisis del experimento mental del tren de Einstein",
+          "duracion_minutos": 15,
+          "detalle": "Visualiza un tren en movimiento rápido donde cae un rayo en ambos extremos. Analiza cómo lo ve un observador dentro del tren versus uno en la estación para comprender la relatividad de la simultaneidad.",
+          "tipo": "reflexion"
+        },
+        {
+          "titulo": "Cálculo básico de dilatación temporal",
+          "duracion_minutos": 10,
+          "detalle": "Aplica la fórmula del factor de Lorentz de manera conceptual para determinar cuánto se retrasa un reloj viajando al 90% de la velocidad de la luz.",
+          "tipo": "ejercicio"
+        }
+      ],
+      "mini_quizzes": [
+        {
+          "id": "mq_1_1",
+          "titulo": "Postulados de Einstein",
+          "ubicacion": "intermedio",
+          "pregunta": "¿Qué ocurre con la velocidad de la luz en el vacío según la Relatividad Especial?",
+          "opciones": [
+            "Depende de la velocidad de la fuente que la emite.",
+            "Es constante para todos los observadores independientes de su movimiento.",
+            "Aumenta si el observador se mueve hacia la fuente de luz."
+          ],
+          "indice_correcto": 1,
+          "retroalimentacion_correcta": "¡Correcto! La velocidad de la luz es constante y absoluta, un pilar inamovible de la física actual.",
+          "retroalimentacion_incorrecta": "Incorrecto. Recuerda que la velocidad de la luz no depende del movimiento de la fuente ni del observador."
+        }
+      ],
+      "seccion_repaso": "Recuerda que la velocidad de la luz es el límite de velocidad del universo. A velocidades cercanas a ella, el tiempo se ralentiza y el espacio se contrae para mantener constante dicha velocidad.",
+      "evaluacion_final": {
+        "titulo": "Evaluación: Fundamentos de la Relatividad Especial",
+        "puntuacion_minima": 80,
+        "preguntas": [
+          {
+            "id": "p_1_1",
+            "pregunta": "¿Qué es la dilatación del tiempo?",
+            "opciones": [
+              "El aumento del tamaño físico de los relojes en movimiento.",
+              "El fenómeno por el cual el tiempo transcurre más lento para un observador en movimiento en comparación con uno estacionario.",
+              "La aceleración de los procesos biológicos en el espacio."
+            ],
+            "indice_correcto": 1,
+            "explicacion": "La dilatación temporal ocurre porque el tiempo es relativo y se ralentiza para sistemas de referencia que se desplazan a altas velocidades."
+          },
+          {
+            "id": "p_1_2",
+            "pregunta": "Si viajas en una nave espacial casi a la velocidad de la luz, ¿cómo percibirás tu propio tiempo a bordo?",
+            "opciones": [
+              "Transcurriendo de manera completamente normal.",
+              "Extremadamente rápido.",
+              "Extremadamente lento."
+            ],
+            "indice_correcto": 0,
+            "explicacion": "En tu propio sistema de referencia (la nave), el tiempo transcurre normalmente. La dilatación del tiempo solo se percibe desde un sistema de referencia externo que te observa pasar."
+          }
+        ],
+        "mensaje_aprobacion": "¡Fantástico! Has dominado los conceptos más contrarios a la intuición de la física clásica. ¡Estás listo para el siguiente nivel!",
+        "mensaje_refuerzo": "No te preocupes, la relatividad desafía nuestro sentido común. Te sugerimos repasar el experimento mental del tren e intentarlo de nuevo."
+      }
+    },
+    {
+      "id": "modulo_2",
+      "titulo": "La Gravedad como Geometría: Relatividad General",
+      "nivel_tag": "Básico",
+      "nivel_clase": "Nivel 2",
+      "objetivo": "Comprender la gravedad no como una fuerza invisible, sino como la curvatura del tejido del espacio-tiempo.",
+      "teoria": "En 1915, Einstein extendió su teoría para incluir la gravedad y la aceleración. Formuló el 'Principio de Equivalencia', que postula que un campo gravitatorio es localmente indistinguible de una aceleración constante. Su gran revelación fue que la masa y la energía le dicen al espacio-tiempo cómo curvarse, y la curvatura del espacio-tiempo le dice a la materia cómo moverse. Esto explica la órbita de los planetas y la desviación de la luz al pasar cerca de objetos masivos.",
+      "actividades": [
+        {
+          "titulo": "Visualización del Espacio-Tiempo como una sábana elástica",
+          "duracion_minutos": 15,
+          "detalle": "Imagina una sábana tensa sobre la cual colocas una bola pesada (el Sol) y canicas (los planetas). Describe por qué las canicas giran alrededor de la bola pesada.",
+          "tipo": "investigacion"
+        },
+        {
+          "titulo": "Estudio del fenómeno de Lentes Gravitacionales",
+          "duracion_minutos": 10,
+          "detalle": "Analiza cómo la gravedad de una galaxia masiva desvía la luz proveniente de estrellas distantes, actuando como una lupa cósmica.",
+          "tipo": "practica"
+        }
+      ],
+      "mini_quizzes": [
+        {
+          "id": "mq_2_1",
+          "titulo": "Principio de Equivalencia",
+          "ubicacion": "intermedio",
+          "pregunta": "Si estás encerrado en un ascensor sin ventanas en el espacio profundo y sientes tu peso normal, ¿qué está ocurriendo según Einstein?",
+          "opciones": [
+            "El ascensor está necesariamente parado sobre la superficie de la Tierra.",
+            "El ascensor podría estar acelerando constantemente a 9.8 m/s².",
+            "Es imposible simular la gravedad en el espacio profundo."
+          ],
+          "indice_correcto": 1,
+          "retroalimentacion_correcta": "¡Excelente! Los efectos de la gravedad y de un sistema acelerado son físicamente idénticos e indistinguibles localmente.",
+          "retroalimentacion_incorrecta": "Incorrecto. Recuerda que no puedes distinguir entre estar en reposo en la Tierra o ser acelerado en el espacio."
+        }
+      ],
+      "seccion_repaso": "La Relatividad General nos enseña que la gravedad no es una fuerza de atracción misteriosa a distancia, sino el efecto de la geometría curva de la realidad producida por la masa.",
+      "evaluacion_final": {
+        "titulo": "Evaluación: Gravedad y Espacio-Tiempo",
+        "puntuacion_minima": 80,
+        "preguntas": [
+          {
+            "id": "p_2_1",
+            "pregunta": "¿Cómo define la Relatividad General a la gravedad?",
+            "opciones": [
+              "Como partículas magnéticas atrayéndose entre sí.",
+              "Como la curvatura del espacio-tiempo causada por la masa y la energía.",
+              "Como una fuerza de succión ejercida por el vacío del espacio."
+            ],
+            "indice_correcto": 1,
+            "explicacion": "La gravedad es la manifestación de la deformación que sufren el espacio y el tiempo ante la presencia de materia."
+          },
+          {
+            "id": "p_2_2",
+            "pregunta": "¿Qué ocurre con la trayectoria de la luz cerca de un agujero negro u objeto muy masivo?",
+            "opciones": [
+              "Se curva siguiendo la geometría del espacio-tiempo alterado.",
+              "Continúa en línea recta sin verse afectada por la gravedad.",
+              "Se detiene de inmediato por completo."
+            ],
+            "indice_correcto": 0,
+            "explicacion": "Aunque la luz no tiene masa, viaja a través del espacio-tiempo curvo, por lo que su trayectoria se dobla siguiendo la curvatura geométrica."
+          }
+        ],
+        "mensaje_aprobacion": "¡Impresionante! Has comprendido la esencia de la gravedad de Einstein. ¡Estás listo para explorar el cosmos!",
+        "mensaje_refuerzo": "El concepto de espacio-tiempo curvo requiere tiempo para asimilarse. Te recomendamos repasar la analogía de la sábana elástica."
+      }
+    }
+  ]
+}

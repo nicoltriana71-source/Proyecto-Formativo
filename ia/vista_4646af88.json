@@ -1,0 +1,215 @@
+{
+  "titulo": "Python desde Cero: Automatización de Tareas",
+  "descripcion": "Aprende la sintaxis de Python, manipulación de datos y automatización de archivos en 3 semanas con sesiones de 60 minutos diarios.",
+  "materia": "Python",
+  "experto": "Experto en Python y desarrollo de software",
+  "tiempo_sesion_minutos": 60,
+  "recomendacion_fatiga": "Estudia durante 45 minutos y realiza una pausa de 15 minutos para evitar la fatiga mental y asimilar mejor el código.",
+  "racha": {
+    "dias_iniciales": 0,
+    "mensaje": "🔥 ¡Comienza tu racha de aprendizaje!",
+    "regla_mantenimiento": "Completa tu sesión de lunes a viernes para mantener encendido tu progreso."
+  },
+  "progreso": {
+    "porcentaje": 0,
+    "modulos_completados": 0,
+    "actividades_completadas": 0,
+    "quizzes_completados": 0,
+    "evaluaciones_completadas": 0,
+    "tiempo_estudiado_minutos": 0
+  },
+  "modulos": [
+    {
+      "id": 1,
+      "titulo": "Semana 1: Fundamentos de Python y Variables",
+      "nivel_tag": "Nivel 1 - Fundamentos",
+      "nivel_clase": "fundamentos",
+      "descripcion": "Instalación, sintaxis básica, variables y condicionales.",
+      "teoria": "Python es un lenguaje legible e intuitivo. Usamos variables para almacenar datos (ej. texto o números) y estructuras condicionales (if/else) para tomar decisiones según condiciones específicas.",
+      "tareas": [
+        {
+          "titulo": "Instalación y Primer Script",
+          "duracion_minutos": 20,
+          "detalle": "Configura tu entorno con Python e imprime tu primer mensaje usando print().",
+          "tipo": "practica"
+        },
+        {
+          "titulo": "Manipulación de Variables",
+          "duracion_minutos": 15,
+          "detalle": "Crea variables numéricas y de texto para realizar operaciones matemáticas sencillas.",
+          "tipo": "ejercicio"
+        }
+      ],
+      "mini_quizzes": [
+        {
+          "id": "mq_1_1",
+          "titulo": "Validación de Variables",
+          "ubicacion": "Intermedio de la teoría básica",
+          "pregunta": "¿Cómo se declara correctamente una variable en Python?",
+          "opciones": [
+            "let x = 5",
+            "x = 5",
+            "int x = 5",
+            "var x = 5"
+          ],
+          "indice_correcto": 1,
+          "retroalimentacion_correcta": "¡Correcto! En Python las variables se declaran directamente asignándoles un valor.",
+          "retroalimentacion_incorrecta": "Incorrecto. En Python no necesitamos palabras clave como 'let', 'var' ni declarar el tipo estático como 'int'."
+        }
+      ],
+      "contenido_repaso": {
+        "titulo": "Práctica de Toma de Decisiones (if/else)",
+        "duracion_minutos": 15,
+        "detalle": "Aplica condicionales escribiendo un programa corto antes de pasar a la evaluación del módulo.",
+        "tipo": "repaso"
+      },
+      "evaluacion_final": {
+        "titulo": "Evaluación del Módulo 1",
+        "puntuacion_minima": 80,
+        "mensaje_aprobacion": "¡Fantástico! Has dominado las bases del lenguaje.",
+        "mensaje_refuerzo": "No te preocupes, repasa las variables y condicionales e inténtalo de nuevo.",
+        "preguntas": [
+          {
+            "id": "ev_1_1",
+            "pregunta": "¿Qué hace el bloque 'else'?",
+            "opciones": [
+              "Ejecuta código si la condición del 'if' es falsa.",
+              "Repite un bloque de código infinitamente.",
+              "Termina la ejecución de todo el programa."
+            ],
+            "indice_correcto": 0,
+            "explicacion": "El 'else' define el camino alternativo cuando la condición del 'if' resulta ser falsa."
+          }
+        ]
+      }
+    },
+    {
+      "id": 2,
+      "titulo": "Semana 2: Estructuras de Control y Listas",
+      "nivel_tag": "Nivel 2 - Básico",
+      "nivel_clase": "basico",
+      "descripcion": "Manejo de listas de datos y automatización con bucles For y While.",
+      "teoria": "Las listas nos permiten almacenar múltiples elementos en una sola variable. Con los bucles (for, while) podemos repetir una acción para cada elemento de la lista sin tener que duplicar código.",
+      "tareas": [
+        {
+          "titulo": "Creando y modificando Listas",
+          "duracion_minutos": 15,
+          "detalle": "Declara listas de tareas y practica agregando o quitando elementos de ellas.",
+          "tipo": "ejercicio"
+        },
+        {
+          "titulo": "Iterando con Bucles For",
+          "duracion_minutos": 20,
+          "detalle": "Escribe un bucle que recorra tu lista de tareas y las muestre una a una.",
+          "tipo": "practica"
+        }
+      ],
+      "mini_quizzes": [
+        {
+          "id": "mq_2_1",
+          "titulo": "Comprensión de Bucles",
+          "ubicacion": "Entre la práctica de listas y bucles",
+          "pregunta": "¿Qué palabra clave se usa comúnmente para recorrer todos los elementos de una lista?",
+          "opciones": [
+            "loop",
+            "while_each",
+            "for",
+            "repeat"
+          ],
+          "indice_correcto": 2,
+          "retroalimentacion_correcta": "¡Exacto! El bucle 'for' es la forma óptima de iterar sobre listas en Python.",
+          "retroalimentacion_incorrecta": "Incorrecto. 'for' es la estructura principal de iteración secuencial."
+        }
+      ],
+      "contenido_repaso": {
+        "titulo": "Repaso Práctico de Bucles y Filtros",
+        "duracion_minutos": 15,
+        "detalle": "Filtra elementos de una lista combinando bucles y condicionales para consolidar tu conocimiento.",
+        "tipo": "repaso"
+      },
+      "evaluacion_final": {
+        "titulo": "Evaluación del Módulo 2",
+        "puntuacion_minima": 80,
+        "mensaje_aprobacion": "¡Increíble! Ya sabes cómo manejar conjuntos de datos de forma eficiente.",
+        "mensaje_refuerzo": "Te sugerimos repasar la iteración de listas antes de avanzar al módulo de automatización.",
+        "preguntas": [
+          {
+            "id": "ev_2_1",
+            "pregunta": "¿Cuál es el índice del primer elemento de una lista en Python?",
+            "opciones": [
+              "1",
+              "0",
+              "-1"
+            ],
+            "indice_correcto": 1,
+            "explicacion": "En Python, al igual que en la mayoría de lenguajes, los índices de las listas comienzan en 0."
+          }
+        ]
+      }
+    },
+    {
+      "id": 3,
+      "titulo": "Semana 3: Automatización de Tareas y Archivos",
+      "nivel_tag": "Nivel 2 - Básico",
+      "nivel_clase": "basico",
+      "descripcion": "Lectura/escritura de archivos locales y creación de tu primer script de automatización.",
+      "teoria": "La automatización se logra leyendo archivos externos, procesando sus líneas con bucles e interactuando con el sistema operativo de forma automatizada mediante scripts.",
+      "tareas": [
+        {
+          "titulo": "Lectura de Archivos de Texto",
+          "duracion_minutos": 15,
+          "detalle": "Usa Python para abrir y leer automáticamente un archivo de texto de tu computadora.",
+          "tipo": "practica"
+        },
+        {
+          "titulo": "Script de Escritura Automatizada",
+          "duracion_minutos": 20,
+          "detalle": "Escribe un script que registre logs o reportes en un archivo nuevo de forma automática.",
+          "tipo": "proyecto"
+        }
+      ],
+      "mini_quizzes": [
+        {
+          "id": "mq_3_1",
+          "titulo": "Manejo de Archivos",
+          "ubicacion": "Entre lectura y escritura de archivos",
+          "pregunta": "¿Qué función de Python se utiliza para abrir un archivo?",
+          "opciones": [
+            "open()",
+            "read()",
+            "file()",
+            "load()"
+          ],
+          "indice_correcto": 0,
+          "retroalimentacion_correcta": "¡Correcto! 'open()' es la función integrada para interactuar con archivos del sistema.",
+          "retroalimentacion_incorrecta": "Incorrecto. 'open()' es indispensable para abrir el canal de lectura o escritura de un archivo."
+        }
+      ],
+      "contenido_repaso": {
+        "titulo": "Integración Final y Buenas Prácticas",
+        "duracion_minutos": 15,
+        "detalle": "Realiza un chequeo de errores comunes al manipular archivos antes de tu gran reto final.",
+        "tipo": "repaso"
+      },
+      "evaluacion_final": {
+        "titulo": "Evaluación del Módulo 3 y Reto de Automatización",
+        "puntuacion_minima": 80,
+        "mensaje_aprobacion": "¡Felicitaciones! Has completado tu plan. Estás listo para automatizar tus tareas diarias con tus propios scripts de Python.",
+        "mensaje_refuerzo": "Revisa cómo cerrar archivos de manera segura e inténtalo de nuevo.",
+        "preguntas": [
+          {
+            "id": "ev_3_1",
+            "pregunta": "¿Cuál es la forma más recomendada y segura de abrir un archivo para evitar fugas de memoria?",
+            "opciones": [
+              "Usando la sentencia 'with open(...) as archivo:'",
+              "Usando solamente 'open()'",
+              "No es necesario cerrar los archivos"
+            ],
+            "indice_correcto": 0,
+            "explicacion": "El bloque 'with' asegura que el archivo se cierre automáticamente incluso si ocurre un error inesperado durante el proceso."
+          }
+        ]
+      }
+    }
+  ]
+}

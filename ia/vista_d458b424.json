@@ -1,0 +1,121 @@
+{
+  "titulo": "Especialización en Programación y Control de Sistemas Robóticos Autónomos",
+  "descripcion": "Un programa intensivo diseñado para dominar la lógica de control, algoritmos de retroalimentación y la arquitectura de comunicación por software en robótica móvil.",
+  "materia": "Programación de Robótica",
+  "recomendacion_fatiga": "Estudia en bloques de 50 minutos con descansos obligatorios de 10 minutos. Al ser jornadas de 5 horas diarias, haz un descanso largo de 30 minutos a la mitad de la sesión para evitar la fatiga mental.",
+  "modulos": [
+    {
+      "id": "mod-1",
+      "nivel_tag": "Semana 1: Lógica de Control Finito y Máquinas de Estado",
+      "nivel_clase": "basico",
+      "titulo": "Arquitectura de Software y Máquinas de Estado Finito (FSM)",
+      "teoria_modulo": "Para que un robot interactúe con un entorno dinámico, su software debe estar estructurado para responder a eventos específicos en lugar de ejecutar una secuencia lineal de código. Las Máquinas de Estado Finito (FSM) son el pilar fundamental para estructurar este comportamiento, permitiendo que el robot transicione de un estado (por ejemplo, 'Avanzar') a otro ('Esquivar obstáculo') de manera predecible y segura.",
+      "lecciones": [
+        {
+          "titulo": "Modelado de Comportamientos mediante FSM",
+          "duracion_minutos": 150,
+          "concepto_teorico": "Una Máquina de Estados Finitos (FSM por sus siglas en inglés) es un modelo de comportamiento compuesto por un número finito de estados, transiciones entre esos estados, y acciones asociadas. En robótica, los estados representan modos operativos del robot (como 'Buscando objetivo', 'Evitando colisión' o 'Cargando batería').\n\nEl paso de un estado a otro se produce tras cumplirse una condición de disparo o evento, como la lectura de un sensor de distancia que detecta un objeto a menos de 20 cm. Diseñar la lógica de un robot usando FSM evita que el código se convierta en una estructura caótica e imposible de mantener llena de condicionales anidados ('if-else hell'). Permite separar claramente las fases del comportamiento robótico y testear cada estado de forma aislada.",
+          "puntos_clave": [
+            "Un estado define un comportamiento único y estable en un intervalo de tiempo.",
+            "Las transiciones se ejecutan de manera instantánea ante un evento disparador específico.",
+            "La modularidad de las FSM facilita añadir nuevas características (estados) sin corromper el funcionamiento existente."
+          ],
+          "ejemplo_codigo_o_formula": "class RobotFSM:\n    def __init__(self):\n        self.state = 'FORWARD'\n\n    def update(self, distance_sensor):\n        if self.state == 'FORWARD':\n            print('Moviendo hacia adelante...')\n            if distance_sensor < 20:  # Evento disparador\n                self.state = 'STOP'\n        elif self.state == 'STOP':\n            print('¡Obstáculo detectado! Deteniendo motores...')\n            self.state = 'ROTATE'\n        elif self.state == 'ROTATE':\n            print('Rotando para evadir...')\n            # Simulamos que tras rotar, el camino está libre\n            self.state = 'FORWARD'",
+          "ejercicio_practico": {
+            "enunciado": "Diseña en pseudocódigo o Python una máquina de estados para un robot aspiradora que tiene tres estados: LIMPIANDO, BATERIA_BAJA (cuando la batería cae por debajo del 15%) y CARGANDO. Define claramente las condiciones de transición.",
+            "solucion_paso_a_paso": "Paso 1: Definir la variable inicial de estado como 'LIMPIANDO' e inicializar el nivel de batería en 100%.\nPaso 2: Crear un ciclo que reduzca el porcentaje de batería para simular el paso del tiempo.\nPaso 3: En el estado 'LIMPIANDO', si la batería baja de 15, transicionar al estado 'BATERIA_BAJA'.\nPaso 4: En el estado 'BATERIA_BAJA', simular la búsqueda de la base de carga. Una vez acoplado, transicionar a 'CARGANDO'.\nPaso 5: En el estado 'CARGANDO', aumentar el nivel de batería simulado hasta llegar al 100%, momento en el cual transiciona de vuelta a 'LIMPIANDO'.\n\nEjemplo de salida lógica:\nEstado: LIMPIANDO -> Evento: Batería < 15% -> Estado: BATERIA_BAJA -> Evento: Base de carga acoplada -> Estado: CARGANDO -> Evento: Carga completa (100%) -> Estado: LIMPIANDO."
+          }
+        }
+      ],
+      "mini_quizzes": [
+        {
+          "titulo": "Quiz de Fundamentos FSM",
+          "pregunta": "¿Qué elemento de una Máquina de Estados Finitos determina el cambio de un comportamiento activo a otro?",
+          "opciones": [
+            "La variable global de ejecución",
+            "Una transición disparada por un evento o condición",
+            "El reinicio completo del sistema de control",
+            "El número de ciclos de reloj del procesador"
+          ],
+          "indice_correcto": 1,
+          "explicacion": "Las transiciones conectan un estado con otro y se ejecutan exclusivamente cuando se cumple un evento o condición lógica específica."
+        }
+      ]
+    },
+    {
+      "id": "mod-2",
+      "nivel_tag": "Semana 2: Sistemas de Control de Retroalimentación",
+      "nivel_clase": "intermedio",
+      "titulo": "Controladores Proporcionales, Integrales y Derivativos (PID)",
+      "teoria_modulo": "Para que un robot se mueva con precisión (por ejemplo, para seguir una línea recta o mantener una velocidad constante), no basta con encender los motores al máximo. Necesitamos medir la diferencia entre dónde queremos que esté el robot y dónde está realmente. Esta diferencia es el 'error', y lo corregimos usando el algoritmo de control por retroalimentación más popular del mundo: el controlador PID.",
+      "lecciones": [
+        {
+          "titulo": "Teoría e Implementación de un Algoritmo PID",
+          "duracion_minutos": 150,
+          "concepto_teorico": "Un controlador PID calcula de manera continua un valor de error como la diferencia entre una variable de proceso medida (como la posición real) y un punto de consigna o 'setpoint' deseado. El algoritmo corrige el error basándose en tres términos:\n\n1. Proporcional (P): Depende del error actual. Si el error es grande, la corrección es grande. Sin embargo, por sí solo puede causar oscilaciones o no alcanzar el valor exacto debido al error de estado estacionario.\n2. Integral (I): Acumula los errores pasados. Si el robot lleva tiempo desviado del setpoint, este término aumenta la fuerza de corrección para eliminar el error remanente.\n3. Derivativo (D): Evalúa la velocidad de cambio del error (su tendencia a futuro). Funciona como un amortiguador que frena el movimiento si el robot se está acercando demasiado rápido al setpoint, evitando que se pase de largo.",
+          "puntos_clave": [
+            "Fórmula matemática del control: U(t) = Kp*e(t) + Ki*∫e(t)dt + Kd*(de(t)/dt).",
+            "El ajuste o tuning de las constantes Kp, Ki y Kd define el comportamiento y la suavidad del robot."
+          ],
+          "ejemplo_codigo_o_formula": "# Implementación simple de un ciclo PID en Python\nclass PID:\n    def __init__(self, Kp, Ki, Kd, setpoint):\n        self.Kp, self.Ki, self.Kd = Kp, Ki, Kd\n        self.setpoint = setpoint\n        self.prev_error = 0\n        self.integral = 0\n\n    def compute(self, current_value, dt):\n        error = self.setpoint - current_value\n        self.integral += error * dt\n        derivative = (error - self.prev_error) / dt\n        \n        output = (self.Kp * error) + (self.Ki * self.integral) + (self.Kd * derivative)\n        self.prev_error = error\n        return output",
+          "ejercicio_practico": {
+            "enunciado": "Simula el ajuste de un controlador Proporcional puro (P). Si el setpoint de distancia a una pared es de 50 cm, la lectura del sensor actual es de 20 cm, y la constante Kp es 0.5, calcula el valor de salida (velocidad del motor) que entregaría el controlador.",
+            "solucion_paso_a_paso": "Paso 1: Identificar las variables: Setpoint = 50, Valor Actual = 20, Kp = 0.5.\nPaso 2: Calcular el error actual empleando la fórmula: Error = Setpoint - Valor Actual. Esto da: 50 - 20 = 30.\nPaso 3: Calcular la salida Proporcional aplicando la fórmula básica: Salida = Kp * Error. Esto da: 0.5 * 30 = 15.\nPaso 4: Concluir que el motor recibirá un comando de velocidad o potencia proporcional de 15 unidades en la dirección adecuada para acercarse al setpoint de 50 cm."
+          }
+        }
+      ],
+      "mini_quizzes": [
+        {
+          "titulo": "Comprensión de Controladores PID",
+          "pregunta": "¿Qué acción realiza el componente derivativo (D) dentro de un sistema PID?",
+          "opciones": [
+            "Elimina por completo el error acumulado en el pasado",
+            "Predice el comportamiento futuro del error sirviendo como amortiguador de oscilaciones",
+            "Multiplica linealmente el error instantáneo",
+            "Reinicia el microcontrolador si detecta una falla física"
+          ],
+          "indice_correcto": 1,
+          "explicacion": "El término derivativo mide la velocidad de cambio del error, lo que le permite 'predecir' si el robot se está acercando demasiado rápido y aplicar una fuerza correctiva contraria para evitar una colisión o sobreimpulso."
+        }
+      ]
+    },
+    {
+      "id": "mod-3",
+      "nivel_tag": "Semana 3: Arquitectura y Middleware Industrial",
+      "nivel_clase": "avanzado",
+      "titulo": "Introducción al Robot Operating System (ROS)",
+      "teoria_modulo": "En la robótica profesional moderna, los programas no se escriben en un solo bloque de código masivo. En su lugar, se divide el sistema en pequeños programas independientes especializados (nodos) que se comunican entre sí. ROS (Robot Operating System) es el estándar industrial para gestionar esta arquitectura de software distribuida de manera ultra-eficiente.",
+      "lecciones": [
+        {
+          "titulo": "El Patrón Publicador-Suscriptor en ROS",
+          "duracion_minutos": 150,
+          "concepto_teorico": "ROS no es un sistema operativo tradicional como Windows o Linux, sino un middleware (software de mediación). Proporciona herramientas y bibliotecas que permiten la comunicación entre múltiples procesos que se ejecutan simultáneamente en uno o varios procesadores del robot.\n\nLa comunicación se basa principalmente en la arquitectura Publicador/Suscriptor usando canales denominados 'Temas' (Topics). Por ejemplo, el nodo encargado de leer la cámara del robot publicará el flujo de imágenes en un Topic llamado `/camera/image_raw`. Cualquier otro nodo (como un detector de caras) puede suscribirse a ese Topic para recibir las imágenes en tiempo real, sin que el nodo de la cámara tenga que saber de su existencia. Esto desacopla el software y lo vuelve sumamente modular.",
+          "puntos_clave": [
+            "Nodos: Procesos individuales que realizan una tarea de cómputo.",
+            "Temas (Topics): Canales de datos con nombres únicos donde los nodos envían o reciben mensajes de tipos de datos estrictos.",
+            "Mensajes (Messages): Estructuras de datos simples como enteros, flotantes o vectores."
+          ],
+          "ejemplo_codigo_o_formula": "# Estructura básica de un publicador en ROS 2 (Python)\nimport rclpy\nfrom rclpy.node import Node\nfrom std_msgs.msg import String\n\nclass SimplePublisher(Node):\n    def __init__(self):\n        super().__init__('simple_publisher')\n        self.publisher_ = self.create_publisher(String, 'robot_telemetry', 10)\n        self.timer = self.create_timer(1.0, self.timer_callback)\n\n    def timer_callback(self):\n        msg = String()\n        msg.data = 'Robot funcionando correctamente'\n        self.publisher_.publish(msg)\n        self.get_logger().info('Publicando mensaje: \"%s\"' % msg.data)",
+          "ejercicio_practico": {
+            "enunciado": "Explica la arquitectura necesaria en ROS para un robot autónomo que lee datos de un sensor LiDAR, procesa un algoritmo de evasión de obstáculos y finalmente envía comandos de velocidad a las ruedas. Define qué nodos y qué topics utilizarías.",
+            "solucion_paso_a_paso": "Paso 1: Definir el Nodo 1 (LiDAR Driver): Se comunica con el hardware físico y publica las distancias obtenidas en un topic llamado `/scan`.\nPaso 2: Definir el Nodo 2 (Controlador de Evasión): Se suscribe al topic `/scan`. Procesa los datos de distancia de la nube de puntos y calcula velocidades seguras.\nPaso 3: El Nodo 2 publica comandos de movimiento (velocidad lineal y angular) en un topic estándar llamado `/cmd_vel`.\nPaso 4: Definir el Nodo 3 (Motor Driver): Se suscribe al topic `/cmd_vel` y traduce esos comandos genéricos a voltajes específicos para los actuadores físicos de las ruedas."
+          }
+        }
+      ],
+      "mini_quizzes": [
+        {
+          "titulo": "Quiz sobre Arquitecturas ROS",
+          "pregunta": "¿Qué beneficio principal ofrece el patrón Publicador/Suscriptor en la arquitectura de un robot?",
+          "opciones": [
+            "Reduce el consumo de batería de forma directa",
+            "Aumenta físicamente la velocidad de procesamiento del procesador",
+            "Desacopla los nodos de software, permitiendo programarlos, probarlos y modularizarlos de manera independiente",
+            "Hace que los sensores funcionen con mayor precisión física"
+          ],
+          "indice_correcto": 2,
+          "explicacion": "El desacoplamiento permite que los desarrolladores puedan modificar o cambiar el sensor físico de un robot sin necesidad de reescribir todo el algoritmo de control, facilitando enormemente el mantenimiento."
+        }
+      ]
+    }
+  ]
+}

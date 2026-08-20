@@ -1,0 +1,80 @@
+{
+  "titulo": "Dominando la Fotosíntesis: La Fábrica Química de la Naturaleza",
+  "descripcion": "Un plan de estudio diseñado para comprender a fondo cómo las plantas convierten la energía solar en alimento, analizando desde las estructuras celulares implicadas hasta las complejas rutas bioquímicas de la fase luminosa y el Ciclo de Calvin.",
+  "materia": "Biología y Fisiología Vegetal",
+  "recomendacion_fatiga": "Estudia 25 minutos enfocándote en las reacciones químicas y descansa 5 minutos para asimilar cómo fluye la energía sin saturar tu memoria.",
+  "modulos": [
+    {
+      "id": "mod-1",
+      "nivel_tag": "Nivel 1: Básico",
+      "nivel_clase": "basico",
+      "titulo": "Fundamentos y Estructuras de la Fotosíntesis",
+      "tareas": [
+        {
+          "titulo": "La Ecuación Global y el Orgánulo Clave: El Cloroplasto",
+          "duracion_minutos": 45,
+          "detalle": "Análisis de reactivos, productos y anatomía del cloroplasto.",
+          "guia_aprendizaje": {
+            "explicacion_teorica": "La fotosíntesis es el proceso mediante el cual los organismos autótrofos (como las plantas, algas y algunas bacterias) transforman la energía lumínica del sol en energía química almacenable en forma de azúcares (glucosa). Este proceso ocurre principalmente en las hojas de las plantas, específicamente dentro de unas células ricas en unos orgánulos llamados cloroplastos. El cloroplasto posee una estructura especializada: una doble membrana externa, un espacio interior gelatinoso llamado estroma (donde ocurre la fase oscura) y un sistema de sacos aplanados llamados tilacoides (donde ocurre la fase luminosa). En la membrana de los tilacoides se encuentra la clorofila, el pigmento encargado de absorber la luz solar. La ecuación química general es: 6CO2 (Dióxido de carbono) + 6H2O (Agua) + Luz solar -> C6H12O6 (Glucosa) + 6O2 (Oxígeno). Es crucial entender que los átomos de oxígeno liberados provienen de la ruptura del agua (fotólisis), no del dióxido de carbono.",
+            "puntos_clave": [
+              "La fotosíntesis convierte energía lumínica inorgánica en energía química orgánica.",
+              "El agua actúa como donador de electrones y libera oxígeno molecular como subproducto.",
+              "El cloroplasto tiene dos compartimentos clave: los tilacoides (fase luminosa) y el estroma (fase oscura)."
+            ],
+            "ejemplo_explicado": "Ecuación desglosada paso a paso:\n6 CO2 + 6 H2O + fotones -> C6H12O6 + 6 O2\n- 6 moléculas de dióxido de carbono entran por los estomas de las hojas.\n- 6 moléculas de agua son absorbidas por las raíces.\n- La energía de los fotones rompe el agua (fotólisis), liberando 6 moléculas de O2 gaseoso al aire y guardando los hidrógenos y electrones para ensamblar la Glucosa (C6H12O6) final.",
+            "ejercicio_resuelto": {
+              "enunciado": "Si una planta de laboratorio consume exactamente 24 moléculas de dióxido de carbono (CO2) durante un periodo de luz constante junto con suficiente agua, ¿cuántas moléculas de glucosa (C6H12O6) sintetizará teóricamente y cuántas moléculas de oxígeno (O2) liberará al ambiente?",
+              "solucion_paso_a_paso": "Paso 1: Recordar la relación estequiométrica de la ecuación general. Sabemos que por cada 6 moléculas de CO2 consumidas, se produce 1 molécula de glucosa (C6H12O6) y se liberan 6 moléculas de oxígeno (O2).\nPaso 2: Calcular la glucosa. Si la relación es de 6:1, dividimos las moléculas de CO2 consumidas entre 6: 24 CO2 / 6 = 4 moléculas de glucosa (C6H12O6).\nPaso 3: Calcular el oxígeno liberado. Dado que la relación de CO2 a O2 es de 1:1 (6 moles de CO2 producen 6 moles de O2), el número de moléculas de O2 liberadas será igual al de CO2 consumidas: 24 moléculas de O2.\nResultado final: La planta producirá 4 moléculas de glucosa y liberará 24 moléculas de oxígeno."
+            }
+          }
+        }
+      ],
+      "quiz": {
+        "titulo": "Evaluación de Conceptos Básicos",
+        "pregunta": "¿Cuál es el origen exacto del oxígeno (O2) gaseoso que las plantas liberan a la atmósfera durante la fotosíntesis?",
+        "opciones": [
+          "De la ruptura de las moléculas de agua (fotólisis) en la fase luminosa.",
+          "De la división de las moléculas de dióxido de carbono (CO2) en el Ciclo de Calvin.",
+          "De la respiración celular mitocondrial de la planta durante la noche."
+        ],
+        "indice_correcto": 0
+      }
+    },
+    {
+      "id": "mod-2",
+      "nivel_tag": "Nivel 2: Intermedio",
+      "nivel_clase": "intermedio",
+      "titulo": "La Maquinaria Bioquímica: Fase Luminosa y Ciclo de Calvin",
+      "tareas": [
+        {
+          "titulo": "Las Dos Fases Interconectadas",
+          "duracion_minutos": 60,
+          "detalle": "Estudio detallado del flujo de electrones en el tilacoide y la fijación del carbono en el estroma.",
+          "guia_aprendizaje": {
+            "explicacion_teorica": "La fotosíntesis ocurre en dos etapas metabólicas acopladas: 1) Fase Luminosa (dependiente de la luz): Ocurre en la membrana del tilacoide. La luz excita a los electrones de los fotosistemas (I y II). Este flujo de electrones a través de una cadena transportadora genera un gradiente de protones que la enzima ATP sintasa aprovecha para producir ATP. Al mismo tiempo, los electrones reducen al NADP+ para formar NADPH. El agua se rompe para reponer los electrones perdidos por el fotosistema II, liberando O2. 2) Fase Oscura o Ciclo de Calvin (independiente de la luz directamente, pero dependiente de los productos de la fase anterior): Ocurre en el estroma. Utiliza el ATP y el NADPH generados en la fase luminosa para reducir el CO2 atmosférico e incorporarlo en azúcares de 3 carbonos (G3P). Este ciclo consta de tres etapas principales: Fijación del carbono (catalizada por la famosa enzima Rubisco), Reducción (donde se consume el ATP y NADPH) y Regeneración de la molécula aceptora de carbono (RuBP).",
+            "puntos_clave": [
+              "La fase luminosa produce ATP y NADPH que actúan como 'moneda energética y reductora'.",
+              "La enzima Rubisco es la encargada de fijar el CO2 inorgánico uniéndolo a la ribulosa-1,5-bifosfato (RuBP).",
+              "El Ciclo de Calvin no requiere luz directa, pero se detiene en la oscuridad prolongada porque se agotan el ATP y el NADPH."
+            ],
+            "ejemplo_explicado": "Flujo de energía resumido:\nLuz -> Excitación de Clorofila -> Fotólisis de H2O -> Flujo de electrones -> Síntesis de ATP y NADPH (en el tilacoide) -> Entrada al Ciclo de Calvin (en el estroma) -> Consumo de ATP/NADPH -> Fijación de CO2 -> Producción de G3P (Glúcido de 3 carbonos).",
+            "ejercicio_resuelto": {
+              "enunciado": "Un herbicida experimental bloquea específicamente la cadena de transporte de electrones en el fotosistema II, impidiendo el flujo de electrones hacia el fotosistema I. Explica qué ocurrirá de manera inmediata con: a) la producción de Oxígeno, b) la producción de NADPH, y c) el Ciclo de Calvin.",
+              "solucion_paso_a_paso": "Paso 1: Analizar el efecto en el Fotosistema II. Al bloquearse el flujo, el Fotosistema II no puede transferir electrones. Como no necesita reponer electrones continuamente a través de la fotólisis del agua, esta reacción se detiene. Por ende, la producción de Oxígeno (a) cesa de inmediato.\nPaso 2: Analizar el efecto en el Fotosistema I y NADPH. Al no recibir electrones de la cadena transportadora, el Fotosistema I no puede reducir el NADP+ a NADPH. Por lo tanto, la producción de NADPH (b) cae a cero.\nPaso 3: Analizar el efecto en el Ciclo de Calvin. El Ciclo de Calvin requiere un suministro constante de ATP y NADPH de la fase luminosa para reducir el carbono fijado. Al no haber producción de NADPH y verse afectado el gradiente de protones para el ATP, el Ciclo de Calvin (c) se detendrá rápidamente por falta de reactivos energéticos, impidiendo que la planta produzca glucosa."
+            }
+          }
+        }
+      ],
+      "quiz": {
+        "titulo": "Evaluación del Ciclo de Calvin y Fase Luminosa",
+        "pregunta": "¿Qué molécula de alta energía y qué agente reductor producidos en la fase luminosa son esenciales para que funcione el Ciclo de Calvin?",
+        "opciones": [
+          "Oxígeno y Glucosa.",
+          "ATP y NADPH.",
+          "ADP y NADP+."
+        ],
+        "indice_correcto": 1
+      }
+    }
+  ]
+}

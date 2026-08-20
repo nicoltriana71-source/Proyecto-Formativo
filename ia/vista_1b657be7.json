@@ -1,0 +1,92 @@
+{
+  "titulo": "Ruta Ninja de Python: De Cero a Creador en 2 Semanas",
+  "descripcion": "Aprende los fundamentos de Python, manipulación de datos y desarrollo de scripts prácticos con un plan estructurado de 14 días.",
+  "materia": "Programación en Python",
+  "recomendacion_fatiga": "Aplica la técnica Pomodoro: estudia 25 minutos y toma pausas activas de 5 minutos para mantener tu mente fresca.",
+  "modulos": [
+    {
+      "id": "mod-1",
+      "nivel_tag": "Nivel 1: Básico",
+      "nivel_clase": "basico",
+      "titulo": "Sintaxis Esencial y Control de Flujo",
+      "tareas": [
+        {
+          "titulo": "Instalación y Primeros Pasos",
+          "duracion_minutos": 40,
+          "detalle": "Configuración del entorno de desarrollo (VS Code / Python) y sintaxis de variables y tipos de datos."
+        },
+        {
+          "titulo": "Estructuras de Control",
+          "duracion_minutos": 50,
+          "detalle": "Práctica con condicionales (if, else) y bucles (for, while) para controlar la lógica del programa."
+        }
+      ],
+      "quiz": {
+        "titulo": "Fundamentos de Sintaxis",
+        "pregunta": "¿Cómo se define correctamente una lista en Python?",
+        "opciones": [
+          "mi_lista = (1, 2, 3)",
+          "mi_lista = [1, 2, 3]",
+          "mi_lista = {1, 2, 3}"
+        ],
+        "indice_correcto": 1
+      }
+    },
+    {
+      "id": "mod-2",
+      "nivel_tag": "Nivel 2: Intermedio",
+      "nivel_clase": "intermedio",
+      "titulo": "Funciones y Colecciones de Datos",
+      "tareas": [
+        {
+          "titulo": "Modularidad con Funciones",
+          "duracion_minutos": 45,
+          "detalle": "Definición de funciones con parámetros, retorno de valores y buenas prácticas de documentación."
+        },
+        {
+          "titulo": "Diccionarios y Archivos",
+          "duracion_minutos": 60,
+          "detalle": "Uso de colecciones llave-valor (diccionarios) y lectura/escritura de archivos locales (.txt)."
+        }
+      ],
+      "quiz": {
+        "titulo": "Estructuras y Funciones",
+        "pregunta": "¿Qué palabra reservada se utiliza en Python para declarar una función?",
+        "opciones": [
+          "function",
+          "def",
+          "func"
+        ],
+        "indice_correcto": 1
+      }
+    },
+    {
+      "id": "mod-3",
+      "nivel_tag": "Nivel 3: Avanzado",
+      "nivel_clase": "avanzado",
+      "titulo": "Programación Orientada a Objetos y Proyecto",
+      "tareas": [
+        {
+          "titulo": "Clases y Objetos",
+          "duracion_minutos": 55,
+          "detalle": "Introducción a la programación orientada a objetos (POO), atributos, métodos y herencia básica."
+        },
+        {
+          "titulo": "Proyecto Integrador Final",
+          "duracion_minutos": 75,
+          "detalle": "Desarrollo de una mini aplicación de consola que integre funciones, archivos y POO."
+        }
+      ],
+      "quiz": {
+        "titulo": "Programación Orientada a Objetos",
+        "pregunta": "¿Qué parámetro representa la instancia de la clase al definir un método interno?",
+        "opciones": [
+          "this",
+          "cls",
+          "self"
+        ],
+        "indice_correcto": 2
+      }
+    }
+  ]
+}

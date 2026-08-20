@@ -1,0 +1,82 @@
+{
+  "titulo": "Plan de Iniciación a la Robótica Autónoma en 2 Semanas",
+  "descripcion": "Diseñar, simular y comprender los fundamentos de los sistemas robóticos, abarcando desde la electrónica básica y sensores hasta la programación de la lógica de control.",
+  "materia": "Robótica y Sistemas Embebidos",
+  "recomendacion_fatiga": "Estudia 25 min y descansa 5 min para consolidar la memoria.",
+  "modulos": [
+    {
+      "id": "mod-1",
+      "nivel_tag": "Semana 1: Fundamentos de Electrónica y Componentes",
+      "nivel_clase": "basico",
+      "titulo": "Circuitos Eléctricos y Sensores",
+      "teoria_modulo": "Para adentrarse en la robótica, es indispensable comprender cómo fluye la corriente eléctrica y cómo interactúan los componentes básicos como resistencias, LEDs, motores y sensores. La ley de Ohm es la piedra angular de esta comprensión física antes de escribir cualquier línea de código.",
+      "lecciones": [
+        {
+          "titulo": "La Ley de Ohm y Circuitos Eléctricos",
+          "duracion_minutos": 45,
+          "concepto_teorico": "La robótica combina la mecánica, la electrónica y la informática. En el nivel físico, todo robot funciona gracias a señales eléctricas. La electricidad es el flujo de electrones a través de un conductor. Para controlar este flujo de forma segura, debemos entender tres variables clave: el Voltaje (V), que es la fuerza que empuja los electrones; la Corriente (I), que es la cantidad de electrones que fluyen por segundo; y la Resistencia (R), que es la oposición al paso de esa corriente.\n\nLa Ley de Ohm establece la relación matemática entre estas tres magnitudes: V = I * R. Gracias a esta fórmula, podemos calcular con precisión qué resistencia necesitamos conectar en serie con un diodo LED o sensor para evitar que se queme al conectarlo a una fuente de alimentación de 5V.",
+          "puntos_clave": [
+            "El voltaje se mide en voltios (V), la corriente en amperios (A) y la resistencia en ohmios (Ω).",
+            "La resistencia limita el paso de corriente para proteger los componentes más sensibles de nuestro robot."
+          ],
+          "ejemplo_codigo_o_formula": "V = I * R  =>  R = (V_fuente - V_led) / I_led\nSi V_fuente = 5V, V_led = 2V, e I_led = 0.02A (20mA):\nR = (5 - 2) / 0.02 = 3 / 0.02 = 150 Ohmios.",
+          "ejercicio_practico": {
+            "enunciado": "Calcula el valor de la resistencia necesaria para proteger un LED que opera a 1.8V y 15mA (0.015A), si la fuente de alimentación del microcontrolador suministra 9V.",
+            "solucion_paso_a_paso": "Paso 1: Identificar las variables conocidas: V_fuente = 9V, V_led = 1.8V, I_led = 0.015A.\nPaso 2: Aplicar la fórmula modificada de la Ley de Ohm para caída de tensión en serie: R = (V_fuente - V_led) / I_led.\nPaso 3: Restar los voltajes: 9V - 1.8V = 7.2V.\nPaso 4: Dividir la diferencia de voltaje por la corriente: R = 7.2V / 0.015A = 480 Ohmios.\nResultado final: Se requiere una resistencia de 480 Ohmios (o el valor comercial más cercano hacia arriba, como 470 o 510 Ohmios)."
+          }
+        }
+      ],
+      "mini_quizzes": [
+        {
+          "titulo": "Comprobación de Concepto: Ley de Ohm",
+          "pregunta": "¿Qué ocurre con la corriente que fluye por un circuito si mantenemos el voltaje constante pero duplicamos la resistencia?",
+          "opciones": [
+            "La corriente se reduce a la mitad.",
+            "La corriente se duplica.",
+            "La corriente se mantiene igual.",
+            "El voltaje disminuye para compensar."
+          ],
+          "indice_correcto": 0,
+          "explicacion": "Según la Ley de Ohm (I = V/R), la corriente es inversamente proporcional a la resistencia. Si la resistencia se duplica y el voltaje permanece constante, la corriente se reduce exactamente a la mitad."
+        }
+      ]
+    },
+    {
+      "id": "mod-2",
+      "nivel_tag": "Semana 2: Programación, Control y Actuadores",
+      "nivel_clase": "intermedio",
+      "titulo": "Programación de Microcontroladores y Actuadores",
+      "teoria_modulo": "Un robot requiere un 'cerebro' que procese las señales de los sensores y decida las acciones de los actuadores. Aprenderemos cómo programar la lógica del robot usando microcontroladores y cómo controlar la velocidad de motores autónomos.",
+      "lecciones": [
+        {
+          "titulo": "Control de Actuadores y Motores mediante PWM",
+          "duracion_minutos": 60,
+          "concepto_teorico": "Los microcontroladores digitales solo entienden de estados encendido (HIGH / 5V) y apagado (LOW / 0V). Sin embargo, para controlar la velocidad de un motor o la intensidad de una luz, necesitamos salidas analógicas variables. Para simular esto, se utiliza la Modulación por Ancho de Pulsos (PWM, por sus siglas en inglés).\n\nPWM consiste en encender y apagar el pin digital de manera extremadamente rápida. La proporción de tiempo que el pin permanece en HIGH frente al tiempo total del ciclo se conoce como 'Ciclo de Trabajo' (Duty Cycle). Si el ciclo de trabajo es del 50%, el motor conectado recibirá un voltaje promedio equivalente a la mitad del voltaje total, lo que nos permite regular su velocidad sin desperdiciar energía.",
+          "puntos_clave": [
+            "El ciclo de trabajo determina el voltaje promedio eficaz que recibe el motor.",
+            "Permite emular salidas analógicas utilizando únicamente pines de control digital rápido."
+          ],
+          "ejemplo_codigo_o_formula": "// Código Arduino para variar la velocidad de un motor\nint motorPin = 9; // Pin digital con soporte PWM\nvoid setup() {\n  pinMode(motorPin, OUTPUT);\n}\nvoid loop() {\n  analogWrite(motorPin, 128); // ~50% de ciclo de trabajo (rango 0-255)\n  delay(2000);\n  analogWrite(motorPin, 255); // 100% velocidad máxima\n  delay(2000);\n}",
+          "ejercicio_practico": {
+            "enunciado": "Escribe un pseudocódigo o algoritmo para aumentar la velocidad de un motor de forma lineal y gradual desde 0 (apagado) hasta su máxima capacidad en un intervalo de 5 segundos.",
+            "solucion_paso_a_paso": "Paso 1: Configurar el pin del motor como salida.\nPaso 2: Iniciar un bucle que incremente el valor de PWM de 0 a 255.\nPaso 3: Calcular el retardo necesario entre incrementos para cumplir el objetivo de 5 segundos (5000 ms). Si dividimos 5000 ms entre 255 pasos, necesitamos un retraso aproximado de 20 ms por paso.\nPaso 4: En cada ciclo, escribir el valor incremental de PWM en el pin correspondiente y esperar 20 ms.\nResultado final: El motor aumentará su velocidad progresivamente de manera suave y limpia en 5 segundos."
+          }
+        }
+      ],
+      "mini_quizzes": [
+        {
+          "titulo": "Comprobación de Concepto: PWM",
+          "pregunta": "Si un microcontrolador funciona a 5V de salida máxima, ¿cuál es el voltaje promedio aproximado que recibe un actuador si aplicamos un ciclo de trabajo del 20%?",
+          "opciones": [
+            "1.0 Voltios",
+            "2.5 Voltios",
+            "0.2 Voltios",
+            "5.0 Voltios"
+          ],
+          "indice_correcto": 0,
+          "explicacion": "El voltaje promedio equivale al voltaje máximo multiplicado por el porcentaje del ciclo de trabajo: 5V * 0.20 = 1.0V."
+        }
+      ]
+    }
+  ]
+}

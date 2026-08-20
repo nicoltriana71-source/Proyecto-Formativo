@@ -1,0 +1,122 @@
+{
+  "titulo": "Especialización en Programación para Robótica: Del Algoritmo a la Simulación",
+  "descripcion": "Este plan intensivo de 3 semanas está diseñado para dominar los fundamentos de la programación en robótica. Aprenderás a estructurar el software que controla sensores, actuadores, la lógica de toma de decisiones y simulación de entornos robóticos usando Python y conceptos de C++ para microcontroladores.",
+  "materia": "Programación en Robótica",
+  "recomendacion_fatiga": "Dado que estudiarás 5 horas al día, te recomiendo aplicar la técnica Pomodoro avanzada: realiza bloques de 50 minutos de estudio por 10 minutos de descanso. Cada 2 horas, toma un descanso largo de 20 minutos para evitar la fatiga mental.",
+  "modulos": [
+    {
+      "id": "mod-1",
+      "nivel_tag": "Semana 1: Fundamentos y Lógica de Control (C++/Python)",
+      "nivel_clase": "basico",
+      "titulo": "Estructuras de Control y Lectura de Entornos",
+      "teoria_modulo": "La programación en robótica requiere entender cómo un procesador ejecuta instrucciones secuenciales, condicionales y cíclicas en tiempo real. En esta semana, nos enfocamos en cómo traducir los datos analógicos y digitales del entorno físico en variables lógicas de software para tomar decisiones elementales en milisegundos.",
+      "lecciones": [
+        {
+          "titulo": "El Bucle Principal (Control Loop) y Lectura de Sensores",
+          "duracion_minutos": 150,
+          "concepto_teorico": "A diferencia de las aplicaciones de software de escritorio que esperan la interacción del usuario, un software de robótica se ejecuta en un bucle infinito continuo llamado 'Control Loop'. Este bucle tiene tres fases críticas: lectura de sensores (percepción), procesamiento de datos (decisión) y escritura en actuadores (acción).\n\nEn sistemas de tiempo real, la latencia es un factor crítico. Si el robot tarda demasiado en procesar la lectura de un sensor de proximidad, podría colisionar antes de que el motor reciba la orden de detenerse. Por ello, optimizar la eficiencia del código y evitar funciones bloqueantes (como 'delay' o esperas inactivas) es fundamental en la robótica.",
+          "puntos_clave": [
+            "El bucle de control (setup y loop) es la espina dorsal de la programación embebida.",
+            "Evitar el uso de retardos bloqueantes (delays) utilizando temporizadores basados en milisegundos.",
+            "La entrada/salida digital (I/O) permite interactuar con interruptores, LEDs y sensores de pulso."
+          ],
+          "ejemplo_codigo_o_formula": "// Ejemplo de bucle de control no bloqueante en C++ (Arduino)\nunsigned long tiempoAnterior = 0;\nconst long intervalo = 1000; // 1 segundo\n\nvoid setup() {\n  pinMode(LED_BUILTIN, OUTPUT);\n}\n\nvoid loop() {\n  unsigned long tiempoActual = millis();\n  // Comprobamos si ha pasado el intervalo sin detener el procesador\n  if (tiempoActual - tiempoAnterior >= intervalo) {\n    tiempoAnterior = tiempoActual;\n    digitalWrite(LED_BUILTIN, !digitalRead(LED_BUILTIN));\n  }\n}",
+          "ejercicio_practico": {
+            "enunciado": "Escribe un programa simulado en Python que emule el bucle de un robot móvil. Debe leer la distancia de un sensor simulado (un número aleatorio entre 0 y 100 cm). Si la distancia es menor a 20 cm, el robot debe imprimir '¡Obstáculo detectado! Frenando motores'; de lo contrario, debe imprimir 'Avanzando seguro'. El bucle debe ejecutarse cada 0.5 segundos.",
+            "solucion_paso_a_paso": "Paso 1: Importar las librerías 'time' para el retardo y 'random' para generar distancias simuladas.\nPaso 2: Crear un bucle infinito 'while True' que represente el Control Loop.\nPaso 3: Dentro del bucle, generar un valor de distancia aleatorio.\nPaso 4: Implementar una estructura condicional 'if-else' para evaluar el peligro de colisión.\nPaso 5: Usar 'time.sleep(0.5)' al final del bucle para simular el intervalo de lectura de 0.5 segundos sin sobrecargar la CPU."
+          }
+        }
+      ],
+      "mini_quizzes": [
+        {
+          "titulo": "Comprobación de Concepto: Control Loop",
+          "pregunta": "¿Por qué se desaconseja el uso de la función 'delay()' o funciones bloqueantes en la programación de robots?",
+          "opciones": [
+            "Porque consumen demasiada memoria RAM del microcontrolador.",
+            "Porque congelan la ejecución del procesador, impidiendo que el robot reaccione a emergencias o lea otros sensores durante ese intervalo.",
+            "Porque reducen la vida útil física de los sensores conectados al bus de comunicación.",
+            "Porque solo funcionan en lenguajes interpretados como Python pero no en lenguajes compilados."
+          ],
+          "indice_correcto": 1,
+          "explicacion": "Las funciones bloqueantes como delay() detienen toda la ejecución del hilo principal del procesador. Si un sensor de colisión detecta un obstáculo durante ese intervalo de pausa, el robot no podrá procesarlo ni actuar a tiempo, lo que causaría un accidente."
+        }
+      ]
+    },
+    {
+      "id": "mod-2",
+      "nivel_tag": "Semana 2: Algoritmos de Control de Movimiento",
+      "nivel_clase": "intermedio",
+      "titulo": "Control Realimentado y Algoritmo PID",
+      "teoria_modulo": "Para que un robot se mueva con precisión en el mundo físico, no basta con decirle 'avanza a velocidad constante'. Elementos externos como la fricción, la inercia o el peso del chasis causan desviaciones. Esta semana aprenderás el control por retroalimentación, específicamente el controlador PID (Proporcional, Integral, Derivativo), la piedra angular del control robótico industrial y de consumo.",
+      "lecciones": [
+        {
+          "titulo": "Control Proporcional (P) y Derivativo (D)",
+          "duracion_minutos": 150,
+          "concepto_teorico": "Un controlador PID calcula continuamente una señal de error como la diferencia entre un punto de consigna deseado (setpoint) y una variable de proceso medida (feedback). La parte Proporcional (P) corrige el error actual aplicando una fuerza proporcional al tamaño del error. Sin embargo, el control P puro suele oscilar o no alcanzar exactamente el objetivo.\n\nPara solucionar esto, la acción Derivativa (D) predice el comportamiento futuro del error analizando su tasa de cambio. Esto actúa como un amortiguador, reduciendo la velocidad del robot conforme se acerca a la meta para evitar sobrepasarla (overshoot).",
+          "puntos_clave": [
+            "Error = Setpoint - Feedback (Valor medido).",
+            "La constante Kp (Proporcional) define la agresividad de la respuesta ante el error actual.",
+            "La constante Kd (Derivativa) frena la oscilación analizando la velocidad del cambio del error."
+          ],
+          "ejemplo_codigo_o_formula": "# Fórmula del controlador PD simplificado\n# Salida = (Kp * error) + (Kd * (error_actual - error_anterior) / dt)",
+          "ejercicio_practico": {
+            "enunciado": "Implementa una clase en Python llamada 'ControladorPD' que reciba las constantes Kp y Kd. Debe tener un método 'calcular' que tome el setpoint, la posición actual y la variación de tiempo (dt), y devuelva la señal de control calculada.",
+            "solucion_paso_a_paso": "Paso 1: Definir la clase con un constructor __init__ para inicializar Kp, Kd y guardar el 'ultimo_error' en 0.\nPaso 2: En el método calcular, restar setpoint menos la posicion_actual para obtener el error.\nPaso 3: Calcular la derivada del error: (error - ultimo_error) / dt.\nPaso 4: Calcular la salida sumando el término proporcional y el derivativo.\nPaso 5: Actualizar 'ultimo_error' con el valor actual y retornar el resultado."
+          }
+        }
+      ],
+      "mini_quizzes": [
+        {
+          "titulo": "Comprobación del Controlador PID",
+          "pregunta": "¿Cuál es la función principal del término Derivativo (D) en un controlador de movimiento?",
+          "opciones": [
+            "Aumentar el error acumulado a lo largo del tiempo para eliminar el error de estado estacionario.",
+            "Proveer una fuerza inicial masiva para sacar al robot del estado de reposo rápidamente.",
+            "Amortiguar la respuesta del sistema para reducir oscilaciones bruscas y prevenir el sobrepaso (overshoot).",
+            "Invertir el sentido de giro de los motores cuando el robot se desvía del trayecto."
+          ],
+          "indice_correcto": 2,
+          "explicacion": "El término Derivativo mide la velocidad a la que disminuye el error. Si el error disminuye muy rápido, frena la señal de control para evitar que el robot se pase de largo de su posición objetivo."
+        }
+      ]
+    },
+    {
+      "id": "mod-3",
+      "nivel_tag": "Semana 3: Simulación de Robots y Navegación Básica",
+      "nivel_clase": "avanzado",
+      "titulo": "Simulación Física y Cinemática de Robots Diferenciales",
+      "teoria_modulo": "Antes de construir un robot real, los desarrolladores de software programan simuladores físicos para validar algoritmos de navegación en entornos seguros. En este módulo final, aprenderás a calcular la cinemática directa de un robot de tracción diferencial (como una aspiradora inteligente Roomba o un robot explorador con dos ruedas y una rueda loca) y a trasladar ese comportamiento a un simulador lógico bidimensional.",
+      "lecciones": [
+        {
+          "titulo": "Cinemática Diferencial y Odometría",
+          "duracion_minutos": 150,
+          "concepto_teorico": "La odometría es el uso de datos de sensores de movimiento (como codificadores ópticos en las ruedas) para estimar el cambio de posición de un robot a lo largo del tiempo. En un robot de tracción diferencial, la velocidad del robot y su velocidad angular de rotación dependen directamente de la diferencia de velocidad entre la rueda izquierda y la rueda derecha.\n\nProgramar la cinemática requiere aplicar trigonometría básica para actualizar las coordenadas cartesianas (X, Y) del robot y su orientación (Theta) en cada ciclo del procesador, sabiendo el radio de las ruedas y la distancia que las separa (ancho de vía).",
+          "puntos_clave": [
+            "La velocidad lineal del robot es el promedio de las velocidades de ambas ruedas.",
+            "La velocidad angular depende de la diferencia entre la velocidad derecha e izquierda dividida por la distancia entre ejes.",
+            "La odometría acumula pequeños errores de precisión con el tiempo debido al deslizamiento de las ruedas."
+          ],
+          "ejemplo_codigo_o_formula": "# Fórmulas de actualización de posición:\n# d_centro = (distancia_rueda_derecha + distancia_rueda_izquierda) / 2\n# x_nuevo = x_anterior + d_centro * cos(theta)\n# y_nuevo = y_anterior + d_centro * sin(theta)\n# theta_nuevo = theta_anterior + (distancia_rueda_derecha - distancia_rueda_izquierda) / ancho_via",
+          "ejercicio_practico": {
+            "enunciado": "Escribe una función en Python que tome la posición actual del robot (x, y, theta), la distancia recorrida por la rueda derecha, la de la izquierda y el ancho de vía del robot, y devuelva las nuevas coordenadas actualizadas del robot.",
+            "solucion_paso_a_paso": "Paso 1: Importar la librería 'math' para usar funciones trigonométricas como cos y sin.\nPaso 2: Calcular la distancia lineal promedio (d_centro).\nPaso 3: Calcular el cambio en la orientación (d_theta) dividiendo la diferencia de distancias por el ancho de vía.\nPaso 4: Calcular las nuevas coordenadas x, y aplicando d_centro * math.cos(theta) y d_centro * math.sin(theta).\nPaso 5: Retornar los valores actualizados de x, y, y theta (ajustando theta en radianes)."
+          }
+        }
+      ],
+      "mini_quizzes": [
+        {
+          "titulo": "Comprobación de Cinemática",
+          "pregunta": "Si las dos ruedas de un robot diferencial giran exactamente a la misma velocidad y en el mismo sentido, ¿qué tipo de movimiento describirá el robot?",
+          "opciones": [
+            "El robot girará sobre su propio eje central continuamente.",
+            "El robot se moverá en una trayectoria perfectamente recta.",
+            "El robot describirá una trayectoria curva constante hacia el lado izquierdo.",
+            "El robot se detendrá de inmediato debido al bloqueo cinemático."
+          ],
+          "indice_correcto": 1,
+          "explicacion": "Al aplicar la misma velocidad a ambas ruedas, la diferencia de velocidades es cero, lo que resulta en una velocidad angular nula. Por lo tanto, el robot avanza en línea recta pura."
+        }
+      ]
+    }
+  ]
+}

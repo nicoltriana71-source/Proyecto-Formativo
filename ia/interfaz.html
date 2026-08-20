@@ -23,8 +23,8 @@
             <div class="mensaje">
                 <div class="avatar">🤖</div>
                 <div class="contenido">
-                    <p>¡Hola! Soy tu asistente de <strong>StudNova IA</strong>.</p>
-                    <p style="margin-top: 8px;">Dime qué materia, tecnología o tema quieres aprender (ejemplo: <em>"Crea un plan de 4 semanas para aprender Python con ejercicios y barras de progreso"</em>) y generaré una interfaz interactiva para ti.</p>
+                    <p>¡Hola! 👋 Soy tu asistente de <strong>StudNova IA</strong>.</p>
+                    <p style="margin-top: 8px;">Cuéntame, ¿qué materia o tema te gustaría aprender hoy?</p>
                 </div>
             </div>
 
@@ -35,19 +35,22 @@
             <textarea 
                 id="prompt-input" 
                 rows="2" 
-                placeholder="Escribe aquí el plan de estudio que deseas..." 
+                placeholder="Escribe tu mensaje aquí..." 
                 onkeydown="manejarEnter(event)"
             ></textarea>
-            <button id="btn-enviar" onclick="enviarMensaje()">Generar</button>
+            <button id="btn-enviar" onclick="enviarMensaje()">Enviar</button>
         </div>
 
     </div>
 
-    <!-- Lógica de interacción con Python y FastAPI -->
+    <!-- Lógica del Chat Inteligente -->
     <script>
         const chatBox = document.getElementById('chat-box');
         const promptInput = document.getElementById('prompt-input');
         const btnEnviar = document.getElementById('btn-enviar');
+
+        // Memoria de la conversación
+        let historialConversacion = [];
 
         function manejarEnter(e) {
             if (e.key === 'Enter' && !e.shiftKey) {
@@ -60,8 +63,10 @@
             const texto = promptInput.value.trim();
             if (!texto) return;
 
-            // 1. Mensaje del Usuario
+            // 1. Agregar mensaje del usuario
             agregarMensajeUsuario(texto);
+            historialConversacion.push({ rol: "usuario", texto: texto });
+
             promptInput.value = '';
             btnEnviar.disabled = true;
             btnEnviar.style.opacity = '0.5';
@@ -71,11 +76,14 @@
             scrollAlFondo();
 
             try {
-                // 3. Llamada al endpoint de FastAPI (/api/ia/generar)
+                // 3. Llamada al endpoint de FastAPI enviando el historial
                 const respuesta = await fetch('/api/ia/generar', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ prompt: texto })
+                    body: JSON.stringify({ 
+                        prompt: texto,
+                        historial: historialConversacion 
+                    })
                 });
 
                 let datos;
@@ -83,14 +91,18 @@
                 try {
                     datos = JSON.parse(textoRespuesta);
                 } catch {
-                    throw new Error(textoRespuesta || 'Error de comunicación con el servidor');
+                    throw new Error(textoRespuesta || 'Error en la respuesta del servidor');
                 }
 
                 if (!respuesta.ok) {
-                    throw new Error(datos.detail || datos.error || 'Ocurrió un error al procesar');
+                    throw new Error(datos.detail || 'Ocurrió un error al procesar');
                 }
 
-                // 4. Quitar carga y mostrar respuesta de la IA
+                // Guardar la respuesta de la IA en el historial
+                const textoIA = datos.mensaje || "He procesado tu respuesta.";
+                historialConversacion.push({ rol: "ia", texto: textoIA });
+
+                // 4. Quitar carga y mostrar respuesta adecuada
                 removerElemento(idCarga);
                 agregarMensajeIA(datos);
 
@@ -105,7 +117,6 @@
             }
         }
 
-        // Renderiza el mensaje que escribió el usuario
         function agregarMensajeUsuario(texto) {
             const div = document.createElement('div');
             div.className = 'mensaje';
@@ -119,7 +130,6 @@
             chatBox.appendChild(div);
         }
 
-        // Renderiza el estado de carga
         function agregarMensajeCarga() {
             const id = 'carga-' + Date.now();
             const div = document.createElement('div');
@@ -128,38 +138,60 @@
             div.innerHTML = `
                 <div class="avatar">🤖</div>
                 <div class="contenido">
-                    <p>⏳ <em>StudNova IA está creando tu plan de estudio y separando el HTML, CSS y JS...</em></p>
+                    <p>⏳ <em>StudNova IA está respondiendo...</em></p>
                 </div>
             `;
             chatBox.appendChild(div);
             return id;
         }
 
-        // Renderiza la respuesta con la vista interactiva dentro del chat
+        // FUNCIÓN QUE DECIDE SI MOSTRAR SOLO TEXTO O MOSTRAR EL PLAN COMPLETO
         function agregarMensajeIA(datos) {
             const div = document.createElement('div');
             div.className = 'mensaje';
-            div.innerHTML = `
-                <div class="avatar">🤖</div>
-                <div class="contenido" style="width: 80%;">
-                    <p>✨ <strong>¡Plan de estudio generado con éxito!</strong></p>
-                    <p style="margin-top: 5px; font-size: 14px; opacity: 0.9;">
-                        Archivo guardado: <code>${datos.nombre_archivo}.html</code>
-                    </p>
 
-                    <!-- Botón para ver en pantalla completa -->
-                    <div style="margin: 12px 0;">
-                        <a href="${datos.url_vista}" target="_blank" style="display:inline-block; padding: 8px 16px; background:#2563eb; color:white; text-decoration:none; border-radius:8px; font-weight:bold; font-size:14px;">
-                            ↗️ Abrir Plan en Pantalla Completa
-                        </a>
-                    </div>
+            // Detectar si la respuesta trae un plan generado completo con módulos
+            const tienePlan = (datos.tipo === "plan_generado") || (datos.plan && datos.plan.modulos && datos.plan.modulos.length > 0) || (datos.modulos && datos.modulos.length > 0);
 
-                    <!-- Previsualización interactiva en vivo -->
-                    <div style="border-radius: 10px; overflow: hidden; border: 1px solid #334155; margin-top: 10px;">
-                        <iframe src="${datos.url_vista}" style="width: 100%; height: 380px; border: none; background: white;"></iframe>
+            if (!tienePlan) {
+                // 🟢 CASO 1: CONVERSACIÓN NORMAL (Solo texto y preguntas pedagógicas)
+                const mensajeTexto = datos.mensaje || (typeof datos === 'string' ? datos : "Cuéntame más sobre lo que quieres aprender.");
+                div.innerHTML = `
+                    <div class="avatar">🤖</div>
+                    <div class="contenido">
+                        <p>${escaparHTML(mensajeTexto)}</p>
                     </div>
-                </div>
-            `;
+                `;
+            } else {
+                // 🟢 CASO 2: PLAN TERMINADO (Muestra mensaje + visor interactivo con iframe)
+                const planObjeto = datos.plan || datos;
+                localStorage.setItem("plan_estudio_actual", JSON.stringify(planObjeto));
+
+                const mensajeTexto = datos.mensaje || "✨ ¡Plan de estudio generado con éxito!";
+
+                div.innerHTML = `
+                    <div class="avatar">🤖</div>
+                    <div class="contenido" style="width: 85%;">
+                        <p><strong>${escaparHTML(mensajeTexto)}</strong></p>
+                        <p style="margin-top: 5px; font-size: 14px; opacity: 0.9;">
+                            He estructurado tu ruta de aprendizaje a tu medida con quizzes y control de fatiga.
+                        </p>
+
+                        <!-- Botón para ver en pantalla completa -->
+                        <div style="margin: 12px 0;">
+                            <a href="/principal/interfaz plan de estudio/visor_plan.html" target="_blank" style="display:inline-block; padding: 8px 16px; background:#2563eb; color:white; text-decoration:none; border-radius:8px; font-weight:bold; font-size:14px;">
+                                ↗️ Abrir Plan en Pantalla Completa
+                            </a>
+                        </div>
+
+                        <!-- Previsualización interactiva con el plan completo -->
+                        <div style="border-radius: 10px; overflow: hidden; border: 1px solid #334155; margin-top: 10px;">
+                            <iframe src="/principal/interfaz plan de estudio/visor_plan.html" style="width: 100%; height: 500px; border: none; background: #0f172a;"></iframe>
+                        </div>
+                    </div>
+                `;
+            }
+
             chatBox.appendChild(div);
         }
 

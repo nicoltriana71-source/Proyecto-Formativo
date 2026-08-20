@@ -41,6 +41,8 @@ app.include_router(ia_router)
 # los archivos HTML, CSS y JS que la IA genere en esa carpeta.
 # -------------------------------------------------------------
 app.mount("/ia", StaticFiles(directory=str(BASE_DIR / "ia"), html=True), name="ia")
+app.mount("/principal", StaticFiles(directory=str(BASE_DIR / "principal"), html=True), name="principal")
+
 
 
 # -------------------------------------------------------------

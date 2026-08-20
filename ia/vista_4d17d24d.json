@@ -1,0 +1,80 @@
+{
+  "titulo": "Master en Bioquímica: Fundamentos Moleculares de la Vida",
+  "descripcion": "Un plan de estudios estructurado para dominar la química de los seres vivos, comprendiendo desde el comportamiento del agua y el equilibrio ácido-base, hasta las principales rutas metabólicas y el flujo energético celular.",
+  "materia": "Bioquímica",
+  "recomendacion_fatiga": "Estudia 25 min y descansa 5 min (Método Pomodoro) para asimilar la densidad de las rutas metabólicas sin saturar tu memoria.",
+  "modulos": [
+    {
+      "id": "mod-1",
+      "nivel_tag": "Nivel 1: Básico",
+      "nivel_clase": "basico",
+      "titulo": "El Agua, pH y Sistemas Amortiguadores Fisiológicos",
+      "tareas": [
+        {
+          "titulo": "Equilibrio Ácido-Base y Ecuación de Henderson-Hasselbalch",
+          "duracion_minutos": 45,
+          "detalle": "Lectura analítica del comportamiento del agua como solvente biológico y resolución de problemas de pH.",
+          "guia_aprendizaje": {
+            "explicacion_teorica": "El agua es el solvente universal de la vida debido a su naturaleza polar y su capacidad para formar puentes de hidrógeno. En los sistemas biológicos, mantener un pH constante (en sangre humana, cercano a 7.4) es crucial, ya que los cambios sutiles pueden desnaturalizar proteínas y alterar reacciones enzimáticas. Para contrarrestar estos cambios, las células utilizan sistemas amortiguadores (buffers) compuestos por un ácido débil y su base conjugada. La relación cuantitativa entre el pH de un amortiguador, la fuerza del ácido (pKa) y las concentraciones de sus componentes se rige por la ecuación de Henderson-Hasselbalch, permitiendo predecir cómo responderá un sistema biológico ante la adición de ácidos o bases.",
+            "puntos_clave": [
+              "El pH es el logaritmo negativo de la concentración de iones de hidrógeno [H+].",
+              "Un sistema buffer o amortiguador minimiza los cambios de pH capturando o liberando protones.",
+              "La ecuación de Henderson-Hasselbalch es: pH = pKa + log([Base conjugada] / [Ácido débil])."
+            ],
+            "ejemplo_explicado": "Imagina que tenemos un amortiguador de ácido acético (pKa = 4.76) donde la concentración del ácido (ácido acético) es igual a la de su base conjugada (acetato). Aplicando la ecuación: pH = 4.76 + log(1/1). Dado que log(1) = 0, el pH es exactamente igual al pKa (4.76). Esto nos demuestra que un amortiguador tiene su máxima eficiencia de regulación cuando el pH del medio es igual al pKa del ácido.",
+            "ejercicio_resuelto": {
+              "enunciado": "Calcula el pH de una solución amortiguadora de fosfato en el citoplasma celular que contiene 0.04 M de KH2PO4 (ácido débil) y 0.08 M de K2HPO4 (base conjugada). El pKa de este sistema amortiguador es de 7.21.",
+              "solucion_paso_a_paso": "Paso 1: Identificar las variables dadas: concentración del ácido [Ácido] = 0.04 M, concentración de la base [Base] = 0.08 M, y el pKa = 7.21. Paso 2: Recordar y plantear la ecuación de Henderson-Hasselbalch: pH = pKa + log([Base] / [Ácido]). Paso 3: Sustituir los valores en la ecuación: pH = 7.21 + log(0.08 / 0.04). Paso 4: Simplificar la fracción: 0.08 / 0.04 = 2. Ahora la ecuación es pH = 7.21 + log(2). Paso 5: Calcular el logaritmo de 2, que equivale a 0.301. Paso 6: Sumar los valores obtenidos: pH = 7.21 + 0.301 = 7.511. Resultado final: El pH del buffer citoplasmático de fosfato es de aproximadamente 7.51."
+            }
+          }
+        }
+      ],
+      "quiz": {
+        "titulo": "Evaluación del Módulo 1",
+        "pregunta": "¿En qué punto un sistema amortiguador presenta su máxima capacidad de resistencia a los cambios de pH?",
+        "opciones": [
+          "Cuando el pH es igual al pKa del ácido débil.",
+          "Cuando la concentración de base conjugada es diez veces mayor al ácido.",
+          "Cuando el pH llega a un valor neutro de 7.0 de forma absoluta."
+        ],
+        "indice_correcto": 0
+      }
+    },
+    {
+      "id": "mod-2",
+      "nivel_tag": "Nivel 2: Intermedio",
+      "nivel_clase": "intermedio",
+      "titulo": "Metabolismo de Carbohidratos: La Glucólisis",
+      "tareas": [
+        {
+          "titulo": "Fases de la Glucólisis y Balance Neto de ATP",
+          "duracion_minutos": 50,
+          "detalle": "Estudio paso a paso de las 10 reacciones de la glucólisis, identificando puntos de regulación y balance energético.",
+          "guia_aprendizaje": {
+            "explicacion_teorica": "La glucólisis es la ruta metabólica central e inicial para el catabolismo de los carbohidratos, ocurriendo en el citosol de prácticamente todas las células vivas. Consiste en la ruptura de una molécula de glucosa de 6 carbonos en dos moléculas de piruvato de 3 carbonos. Este proceso se divide en dos fases: la fase de inversión de energía (donde se consumen 2 moléculas de ATP para activar y desestabilizar la glucosa) y la fase de generación de energía (donde se producen 4 moléculas de ATP por fosforilación a nivel de sustrato y 2 moléculas de NADH). El balance neto es fundamental para comprender la bioenergética celular en condiciones anaerobias y aerobias.",
+            "puntos_clave": [
+              "La glucólisis consume inicialmente 2 ATP para producir fructosa-1,6-bisofosfato.",
+              "Se generan 4 ATP y 2 NADH en la segunda fase, resultando en un beneficio neto de 2 ATP y 2 NADH por glucosa.",
+              "La fosfofructocinasa-1 (PFK-1) es el principal punto de regulación y enzima marcapasos de la vía."
+            ],
+            "ejemplo_explicado": "Durante la primera reacción de la glucólisis, la enzima hexocinasa cataliza la transferencia de un grupo fosfato del ATP a la glucosa, formando glucosa-6-fosfato y ADP. Esta reacción consume un ATP, pero es crucial porque 'atrapa' a la glucosa cargada negativamente dentro de la célula, impidiendo que vuelva a cruzar la membrana plasmática.",
+            "ejercicio_resuelto": {
+              "enunciado": "Si una célula muscular consume metabólicamente 5 moléculas de glucosa para realizar una contracción rápida en condiciones de hipoxia (anaerobia), calcula la ganancia neta total de moléculas de ATP que obtendrá exclusivamente a través de la vía glucolítica.",
+              "solucion_paso_a_paso": "Paso 1: Determinar el rendimiento metabólico neto estándar de la glucólisis por cada molécula de glucosa procesada. El rendimiento neto es de 2 ATP por cada glucosa (se generan 4 ATP pero se invirtieron 2 ATP previamente). Paso 2: Multiplicar el rendimiento neto unitario por el número de moléculas de glucosa consumidas en el ejercicio planteado: Rendimiento total = (Rendimiento neto de 1 glucosa) x (Cantidad de glucosas). Paso 3: Realizar la operación matemática utilizando los valores: Rendimiento total = 2 ATP/glucosa * 5 glucosas = 10 ATP. Resultado final: El beneficio neto total obtenido por la célula a partir de las 5 moléculas de glucosa es de 10 moléculas de ATP."
+            }
+          }
+        }
+      ],
+      "quiz": {
+        "titulo": "Evaluación del Módulo 2",
+        "pregunta": "¿Cuál es la ganancia NETAL de ATP y NADH obtenida por cada molécula de glucosa al final de la glucólisis?",
+        "opciones": [
+          "4 ATP y 2 NADH",
+          "2 ATP y 2 NADH",
+          "2 ATP y 4 NADH"
+        ],
+        "indice_correcto": 1
+      }
+    }
+  ]
+}
