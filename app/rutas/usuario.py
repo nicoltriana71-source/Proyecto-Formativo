@@ -1,59 +1,21 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlmodel import Session
+from base_datos import obtener_sesion
+from app.esquemas.usuario import UsuarioCrear, UsuarioLogin, UsuarioRespuesta
+from app.crud.usuario import obtener_usuario_por_correo, crear_usuario
 
-from app.base_datos import obtener_sesion
-from app.modelos.usuario import Usuario
-from app.esquemas.usuario import UsuarioCrear, UsuarioActualizar
-from app.crud.usuario import (
-    crear_usuario,
-    editar_usuario,
-    eliminar_usuario
-)
-from app.crud.usuario import (
-    crear_usuario,
-    editar_usuario,
-    eliminar_usuario,
-    listar_usuarios
-)
+router = APIRouter()
 
-router = APIRouter(
-    prefix="/usuarios",
-    tags=["Usuarios"]
-)
-
-
-@router.post("/")
-def registrar_usuario(
-    datos: UsuarioCrear,
-    sesion: Session = Depends(obtener_sesion)
-):
-    usuario = Usuario(
-        nombre=datos.nombre,
-        correo=datos.correo,
-        contraseña=datos.contraseña,
-        rol=datos.rol
-    )
-
+@router.post("/registro", response_model=UsuarioRespuesta, status_code=status.HTTP_201_CREATED)
+def registrar(usuario: UsuarioCrear, sesion: Session = Depends(obtener_sesion)):
+    db_user = obtener_usuario_por_correo(sesion, usuario.correo)
+    if db_user:
+        raise HTTPException(status_code=400, detail="El correo ya está registrado.")
     return crear_usuario(sesion, usuario)
 
-@router.get("/")
-def obtener_usuarios(
-    sesion: Session = Depends(obtener_sesion)
-):
-    return listar_usuarios(sesion)
-
-@router.put("/{id_usuario}")
-def actualizar_usuario(
-    id_usuario: int,
-    datos: UsuarioActualizar,
-    sesion: Session = Depends(obtener_sesion)
-):
-    return editar_usuario(sesion, id_usuario, datos)
-
-
-@router.delete("/{id_usuario}")
-def borrar_usuario(
-    id_usuario: int,
-    sesion: Session = Depends(obtener_sesion)
-):
-    return eliminar_usuario(sesion, id_usuario)
+@router.post("/login", response_model=UsuarioRespuesta)
+def login(credenciales: UsuarioLogin, sesion: Session = Depends(obtener_sesion)):
+    usuario = obtener_usuario_por_correo(sesion, credenciales.correo)
+    if not usuario or usuario.contraseña != credenciales.contraseña:
+        raise HTTPException(status_code=401, detail="Credenciales incorrectas.")
+    return usuario

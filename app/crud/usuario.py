@@ -1,54 +1,19 @@
-from fastapi import HTTPException
-from sqlmodel import Session
-
-from app.modelos.usuario import Usuario
-from app.esquemas.usuario import UsuarioActualizar
 from sqlmodel import Session, select
+from app.modelos.usuario import Usuario
+from app.esquemas.usuario import UsuarioCrear
 
+def obtener_usuario_por_correo(sesion: Session, correo: str) -> Usuario | None:
+    statement = select(Usuario).where(Usuario.correo == correo)
+    return sesion.exec(statement).first()
 
-def crear_usuario(sesion: Session, usuario: Usuario):
-    sesion.add(usuario)
+def crear_usuario(sesion: Session, usuario: UsuarioCrear) -> Usuario:
+    # Nota: En producción recuerda encriptar la contraseña (ej. con passlib/bcrypt)
+    db_usuario = Usuario(
+        nombre=usuario.nombre,
+        correo=usuario.correo,
+        contraseña=usuario.contraseña
+    )
+    sesion.add(db_usuario)
     sesion.commit()
-    sesion.refresh(usuario)
-
-    return usuario
-
-
-def editar_usuario(
-    sesion: Session,
-    id_usuario: int,
-    datos: UsuarioActualizar
-):
-    usuario = sesion.get(Usuario, id_usuario)
-
-    if not usuario:
-        raise HTTPException(status_code=404, detail="Usuario no encontrado")
-
-    usuario.nombre = datos.nombre
-    usuario.correo = datos.correo
-    usuario.contraseña = datos.contraseña
-    usuario.rol = datos.rol
-
-    sesion.add(usuario)
-    sesion.commit()
-    sesion.refresh(usuario)
-
-    return usuario
-
-
-def eliminar_usuario(
-    sesion: Session,
-    id_usuario: int
-):
-    usuario = sesion.get(Usuario, id_usuario)
-
-    if not usuario:
-        raise HTTPException(status_code=404, detail="Usuario no encontrado")
-
-    sesion.delete(usuario)
-    sesion.commit()
-
-    return {"mensaje": "Usuario eliminado correctamente"}
-
-def listar_usuarios(sesion: Session):
-    return sesion.exec(select(Usuario)).all()
+    sesion.refresh(db_usuario)
+    return db_usuario

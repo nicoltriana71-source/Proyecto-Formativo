@@ -1,22 +1,18 @@
-from sqlmodel import SQLModel
+from pydantic import BaseModel, EmailStr
 
-
-class UsuarioCrear(SQLModel):
+class UsuarioCrear(BaseModel):
     nombre: str
-    correo: str
+    correo: EmailStr
     contraseña: str
-    rol: str
 
-
-class UsuarioActualizar(SQLModel):
-    nombre: str
-    correo: str
+class UsuarioLogin(BaseModel):
+    correo: EmailStr
     contraseña: str
-    rol: str
 
-
-class UsuarioRespuesta(SQLModel):
+class UsuarioRespuesta(BaseModel):
     id_usuario: int
     nombre: str
     correo: str
-    rol: str
+
+    class Config:
+        from_attributes = True
