@@ -1,0 +1,46 @@
+{
+  "titulo": "Dominio Integral del Español en 5 Semanas",
+  "descripcion": "Plan intensivo y estructurado para perfeccionar la gramática, la ortografía, la comprensión lectora y la redacción avanzada en español.",
+  "materia": "Español",
+  "recomendacion_fatiga": "Estudia 25 min y descansa 5 min para consolidar la memoria.",
+  "modulos": [
+    {
+      "id": "mod-1",
+      "nivel_tag": "Nivel 1: Fundamentos y Ortografía",
+      "nivel_clase": "basico",
+      "titulo": "Bases Gramaticales y Reglas de Acentuación",
+      "teoria_modulo": "En este primer módulo estableceremos los cimientos del idioma, comprendiendo la estructura de las palabras, la clasificación según su acento y el uso correcto de las normas ortográficas básicas.",
+      "lecciones": [
+        {
+          "titulo": "Acentuación: Agudas, Graves, Esdrújulas y Sobresdrújulas",
+          "duracion_minutos": 45,
+          "concepto_teorico": "El acento ortográfico (la tilde) no es un adorno, es una herramienta clave que cambia el significado de las palabras y guía la correcta pronunciación. Las palabras se clasifican según la sílaba tónica, es decir, aquella donde recae la mayor fuerza de voz.\n\nComprender esta clasificación es el primer paso para escribir sin faltas ortográficas y mejorar drásticamente nuestra redacción en cualquier contexto formal o cotidiano.",
+          "puntos_clave": [
+            "Palabras agudas: llevan tilde si terminan en N, S o vocal.",
+            "Palabras graves (llanas): llevan tilde si NO terminan en N, S o vocal.",
+            "Palabras esdrújulas y sobresdrújulas: siempre llevan tilde."
+          ],
+          "ejemplo_codigo_o_formula": "Ejemplos:\n- Aguda: camión (termina en n)\n- Grave: árbol (termina en l)\n- Esdrújula: música (siempre tilde)",
+          "ejercicio_practico": {
+            "enunciado": "Clasifica las siguientes palabras en aguda, grave o esdrújula, y coloca la tilde donde corresponda: 'lapiz', 'cantara', 'helicoptero', 'compas'.",
+            "solucion_paso_a_paso": "Paso 1: Identificar la sílaba tónica de cada palabra. Paso 2: Aplicar la regla correspondiente según su terminación. Solución: lápiz (grave), cantará (aguda), helicóptero (esdrújula), compás (aguda)."
+          }
+        }
+      ],
+      "mini_quizzes": [
+        {
+          "titulo": "Comprobación de Acentuación",
+          "pregunta": "¿Cuál de las siguientes palabras es esdrújula y por lo tanto siempre lleva tilde?",
+          "opciones": [
+            "Reloj",
+            "Azúcar",
+            "Teléfono",
+            "Camión"
+          ],
+          "indice_correcto": 2,
+          "explicacion": "La palabra 'teléfono' tiene la sílaba tónica en la antepenúltima sílaba, lo que la convierte en una palabra esdrújula, las cuales siempre se acentúan gráficamente."
+        }
+      ]
+    }
+  ]
+}

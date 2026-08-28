@@ -17,10 +17,9 @@ if not API_KEY:
 client = genai.Client(api_key=API_KEY)
 
 MODELOS_CASCADA = [
-    "gemini-3.5-flash",
-    "gemini-3.7-flash",
-    "gemini-3.5-flash-lite",
-    "gemini-pro-latest"
+  
+    "gemini-3.5-flash-lite"
+   
 ]
 
 # PROMPT DINÁMICO Y NATURAL
