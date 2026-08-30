@@ -1,0 +1,84 @@
+{
+  "titulo": "Ruta de JavaScript Moderno (ES6+) en 2 Semanas",
+  "descripcion": "Domina la sintaxis moderna de JS y aprende a gestionar el flujo asíncrono mediante Promesas y Fetch para consumir APIs reales.",
+  "materia": "JavaScript Moderno (ES6+)",
+  "recomendacion_fatiga": "Estudia 25 min utilizando la técnica Pomodoro y descansa 5 min para consolidar tu memoria a largo plazo.",
+  "modulos": [
+    {
+      "id": "mod-1",
+      "nivel_tag": "Semana 1: Fundamentos Modernos (ES6+)",
+      "nivel_clase": "basico",
+      "titulo": "Sintaxis, Ámbito y Estructuras Modernas",
+      "teoria_modulo": "La especificación ES6 (2015) marcó una evolución fundamental en JavaScript. Dejamos atrás las malas prácticas asociadas al ámbito global de las variables antiguas para dar paso a una sintaxis limpia, segura y compacta que define el desarrollo moderno.",
+      "lecciones": [
+        {
+          "titulo": "Let, Const y Arrow Functions",
+          "duracion_minutos": 45,
+          "concepto_teorico": "Históricamente, JavaScript usaba 'var' para declarar variables, lo que generaba comportamientos inesperados debido al hoisting y al alcance de función. Con ES6, introducimos 'let' y 'const', los cuales poseen un alcance de bloque (block scope), limitando su existencia al par de llaves más cercano.\n\nPor otro lado, las Funciones Flecha (Arrow Functions) simplifican la escritura de bloques de código y resuelven de forma nativa los problemas del contexto de 'this', ya que heredan este valor del entorno léxico donde fueron creadas.",
+          "puntos_clave": [
+            "Usa 'const' por defecto para referencias que no vayan a ser reasignadas.",
+            "Usa 'let' solo cuando preveas que el valor de la variable cambiará.",
+            "Las funciones flecha no definen su propio contexto 'this', lo que evita el uso de bind()."
+          ],
+          "ejemplo_codigo_o_formula": "// Declaración correcta de variables de bloque\nconst pi = 3.1416;\nlet puntuacion = 100;\n\n// Arrow function compacta con retorno implícito\nconst calcularCuadrado = x => x * x;\nconsole.log(calcularCuadrado(4)); // Imprime 16",
+          "ejercicio_practico": {
+            "enunciado": "Escribe una función flecha que reciba un precio base y un porcentaje de descuento, y retorne el precio final descontado. Si el descuento no es provisto, por defecto debe ser del 10%.",
+            "solucion_paso_a_paso": "Paso 1: Define la arrow function con parámetros por defecto: const calcularDescuento = (precio, descuento = 10) => ...\nPaso 2: Realiza la operación matemática dentro de la función: precio - (precio * (descuento / 100)).\nPaso 3: Retorna el resultado implícitamente en una sola línea: const calcularDescuento = (precio, descuento = 10) => precio * (1 - descuento / 100);"
+          }
+        }
+      ],
+      "mini_quizzes": [
+        {
+          "titulo": "Alcance de Bloque",
+          "pregunta": "¿Qué sucede si intentas acceder a una variable declarada con 'let' antes de su línea de definición?",
+          "opciones": [
+            "Devuelve 'undefined' debido al hoisting clásico.",
+            "Lanza un ReferenceError debido a la Zona Muerta Temporal (TDZ).",
+            "La variable se inicializa automáticamente con valor nulo.",
+            "El script se ejecuta ignorando esa línea de código."
+          ],
+          "indice_correcto": 1,
+          "explicacion": "A diferencia de 'var', las variables declaradas con 'let' y 'const' no se inicializan hasta que se evalúa su definición, generando un ReferenceError si se intentan usar antes."
+        }
+      ]
+    },
+    {
+      "id": "mod-2",
+      "nivel_tag": "Semana 2: Asincronía y APIs",
+      "nivel_clase": "intermedio",
+      "titulo": "Promesas, Async/Await y Fetch",
+      "teoria_modulo": "El navegador web realiza constantemente tareas de fondo, como pedir información a servidores externos. En esta fase dominaremos el flujo no bloqueante de JavaScript usando promesas nativas y su simplificación con async/await para consumir APIs reales.",
+      "lecciones": [
+        {
+          "titulo": "Consumo de APIs con Fetch y Promesas",
+          "duracion_minutos": 60,
+          "concepto_teorico": "Una Promesa representa un valor que estará disponible ahora, en el futuro o nunca. Permite gestionar respuestas asíncronas de manera elegante evitando el anidamiento excesivo de callbacks.\n\nLa API Fetch es el estándar moderno del navegador para realizar peticiones HTTP. Al llamarla, nos retorna inmediatamente una Promesa que resuelve en un objeto Response. Posteriormente, decodificamos esta respuesta usando el método '.json()' (que también devuelve otra promesa) para finalmente manipular los datos en formato de objeto JavaScript.",
+          "puntos_clave": [
+            "Una promesa tiene tres estados: Pendiente (pending), Cumplida (fulfilled) y Rechazada (rejected).",
+            "La API Fetch requiere dos pasos de promesa: conectarse a la red y parsear el cuerpo a JSON.",
+            "Debes usar bloques try/catch junto con async/await para atrapar y controlar posibles errores de red."
+          ],
+          "ejemplo_codigo_o_formula": "// Consumo asíncrono elegante utilizando async/await\nasync function obtenerDatos() {\n  try {\n    const response = await fetch('https://api.github.com/users/octocat');\n    if (!response.ok) throw new Error('Error en el servidor');\n    const datos = await response.json();\n    console.log(`Nombre: ${datos.name}`);\n  } catch (error) {\n    console.error('Error de petición:', error.message);\n  }\n}",
+          "ejercicio_practico": {
+            "enunciado": "Utiliza la función Fetch para realizar una petición GET a la API pública 'https://jsonplaceholder.typicode.com/posts/1' y muestra el título de la publicación en la consola.",
+            "solucion_paso_a_paso": "Paso 1: Crea una función asíncrona: async function verPost() {}.\nPaso 2: Realiza el fetch usando await: const res = await fetch('...').\nPaso 3: Convierte el cuerpo de la respuesta a formato JSON: const post = await res.json().\nPaso 4: Muestra la propiedad title en la consola: console.log(post.title)."
+          }
+        }
+      ],
+      "mini_quizzes": [
+        {
+          "titulo": "Estados de Promesas",
+          "pregunta": "¿Qué método del objeto Promesa se ejecuta cuando esta cambia de estado a rechazada (rejected)?",
+          "opciones": [
+            ".then()",
+            ".finally()",
+            ".catch()",
+            ".resolve()"
+          ],
+          "indice_correcto": 2,
+          "explicacion": "El método '.catch()' está diseñado para capturar y manejar cualquier error producido en la cadena de promesas o cuando una promesa es expresamente rechazada."
+        }
+      ]
+    }
+  ]
+}

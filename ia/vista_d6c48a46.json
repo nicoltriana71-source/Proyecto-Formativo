@@ -1,0 +1,92 @@
+{
+  "titulo": "Dominio del Álgebra en 4 Semanas",
+  "descripcion": "Un plan estructurado paso a paso diseñado para llevarte desde los conceptos fundamentales de variables y despejes hasta la resolución de ecuaciones cuadráticas y factorización, con ejercicios prácticos y evaluaciones continuas.",
+  "materia": "Álgebra",
+  "recomendacion_fatiga": "El temporizador de control de fatiga se iniciará automáticamente únicamente cuando interactúes con las tareas de este plan. Te sugerimos tomar una pausa de 5 minutos tras completar cada bloque de 25 minutos.",
+  "modulos": [
+    {
+      "id": "mod-1",
+      "nivel_tag": "Nivel 1: Básico (Semanas 1-2)",
+      "nivel_clase": "basico",
+      "titulo": "Fundamentos y Ecuaciones Lineales",
+      "tareas": [
+        {
+          "titulo": "Introducción a variables y reducción de términos semejantes",
+          "duracion_minutos": 45,
+          "detalle": "Aprende el concepto de variable y practica simplificando expresiones algebraicas básicas mediante la agrupación de términos afines."
+        },
+        {
+          "titulo": "Resolución de ecuaciones de primer grado",
+          "duracion_minutos": 50,
+          "detalle": "Aprende las reglas de transposición de términos para despejar la incógnita 'x' en ecuaciones lineales paso a paso."
+        }
+      ],
+      "quiz": {
+        "titulo": "Fundamentos de Álgebra",
+        "pregunta": "¿Cuál es el valor de 'x' en la ecuación lineal 4x - 5 = 11?",
+        "opciones": [
+          "x = 3",
+          "x = 4",
+          "x = 1.5"
+        ],
+        "indice_correcto": 1
+      }
+    },
+    {
+      "id": "mod-2",
+      "nivel_tag": "Nivel 2: Intermedio (Semana 3)",
+      "nivel_clase": "intermedio",
+      "titulo": "Sistemas de Ecuaciones y Gráficas",
+      "tareas": [
+        {
+          "titulo": "Sistemas de ecuaciones lineales 2x2",
+          "duracion_minutos": 50,
+          "detalle": "Estudia y aplica los métodos de resolución de sistemas de ecuaciones: sustitución, igualación y reducción."
+        },
+        {
+          "titulo": "Funciones lineales y su representación gráfica",
+          "duracion_minutos": 60,
+          "detalle": "Aprende a graficar una línea recta utilizando la pendiente y la intersección con el eje Y."
+        }
+      ],
+      "quiz": {
+        "titulo": "Sistemas de Ecuaciones",
+        "pregunta": "Si un sistema de ecuaciones lineales no tiene ningún punto de intersección, significa que las rectas son:",
+        "opciones": [
+          "Paralelas",
+          "Perpendiculares",
+          "Secuenciales"
+        ],
+        "indice_correcto": 0
+      }
+    },
+    {
+      "id": "mod-3",
+      "nivel_tag": "Nivel 3: Avanzado (Semana 4)",
+      "nivel_clase": "avanzado",
+      "titulo": "Factorización y Ecuaciones Cuadráticas",
+      "tareas": [
+        {
+          "titulo": "Métodos de factorización de polinomios",
+          "duracion_minutos": 55,
+          "detalle": "Aprende las técnicas esenciales: factor común, diferencia de cuadrados y trinomios de la forma x² + bx + c."
+        },
+        {
+          "titulo": "Resolución de ecuaciones de segundo grado",
+          "duracion_minutos": 70,
+          "detalle": "Aplica la fórmula general cuadrática y la factorización para encontrar las raíces de ecuaciones de grado 2."
+        }
+      ],
+      "quiz": {
+        "titulo": "Álgebra Avanzada",
+        "pregunta": "¿Cuáles son las soluciones para la ecuación cuadrática x² - 7x + 12 = 0?",
+        "opciones": [
+          "x = -3, x = -4",
+          "x = 2, x = 6",
+          "x = 3, x = 4"
+        ],
+        "indice_correcto": 2
+      }
+    }
+  ]
+}

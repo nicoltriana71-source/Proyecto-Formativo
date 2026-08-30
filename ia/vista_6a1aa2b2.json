@@ -1,0 +1,45 @@
+{
+  "titulo": "Python desde Cero: Automatización de Tareas para Principiantes",
+  "descripcion": "Ruta de aprendizaje acelerada diseñada para adquirir las bases de Python y aprender a automatizar tareas comunes como manipulación de archivos y procesamiento de textos en 3 semanas.",
+  "materia": "Programación en Python",
+  "recomendacion_fatiga": "Estudia 25 min y descansa 5 min para consolidar la memoria.",
+  "modulos": [
+    {
+      "id": "mod-1",
+      "nivel_tag": "Nivel 1: Fundamentos y Sintaxis Básica",
+      "nivel_clase": "basico",
+      "titulo": "Variables, Tipos de Datos y Control de Flujo",
+      "teoria_modulo": "Para automatizar cualquier tarea, primero debemos entender cómo Python almacena y procesa la información en la memoria del ordenador, y cómo tomar decisiones lógicas en nuestro código.",
+      "lecciones": [
+        {
+          "titulo": "Variables y Tipos de Datos Esenciales",
+          "duracion_minutos": 45,
+          "concepto_teorico": "En Python, una variable es un contenedor que se utiliza para almacenar valores de datos. A diferencia de otros lenguajes de programación, Python tiene un tipado dinámico, lo que significa que no necesitas declarar explícitamente el tipo de datos de una variable antes de usarla.\n\nLos tipos de datos básicos que utilizaremos para automatizar tareas son las cadenas de texto (str) para nombres de archivos o rutas, los enteros (int) y decimales (float) para contar elementos o medir tamaños, y los booleanos (True/False) para verificar si una condición se cumple (por ejemplo, si un archivo ya fue procesado).",
+          "puntos_clave": [
+            "La asignación de variables se realiza utilizando el operador de igualdad (=).",
+            "Los nombres de las variables deben ser descriptivos y por convención usan minúsculas separadas por guiones bajos (snake_case)."
+          ],
+          "ejemplo_codigo_o_formula": "# Definición de variables para un script de automatización\nnombre_archivo = 'reporte_ventas.csv'\ntamano_mb = 12.5\nprocesado = False\n\n# Imprimir los valores en pantalla\nprint(f'Procesando: {nombre_archivo} | Tamaño: {tamano_mb}MB | Estado: {procesado}')",
+          "ejercicio_practico": {
+            "enunciado": "Crea un script en Python que defina tres variables: una para el nombre de una carpeta, otra para la cantidad de archivos dentro de ella y una tercera que indique si la limpieza de la carpeta está completada. Luego, muestra un mensaje descriptivo uniendo estas variables.",
+            "solucion_paso_a_paso": "Paso 1: Creamos la variable 'carpeta' asignándole un texto, por ejemplo: 'Descargas'.\nPaso 2: Creamos la variable 'cantidad_archivos' asignándole un número entero, por ejemplo: 15.\nPaso 3: Creamos la variable 'limpieza_completada' con el valor booleano False.\nPaso 4: Usamos la función print() combinada con una f-string para formatear el mensaje de salida de forma legible.\n\nCódigo final:\ncarpeta = 'Descargas'\ncantidad_archivos = 15\nlimpieza_completada = False\n\nprint(f'Carpeta de trabajo: {carpeta}. Archivos detectados: {cantidad_archivos}. ¿Limpieza completada?: {limpieza_completada}')"
+          }
+        }
+      ],
+      "mini_quizzes": [
+        {
+          "titulo": "Comprobación de Concepto",
+          "pregunta": "¿Cómo se asigna correctamente el valor 10 a la variable 'limite_archivos' en Python?",
+          "opciones": [
+            "limite_archivos = 10",
+            "let limite_archivos = 10",
+            "int limite_archivos = 10",
+            "limite_archivos := 10"
+          ],
+          "indice_correcto": 0,
+          "explicacion": "En Python la asignación de variables se realiza directamente con el operador de igualdad (=), sin necesidad de usar palabras clave adicionales."
+        }
+      ]
+    }
+  ]
+}

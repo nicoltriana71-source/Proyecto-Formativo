@@ -1,0 +1,116 @@
+{
+  "titulo": "Ruta Maestra de Bioquímica: De las Biomoléculas al Metabolismo Celular",
+  "descripcion": "Un plan de aprendizaje estructurado y progresivo diseñado para dominar las bases moleculares de la vida. Aprenderás sobre la estructura de las biomoléculas, el comportamiento de las enzimas y los principios del metabolismo energético celular con aplicaciones prácticas paso a paso.",
+  "materia": "Bioquímica",
+  "recomendacion_fatiga": "Usa el método Pomodoro: Estudia intensamente durante 25 minutos, luego descansa 5 minutos. Al finalizar cada módulo, haz un descanso largo de 15 a 20 minutos para fijar los conceptos en la memoria de largo plazo.",
+  "modulos": [
+    {
+      "id": "mod-1",
+      "nivel_tag": "Nivel 1: Básico",
+      "nivel_clase": "basico",
+      "titulo": "Estructura del Agua, pH y Sistemas Amortiguadores",
+      "tareas": [
+        {
+          "titulo": "El pH y la Ecuación de Henderson-Hasselbalch",
+          "duracion_minutos": 45,
+          "detalle": "Estudio del comportamiento del agua como disolvente y la regulación del pH celular.",
+          "guia_aprendizaje": {
+            "explicacion_teorica": "El agua es el medio en el que ocurren las reacciones biológicas. Debido a su naturaleza polar, puede disociarse débilmente en iones de hidrógeno (protones, H+) e iones hidróxido (OH-). El control del pH (potencial de hidrógeno) es vital porque la estructura y función de las proteínas dependen críticamente de su estado de ionización. Para resistir cambios bruscos de pH, las células y los organismos utilizan sistemas amortiguadores (buffers), que generalmente consisten en un ácido débil y su base conjugada. La relación entre el pH de una solución amortiguadora, la constante de disociación ácida (pKa) y las concentraciones del ácido y su base se calcula matemáticamente mediante la Ecuación de Henderson-Hasselbalch: pH = pKa + log([Base Conjugada]/[Ácido Débil]).",
+            "puntos_clave": [
+              "El pH se define matemáticamente como el logaritmo negativo de la concentración de protones: pH = -log[H+].",
+              "Un buffer o amortiguador funciona de manera óptima en un rango de pH de +/- 1 unidad respecto a su pKa.",
+              "El sistema de amortiguación más importante en la sangre humana es el sistema ácido carbónico/bicarbonato."
+            ],
+            "ejemplo_explicado": "Ejemplo conceptual: Si tenemos un amortiguador de ácido acético (pKa = 4.76) donde la concentración de la base conjugada (acetato) es exactamente igual a la concentración del ácido débil (ácido acético), la ecuación se reduce a: pH = 4.76 + log(1/1). Dado que log(1) = 0, el pH de la solución será exactamente igual al pKa (4.76).",
+            "ejercicio_resuelto": {
+              "enunciado": "Calcula el pH de una solución amortiguadora compuesta por una mezcla de ácido fosfórico monobásico 0.1 M (ácido débil, H2PO4-) y fosfato dibásico 0.05 M (base conjugada, HPO4^2-), sabiendo que el pKa para este par es de 7.21.",
+              "solucion_paso_a_paso": "Paso 1: Identificar los componentes y valores dados en el problema. El ácido débil [H2PO4-] tiene una concentración de 0.1 M. La base conjugada [HPO4^2-] tiene una concentración de 0.05 M. El pKa es 7.21. Paso 2: Escribir la Ecuación de Henderson-Hasselbalch: pH = pKa + log([Base] / [Ácido]). Paso 3: Sustituir los valores en la ecuación: pH = 7.21 + log(0.05 / 0.10). Paso 4: Realizar la operación matemática dentro del logaritmo: 0.05 / 0.10 = 0.5. Paso 5: Calcular el logaritmo de 0.5, el cual es aproximadamente -0.301. Paso 6: Sumar el resultado al pKa: pH = 7.21 + (-0.301) = 6.91. Conclusión: El pH resultante es ligeramente más ácido que el pKa porque hay más cantidad de la especie ácida que de la básica."
+            }
+          }
+        }
+      ],
+      "quiz": {
+        "titulo": "Quiz de Amortiguadores Biológicos",
+        "pregunta": "¿Qué ocurre con el pH de una solución amortiguadora si la concentración del ácido débil es exactamente igual a la concentración de su base conjugada?",
+        "opciones": [
+          "El pH es igual al pKa del ácido.",
+          "El pH es neutro (7.0), independientemente del compuesto.",
+          "El pH es igual a cero."
+        ],
+        "indice_correcto": 0
+      }
+    },
+    {
+      "id": "mod-2",
+      "nivel_tag": "Nivel 2: Intermedio",
+      "nivel_clase": "intermedio",
+      "titulo": "Cinética Enzimática y el Modelo de Michaelis-Menten",
+      "tareas": [
+        {
+          "titulo": "La Ecuación de Michaelis-Menten",
+          "duracion_minutos": 60,
+          "detalle": "Análisis cuantitativo de la velocidad de las reacciones catalizadas por enzimas.",
+          "guia_aprendizaje": {
+            "explicacion_teorica": "Las enzimas son catalizadores biológicos que aceleran las reacciones disminuyendo la energía de activación. El modelo de Michaelis-Menten describe la velocidad de reacción (V0) en función de la concentración de sustrato ([S]). La ecuación matemática es V0 = (Vmax * [S]) / (Km + [S]), donde Vmax es la velocidad máxima que la enzima puede alcanzar cuando está completamente saturada con el sustrato, y Km (constante de Michaelis) es una medida de la afinidad de la enzima por el sustrato: un Km bajo indica alta afinidad (se necesita poco sustrato para alcanzar la mitad de Vmax), mientras que un Km alto indica baja afinidad.",
+            "puntos_clave": [
+              "Km se define como la concentración de sustrato necesaria para alcanzar la mitad de la velocidad máxima (Vmax/2).",
+              "Los inhibidores competitivos aumentan la Km aparente pero no modifican la Vmax.",
+              "Los inhibidores no competitivos disminuyen la Vmax pero no afectan la Km."
+            ],
+            "ejemplo_explicado": "Ejemplo conceptual: Si una enzima trabaja a una concentración de sustrato [S] extremadamente alta ([S] >> Km), el término 'Km' en el denominador se vuelve despreciable, por lo que V0 se simplifica a Vmax * [S] / [S] = Vmax. Esto demuestra por qué la velocidad no aumenta más allá de la saturación.",
+            "ejercicio_resuelto": {
+              "enunciado": "Una enzima tiene una Vmax de 100 micromoles/min y una Km de 2 mM por su sustrato. ¿Cuál será la velocidad inicial (V0) de la reacción cuando la concentración de sustrato sea de 6 mM?",
+              "solucion_paso_a_paso": "Paso 1: Identificar los datos del problema: Vmax = 100 micromoles/min, Km = 2 mM, [S] = 6 mM. Paso 2: Plantear la fórmula de Michaelis-Menten: V0 = (Vmax * [S]) / (Km + [S]). Paso 3: Sustituir los valores en la fórmula: V0 = (100 * 6) / (2 + 6). Paso 4: Resolver el numerador y el denominador de manera independiente: Numerador = 600; Denominador = 8. Paso 5: Dividir los resultados: V0 = 600 / 8 = 75 micromoles/min. Conclusión: A una concentración de sustrato de 6 mM, la enzima opera a 75 micromoles/min, lo cual representa el 75% de su velocidad máxima."
+            }
+          }
+        }
+      ],
+      "quiz": {
+        "titulo": "Quiz de Cinética Enzimática",
+        "pregunta": "¿Qué significa biológicamente que una enzima posea una constante Km muy baja para un sustrato determinado?",
+        "opciones": [
+          "Que la enzima tiene una alta afinidad por ese sustrato.",
+          "Que la enzima cataliza la reacción de manera muy lenta.",
+          "Que la enzima se desnaturaliza fácilmente con el calor."
+        ],
+        "indice_correcto": 0
+      }
+    },
+    {
+      "id": "mod-3",
+      "nivel_tag": "Nivel 3: Avanzado",
+      "nivel_clase": "avanzado",
+      "titulo": "Metabolismo de Carbohidratos y Balance Energético",
+      "tareas": [
+        {
+          "titulo": "La Ruta Glucolítica y su Rendimiento Neto",
+          "duracion_minutos": 60,
+          "detalle": "Análisis paso a paso del rendimiento de ATP y coenzimas reducidas en la degradación de la glucosa.",
+          "guia_aprendizaje": {
+            "explicacion_teorica": "La glucólisis es una ruta metabólica citosólica universal en la cual una molécula de glucosa (6 carbonos) se oxida secuencialmente a dos moléculas de piruvato (3 carbonos). Consta de dos etapas clave: la fase de inversión de energía, donde se consumen 2 ATP para activar la glucosa (enzimas clave: hexocinasa y fosfofructocinasa-1), y la fase de generación de energía, donde se generan 4 ATP mediante fosforilación a nivel de sustrato y se reducen 2 coenzimas NAD+ a NADH. El destino final del piruvato depende de la presencia de oxígeno. En condiciones aerobias, pasa a la mitocondria; en condiciones anaerobias (ausencia de oxígeno), entra en fermentación láctica para regenerar el NAD+ y permitir que la glucólisis continúe.",
+            "puntos_clave": [
+              "El balance neto directo de la glucólisis es de 2 ATP, 2 NADH y 2 moléculas de piruvato por cada glucosa.",
+              "La fosfofructocinasa-1 (PFK-1) es el principal punto de regulación alostérica de esta vía metabólica.",
+              "La regeneración de NAD+ es crucial; sin ella, la glucólisis se detiene por falta de coenzimas oxidadas."
+            ],
+            "ejemplo_explicado": "Ejemplo conceptual de inversión/ganancia: Imagina que inicias un negocio con un préstamo de 2 pesos (inversión de 2 ATP para fosforilar glucosa y fructosa-6-fosfato). A mitad del proyecto logras vender tus productos por 4 pesos (ganancia de 4 ATP). Al final, tu ganancia líquida real es de 2 pesos (2 ATP netos).",
+            "ejercicio_resuelto": {
+              "enunciado": "Si una célula muscular funciona bajo condiciones estrictamente anaeróbicas (por ejemplo, durante un ejercicio de alta intensidad sostenido), calcula el rendimiento neto total de ATP que se obtiene exclusivamente a partir de la degradación completa de 5 moléculas de glucosa.",
+              "solucion_paso_a_paso": "Paso 1: Comprender el contexto metabólico. Bajo condiciones anaeróbicas, el piruvato se convierte en lactato mediante la fermentación láctica. Este proceso consume los 2 NADH generados en la glucólisis para restaurar el NAD+, por lo que el NADH no ingresa a la cadena respiratoria y no produce ATP extra. Paso 2: Determinar el rendimiento metabólico neto por glucosa en condiciones anaerobias, el cual es estrictamente de 2 ATP generados por fosforilación a nivel de sustrato. Paso 3: Plantear el cálculo matemático: Multiplicar la cantidad de glucosas ingresadas (5) por el rendimiento neto unitario (2 ATP por glucosa). Paso 4: Operación: 5 moléculas de glucosa * 2 ATP/glucosa = 10 ATP. Conclusión: El rendimiento neto total para las 5 moléculas de glucosa bajo estas condiciones anaeróbicas limitantes es de 10 ATP netos."
+            }
+          }
+        }
+      ],
+      "quiz": {
+        "titulo": "Quiz de Regulación Metabólica",
+        "pregunta": "¿Cuál es la función principal de la fermentación del piruvato a lactato en condiciones anaeróbicas?",
+        "opciones": [
+          "Sintetizar oxígeno molecular adicional para la célula.",
+          "Regenerar el NAD+ necesario para que la glucólisis pueda continuar produciendo ATP.",
+          "Incrementar la acidez para destruir bacterias patógenas dentro del músculo."
+        ],
+        "indice_correcto": 1
+      }
+    }
+  ]
+}

@@ -1,0 +1,60 @@
+{
+  "titulo": "Domina Python desde Cero: Tu Primer Paso en la Programación",
+  "descripcion": "En este plan de estudio interactivo diseñado por StudNova, aprenderás los conceptos más fundamentales de la programación utilizando Python. Descubrirás cómo almacenar datos en variables y cómo enseñarle a tu computadora a tomar decisiones lógicas basadas en condiciones.",
+  "materia": "Programación (Python)",
+  "recomendacion_fatiga": "Estudia 25 min utilizando la técnica Pomodoro para mantener el enfoque, luego descansa 5 min antes de realizar los ejercicios prácticos.",
+  "modulos": [
+    {
+      "id": "mod-1",
+      "nivel_tag": "Nivel 1: Básico",
+      "nivel_clase": "basico",
+      "titulo": "Variables y Toma de Decisiones en Python",
+      "tareas": [
+        {
+          "titulo": "Variables y Tipos de Datos Básicos",
+          "duracion_minutos": 45,
+          "detalle": "Lectura conceptual y aplicación práctica sobre el almacenamiento de datos en memoria.",
+          "guia_aprendizaje": {
+            "explicacion_teorica": "Una variable es un espacio reservado en la memoria de la computadora diseñado para almacenar un valor que puede cambiar durante la ejecución del programa. Piensa en ella como una caja con una etiqueta escrita a mano. Al asignarle un valor a una variable usando el signo '=', estamos guardando ese dato dentro de la caja. En Python no necesitas declarar el tipo de dato manualmente; el lenguaje detecta de forma automática si estás guardando texto (String), números enteros (Integer) o decimales (Float).",
+            "puntos_clave": [
+              "El operador '=' en programación significa asignación, no igualdad matemática.",
+              "Los nombres de las variables deben ser descriptivos, no pueden empezar con números y se recomienda usar minúsculas separadas por guiones bajos (snake_case)."
+            ],
+            "ejemplo_explicado": "nombre_usuario = \"Sofia\"  # Almacena un texto (String)\nedad_usuario = 22  # Almacena un número entero (Int)\nestatura = 1.65  # Almacena un número decimal (Float)\n\n# Mostramos los datos en consola concatenándolos\nprint(\"Hola\", nombre_usuario, \"tienes\", edad_usuario, \"años.\")",
+            "ejercicio_resuelto": {
+              "enunciado": "Crea un script en Python que almacene el nombre de un artículo tecnológico, su precio original y el porcentaje de descuento que tiene aplicado. Calcula el precio final tras aplicar el descuento y muestra un mensaje detallado en la consola.",
+              "solucion_paso_a_paso": "Paso 1: Creamos las variables de entrada con valores de prueba (producto = \"Audífonos Bluetooth\", precio_original = 80.0, descuento_porcentaje = 15). Paso 2: Calculamos el valor del descuento dividiendo el porcentaje entre 100 y multiplicándolo por el precio (monto_descuento = precio_original * (descuento_porcentaje / 100)). Paso 3: Restamos el monto del descuento al precio original para obtener el precio final (precio_final = precio_original - monto_descuento). Paso 4: Usamos print() para mostrar el resultado formateado. Resultado final en consola: 'El producto Audífonos Bluetooth con un 15% de descuento queda en un precio final de 68.0 dólares'."
+            }
+          }
+        },
+        {
+          "titulo": "Estructuras Condicionales (if, else)",
+          "duracion_minutos": 45,
+          "detalle": "Aprende a controlar el flujo de tu programa permitiendo que tome decisiones según condiciones lógicas.",
+          "guia_aprendizaje": {
+            "explicacion_teorica": "Las estructuras condicionales permiten que tu código tome diferentes caminos. Usando la palabra clave 'if' (si condicional), le ordenas al programa que evalúe una expresión matemática o lógica. Si el resultado de esa evaluación es verdadero (True), se ejecutará el bloque de código que está indentado (desplazado a la derecha). Si es falso (False), puedes usar 'else' (de lo contrario) para ejecutar una acción alternativa. Esto es la base de la inteligencia de cualquier software.",
+            "puntos_clave": [
+              "La indentación (4 espacios de sangría) es obligatoria en Python para definir qué instrucciones pertenecen a cada bloque del condicional.",
+              "Se utilizan operadores relacionales para comparar valores: '>' (mayor que), '<' (menor que), '==' (igual a), y '!=' (diferente de)."
+            ],
+            "ejemplo_explicado": "temperatura = 32\nif temperatura > 30:\n    print(\"Hace mucho calor, enciende el aire acondicionado.\")\nelse:\n    print(\"La temperatura es templada o fría.\")",
+            "ejercicio_resuelto": {
+              "enunciado": "Escribe un programa que determine si un usuario puede ingresar a una atracción mecánica extrema. La estatura mínima requerida es de 1.50 metros. Si el usuario mide esa estatura o más, el programa debe imprimir 'Acceso Autorizado'. De lo contrario, debe imprimir 'Acceso Denegado'.",
+              "solucion_paso_a_paso": "Paso 1: Declaramos una variable con la estatura del usuario (estatura_usuario = 1.45). Paso 2: Planteamos la condición usando 'if' evaluando si la estatura es mayor o igual a 1.50 (if estatura_usuario >= 1.50:). Paso 3: Escribimos la acción afirmativa indentada (print('Acceso Autorizado')). Paso 4: Añadimos la cláusula 'else:' al mismo nivel que el 'if'. Paso 5: Escribimos la acción alternativa indentada (print('Acceso Denegado')). Al ejecutar con 1.45, la condición es falsa, por lo que el programa imprime 'Acceso Denegado'."
+            }
+          }
+        }
+      ],
+      "quiz": {
+        "titulo": "Evaluación del Módulo",
+        "pregunta": "¿Qué operador se utiliza en Python para comparar si dos variables contienen el mismo valor?",
+        "opciones": [
+          "El operador '='",
+          "El operador '=='",
+          "El operador '==='"
+        ],
+        "indice_correcto": 1
+      }
+    }
+  ]
+}
