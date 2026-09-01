@@ -5,7 +5,7 @@ ENV PYTHONUNBUFFERED=1
 
 WORKDIR /app
 
-# Instalar herramientas para PostgreSQL
+# Instalar dependencias del sistema para PostgreSQL
 RUN apt-get update && apt-get install -y --no-install-recommends \
     gcc \
     libpq-dev \
@@ -17,11 +17,11 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir --upgrade pip && \
     pip install --no-cache-dir -r requirements.txt
 
-# Copiar todo el código de la aplicación
+# Copiar todo el código del proyecto
 COPY . .
 
-# Exponer el puerto de la API y las interfaces web
+# Exponer el puerto de FastAPI y las interfaces web
 EXPOSE 8000
 
-# Comando de inicio
+# Iniciar la aplicación
 CMD ["uvicorn", "principal:app", "--host", "0.0.0.0", "--port", "8000"]

@@ -1,5 +1,5 @@
 services:
-  # Base de Datos PostgreSQL
+  # Base de Datos PostgreSQL 16
   db:
     image: postgres:16-alpine
     container_name: studnova_db
@@ -18,9 +18,11 @@ services:
       timeout: 5s
       retries: 5
 
-  # Aplicación FastAPI + Interfaces Web (StudNova)
+  # Aplicación FastAPI + StudNova IA
   web:
-    build: .
+    build:
+      context: ..
+      dockerfile: dockerizar/Dockerfile
     container_name: studnova_app
     restart: always
     ports:
@@ -28,13 +30,13 @@ services:
     environment:
       - DATABASE_URL=postgresql://postgres:1234@db:5432/studnova
     env_file:
-      - .env
+      - ../.env
     depends_on:
       db:
         condition: service_healthy
     volumes:
-      - ./ia:/app/ia
-      - ./principal:/app/principal
+      - ../ia:/app/ia
+      - ../principal:/app/principal
 
 volumes:
   postgres_data:
