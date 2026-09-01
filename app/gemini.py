@@ -9,18 +9,18 @@ from google.genai.errors import ServerError, APIError
 BASE_DIR = Path(__file__).resolve().parent
 ROOT_DIR = BASE_DIR.parent
 load_dotenv(BASE_DIR / ".env")
-
-API_KEY = os.getenv("GEMINI_API_KEY")
-if not API_KEY:
-    raise ValueError("No se encontró GEMINI_API_KEY en app/.env")
-
-client = genai.Client(api_key=API_KEY)
+load_dotenv(ROOT_DIR / ".env")
 
 MODELOS_CASCADA = [
-  
     "gemini-3.5-flash-lite"
-   
 ]
+
+def get_gemini_client():
+    api_key = os.getenv("GEMINI_API_KEY")
+    if not api_key:
+        raise ValueError("No se encontró GEMINI_API_KEY en las variables de entorno o en el archivo .env")
+    return genai.Client(api_key=api_key)
+
 
 # PROMPT DINÁMICO Y NATURAL
 PROMPT_TUTOR_PROFUNDO = """
@@ -116,6 +116,8 @@ Responde ÚNICAMENTE con JSON válido:
 
     configuracion = types.GenerateContentConfig(response_mime_type="application/json")
     texto_json = None
+    client = get_gemini_client()
+    ultimo_error = None
 
     for modelo in MODELOS_CASCADA:
         try:
@@ -129,11 +131,12 @@ Responde ÚNICAMENTE con JSON válido:
                 texto_json = respuesta.text
                 break
         except Exception as e:
-            print(f"⚠️ Reintentando: {e}")
+            ultimo_error = e
+            print(f"⚠️ Error en modelo {modelo}: {e}")
             continue
 
     if not texto_json:
-        raise Exception("No fue posible conectar con los servidores de Gemini.")
+        raise Exception(f"No fue posible conectar con los servidores de Gemini: {ultimo_error}")
 
     datos = json.loads(texto_json)
 

@@ -10,4 +10,4 @@ class Modulo(SQLModel, table=True):
     descripcion: Optional[str] = None
     numero_modulo: int
     objetivo: Optional[str] = None
-    estado: Optional[str] = None | None
+    estado: Optional[str] = None
