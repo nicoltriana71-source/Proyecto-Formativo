@@ -12,3 +12,7 @@ engine = create_engine(DATABASE_URL, echo=True)
 def obtener_sesion():
     with Session(engine) as sesion:
         yield sesion
+
+def crear_tablas():
+    import app.modelos
+    SQLModel.metadata.create_all(engine)
