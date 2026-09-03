@@ -17,11 +17,12 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir --upgrade pip && \
     pip install --no-cache-dir -r requirements.txt
 
-# Copiar todo el c�digo del proyecto
+# Copiar todo el c�digo del proyecto
 COPY . .
 
 # Exponer el puerto de FastAPI y las interfaces web
 EXPOSE 8000
 
-# Iniciar la aplicaci�n
-CMD ["uvicorn", "principal:app", "--host", "0.0.0.0", "--port", "8000"]
+# Iniciar la aplicaci�n
+# Iniciar la aplicación
+CMD ["sh", "-c", "echo '========================================' && echo '🚀 Proyecto iniciado correctamente' && echo '🌐 http://localhost:8000/principal/interfaz/index.html' && echo '📚 API: http://localhost:8000/docs' && echo '========================================' && exec uvicorn principal:app --host 0.0.0.0 --port 8000"]

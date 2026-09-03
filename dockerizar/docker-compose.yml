@@ -18,7 +18,7 @@ services:
       timeout: 5s
       retries: 5
 
-  # Aplicación FastAPI + StudNova IA
+  # Aplicaciï¿½n FastAPI + StudNova IA
   web:
     build:
       context: ..
