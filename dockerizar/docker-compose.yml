@@ -15,5 +15,10 @@ services:
     env_file:
       - ../.env
     volumes:
+      - ../app:/app/app
       - ../ia:/app/ia
       - ../principal:/app/principal
+      - ../login:/app/login
+      - ../principal interfaz:/app/principal interfaz
+      - ../base_datos.py:/app/base_datos.py
+      - ../principal.py:/app/principal.py
