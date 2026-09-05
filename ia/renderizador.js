@@ -1,187 +1,190 @@
-// ia/renderizador.js
+// --- CERRAR SESION ---
+function cerrarSesion() {
+    if (!confirm("¿Seguro que quieres cerrar sesión?")) return;
+    localStorage.clear();
+    sessionStorage.clear();
+    window.location.href = "/login/login.html";
+}
+// --- FIN CERRAR SESION ---
 
-// 1. Función principal que construye la interfaz a partir del JSON de la IA
-function renderizarPlan(datosJSON) {
-    if (!datosJSON) return;
+// Determinar la URL base de la API (si se abre en Live Server 5500/5501 apunta a localhost:8000)
+const API_BASE = window.location.port === "8000" ? "" : "http://localhost:8000";
 
-    // A. Llenar Metadatos en el Header
-    const meta = datosJSON.metadatos || {};
-    document.getElementById('titulo-plan').innerText = meta.titulo || "Plan de Estudio Personalizado";
-    document.getElementById('descripcion-plan').innerText = meta.descripcion_general || "";
-    document.getElementById('nivel-plan').innerText = `${meta.materia || 'General'} • ${meta.nivel || 'Plan'}`;
+const chatBox = document.getElementById('chat-box');
+const promptInput = document.getElementById('prompt-input');
+const btnEnviar = document.getElementById('btn-enviar');
+let historialConversacion = [];
 
-    // B. Construir los Módulos Semanales
-    const contenedor = document.getElementById('contenedor-modulos');
-    contenedor.innerHTML = ''; // Limpiar contenedor
+function manejarEnter(e) {
+    if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        enviarMensaje();
+    }
+}
 
-    const cronograma = datosJSON.cronograma || [];
+async function enviarMensaje() {
+    const input = document.getElementById('prompt-input') || promptInput;
+    const boton = document.getElementById('btn-enviar') || btnEnviar;
+    const texto = input ? input.value.trim() : '';
+    if (!texto) return;
 
-    cronograma.forEach((modulo, index) => {
-        const idModulo = `modulo-${index + 1}`;
-        
-        // Asignar etiqueta según el número de módulo
-        let claseNivel = 'basico';
-        let textoNivel = `Módulo ${modulo.semana || index + 1}: Inicial`;
-        if (index === 1) { claseNivel = 'intermedio'; textoNivel = `Módulo ${modulo.semana || index + 1}: Intermedio`; }
-        if (index >= 2) { claseNivel = 'avanzado'; textoNivel = `Módulo ${modulo.semana || index + 1}: Avanzado`; }
+    agregarMensajeUsuario(texto);
+    historialConversacion.push({ rol: "usuario", texto: texto });
 
-        // 1. Crear Lista de Actividades
-        let htmlActividades = '';
-        (modulo.dias || []).forEach(dia => {
-            (dia.actividades || []).forEach(act => {
-                htmlActividades += `
-                    <label class="tarea-item">
-                        <input type="checkbox" onchange="actualizarProgreso()">
-                        <span class="check-custom"></span>
-                        <div class="tarea-texto">
-                            <strong>${escapar(act)}</strong>
-                            <small>📅 Día ${dia.dia || 1}: ${escapar(dia.tema || '')} • ⏱️ ${dia.tiempo_estimado_minutos || 40} min</small>
-                            ${dia.control_fatiga ? `<small style="color:#f59e0b; display:block;">💡 Pausa: ${escapar(dia.control_fatiga)}</small>` : ''}
-                        </div>
-                    </label>
-                `;
-            });
+    if (input) input.value = '';
+    if (boton) {
+        boton.disabled = true;
+        boton.style.opacity = '0.5';
+    }
+
+    const idCarga = agregarMensajeCarga();
+    scrollAlFondo();
+
+    try {
+        const respuesta = await fetch(`${API_BASE}/api/ia/generar`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ prompt: texto, historial: historialConversacion })
         });
 
-        // 2. Crear Mini Quiz si existe
-        let htmlQuiz = '';
-        if (modulo.mini_quiz && modulo.mini_quiz.length > 0) {
-            const quiz = modulo.mini_quiz[0];
-            let botonesOpciones = '';
-            (quiz.opciones || []).forEach((opc, opcIdx) => {
-                botonesOpciones += `<button onclick="verificarRespuesta(this, ${opcIdx})">${escapar(opc)}</button>`;
-            });
-
-            htmlQuiz = `
-                <div class="quiz-box">
-                    <h4>🧪 Mini Quiz de Evaluación</h4>
-                    <p>${escapar(quiz.pregunta)}</p>
-                    <div class="opciones-quiz" data-correcta="${quiz.respuesta_correcta_indice || 0}">
-                        ${botonesOpciones}
-                    </div>
-                    <div class="feedback-quiz"></div>
-                </div>
-            `;
+        let datos;
+        const textoRespuesta = await respuesta.text();
+        try { 
+            datos = JSON.parse(textoRespuesta); 
+        } catch { 
+            throw new Error(textoRespuesta || 'Error en la respuesta del servidor'); 
         }
 
-        // 3. Ensamblar la Tarjeta del Módulo
-        const tarjetaModulo = `
-            <section class="modulo-card">
-                <div class="modulo-header" onclick="alternarModulo('${idModulo}')">
-                    <div class="modulo-titulo-area">
-                        <span class="nivel-tag ${claseNivel}">${textoNivel}</span>
-                        <h2>${escapar(modulo.titulo_semana || 'Módulo de Estudio')}</h2>
-                    </div>
-                    <span class="flecha" id="flecha-${idModulo}">▼</span>
+        if (!respuesta.ok) {
+            throw new Error(datos.detail || 'Ocurrió un error al procesar');
+        }
+
+        const textoIA = datos.mensaje || "He procesado tu respuesta.";
+        historialConversacion.push({ rol: "ia", texto: textoIA });
+
+        removerElemento(idCarga);
+        agregarMensajeIA(datos);
+
+    } catch (error) {
+        removerElemento(idCarga);
+        agregarMensajeError(error.message);
+    } finally {
+        btnEnviar.disabled = false;
+        btnEnviar.style.opacity = '1';
+        promptInput.focus();
+        scrollAlFondo();
+    }
+}
+
+function agregarMensajeUsuario(texto) {
+    const div = document.createElement('div');
+    div.className = 'mensaje';
+    div.style.flexDirection = 'row-reverse';
+    div.innerHTML = `
+        <div class="avatar" style="background:#1e293b; display:flex; justify-content:center; align-items:center;">👩🏻‍💻</div>
+        <div class="contenido" style="background:#1e293b;"><p>${escaparHTML(texto)}</p></div>
+    `;
+    chatBox.appendChild(div);
+}
+
+function agregarMensajeCarga() {
+    const id = 'carga-' + Date.now();
+    const div = document.createElement('div');
+    div.className = 'mensaje';
+    div.id = id;
+    div.innerHTML = `
+        <div class="avatar">🤖</div>
+        <div class="contenido"><p>⏳ <em>StudNova IA está respondiendo...</em></p></div>
+    `;
+    chatBox.appendChild(div);
+    return id;
+}
+
+function agregarMensajeIA(datos) {
+    const div = document.createElement('div');
+    div.className = 'mensaje';
+    const tienePlan = (datos.tipo === "plan_generado") || (datos.plan && datos.plan.modulos && datos.plan.modulos.length > 0) || (datos.modulos && datos.modulos.length > 0);
+
+    if (!tienePlan) {
+        const mensajeTexto = datos.mensaje || (typeof datos === 'string' ? datos : "Cuéntame más sobre lo que quieres aprender.");
+        div.innerHTML = `<div class="avatar">🤖</div><div class="contenido"><p>${escaparHTML(mensajeTexto)}</p></div>`;
+    } else {
+        const planObjeto = datos.plan || datos;
+        const idPlan = datos.id_plan || (datos.plan && datos.plan.id_plan) || "";
+
+        try {
+            localStorage.setItem("plan_estudio_actual", JSON.stringify(planObjeto));
+        } catch (e) {
+            console.error("Error al guardar en localStorage:", e);
+        }
+
+        window.ultimoPlanGenerado = planObjeto;
+
+        const mensajeTexto = datos.mensaje || "✨ ¡Plan de estudio generado con éxito!";
+        const urlRelativa = `/principal/interfaz%20plan%20de%20estudio/visor_plan.html${idPlan ? `?id=${idPlan}` : ''}`;
+        const urlCompleta = `${API_BASE}${urlRelativa}`;
+
+        div.innerHTML = `
+            <div class="avatar">🤖</div>
+            <div class="contenido" style="width: 85%;">
+                <p><strong>${escaparHTML(mensajeTexto)}</strong></p>
+                <p style="margin-top: 5px; font-size: 14px; opacity: 0.9;">
+                    He estructurado tu ruta de aprendizaje a tu medida con quizzes y control de fatiga.
+                </p>
+                <div style="margin: 12px 0;">
+                    <a href="${urlRelativa}" target="_blank" style="display:inline-block; padding: 8px 16px; background:#2563eb; color:white; text-decoration:none; border-radius:8px; font-weight:bold; font-size:14px;">
+                        ↗️ Abrir Plan en Pantalla Completa
+                    </a>
                 </div>
-                
-                <div class="modulo-contenido" id="${idModulo}">
-                    <div class="lista-tareas">
-                        ${htmlActividades}
-                    </div>
-                    ${htmlQuiz}
+                <div style="border-radius: 10px; overflow: hidden; border: 1px solid #334155; margin-top: 10px;">
+                    <iframe src="${urlRelativa}" style="width: 100%; height: 500px; border: none; background: #0f172a;"></iframe>
                 </div>
-            </section>
+            </div>
         `;
 
-        contenedor.innerHTML += tarjetaModulo;
-    });
-
-    // Actualizar conteo de progreso inicial
-    actualizarProgreso();
-}
-
-// 2. Actualizar barra de progreso dinámica
-function actualizarProgreso() {
-    const checkboxes = document.querySelectorAll('.tarea-item input[type="checkbox"]');
-    const total = checkboxes.length;
-    let marcadas = 0;
-
-    checkboxes.forEach(chk => { if (chk.checked) marcadas++; });
-
-    const porcentaje = total > 0 ? Math.round((marcadas / total) * 100) : 0;
-    document.getElementById('barra-progreso').style.width = porcentaje + '%';
-    document.getElementById('porcentaje-texto').innerText = porcentaje + '%';
-    document.getElementById('contador-tareas').innerText = `${marcadas} de ${total} actividades completadas`;
-}
-
-// 3. Colapsar / Expandir Módulo
-function alternarModulo(id) {
-    const contenido = document.getElementById(id);
-    const flecha = document.getElementById('flecha-' + id);
-    if (contenido.style.display === 'none') {
-        contenido.style.display = 'flex';
-        flecha.style.transform = 'rotate(0deg)';
-    } else {
-        contenido.style.display = 'none';
-        flecha.style.transform = 'rotate(-90deg)';
+        // Enviar el plan directamente al iframe vía postMessage cuando termine de cargar
+        const iframe = div.querySelector('iframe');
+        if (iframe) {
+            iframe.addEventListener('load', () => {
+                try {
+                    iframe.contentWindow.postMessage({ tipo: 'CARGAR_PLAN', plan: planObjeto }, '*');
+                } catch (err) {
+                    console.error("Error enviando postMessage al iframe:", err);
+                }
+            });
+        }
     }
+    chatBox.appendChild(div);
 }
 
-// 4. Validar respuestas del Mini Quiz
-function verificarRespuesta(boton, indiceSeleccionado) {
-    const contenedorOpciones = boton.parentElement;
-    const indiceCorrecto = parseInt(contenedorOpciones.getAttribute('data-correcta'));
-    const botones = contenedorOpciones.querySelectorAll('button');
-    const feedback = contenedorOpciones.nextElementSibling;
-
-    botones.forEach(btn => btn.disabled = true);
-
-    if (indiceSeleccionado === indiceCorrecto) {
-        boton.classList.add('correcto');
-        feedback.innerHTML = '<span style="color: #34d399;">✅ ¡Correcto! Has superado este módulo.</span>';
-    } else {
-        boton.classList.add('incorrecto');
-        if (botones[indiceCorrecto]) botones[indiceCorrecto].classList.add('correcto');
-        feedback.innerHTML = '<span style="color: #f87171;">❌ Incorrecto. Revisa el tema para reforzar.</span>';
-    }
-}
-
-// 5. Temporizador de Control de Fatiga (Pomodoro 25 min)
-let tiempoSegundos = 25 * 60;
-let intervalo = null;
-let enPausa = true;
-
-function alternarTimer() {
-    const btn = document.getElementById('btn-timer');
-    const estado = document.getElementById('estado-fatiga');
-
-    if (enPausa) {
-        enPausa = false;
-        btn.innerText = "Pausar";
-        estado.innerText = "Sesión de estudio activa. ¡Mantén el enfoque!";
-        intervalo = setInterval(() => {
-            if (tiempoSegundos > 0) {
-                tiempoSegundos--;
-                const min = Math.floor(tiempoSegundos / 60);
-                const seg = tiempoSegundos % 60;
-                document.getElementById('temporizador').innerText = 
-                    `${min.toString().padStart(2, '0')}:${seg.toString().padStart(2, '0')}`;
-            } else {
-                clearInterval(intervalo);
-                alert("🔔 ¡Sesión completada! Toma una pausa activa de 5 min.");
-                tiempoSegundos = 5 * 60;
-                enPausa = true;
-                btn.innerText = "Iniciar Descanso";
-            }
-        }, 1000);
-    } else {
-        enPausa = true;
-        clearInterval(intervalo);
-        btn.innerText = "Continuar";
-        estado.innerText = "Sesión en pausa.";
-    }
-}
-
-function escapar(str) {
-    if (!str) return '';
-    return String(str).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-}
-
-// 6. Cargar automáticamente si los datos vienen en localStorage
-document.addEventListener("DOMContentLoaded", () => {
-    const datosGuardados = localStorage.getItem("plan_estudio_actual");
-    if (datosGuardados) {
-        renderizarPlan(JSON.parse(datosGuardados));
+// Escuchar peticiones de iframes hijos
+window.addEventListener('message', (event) => {
+    if (event.data && event.data.tipo === 'SOLICITAR_PLAN' && window.ultimoPlanGenerado) {
+        if (event.source) {
+            event.source.postMessage({ tipo: 'CARGAR_PLAN', plan: window.ultimoPlanGenerado }, '*');
+        }
     }
 });
+
+function agregarMensajeError(mensaje) {
+    const div = document.createElement('div');
+    div.className = 'mensaje';
+    div.innerHTML = `
+        <div class="avatar" style="background:#dc2626;">⚠️</div>
+        <div class="contenido" style="background:#7f1d1d;"><p><strong>Error:</strong> ${escaparHTML(mensaje)}</p></div>
+    `;
+    chatBox.appendChild(div);
+}
+
+function removerElemento(id) { 
+    const el = document.getElementById(id); 
+    if (el) el.remove(); 
+}
+
+function scrollAlFondo() { 
+    chatBox.scrollTop = chatBox.scrollHeight; 
+}
+
+function escaparHTML(str) { 
+    return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); 
+}

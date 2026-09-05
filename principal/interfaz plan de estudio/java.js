@@ -3,7 +3,9 @@
 function renderizarPlan(plan) {
     if (!plan) return;
     if (plan.plan_json) plan = plan.plan_json;
+    if (plan.contenido_json) plan = plan.contenido_json;
     if (plan.plan) plan = plan.plan;
+    if (plan.contenido_json) plan = plan.contenido_json;
 
     // Header
     const titulo = plan.titulo || "Plan de Estudio Personalizado";
@@ -299,9 +301,60 @@ function actualizarDisplayTimer() {
     if (el) el.innerText = `${minutos.toString().padStart(2, '0')}:${segundos.toString().padStart(2, '0')}`;
 }
 
-document.addEventListener("DOMContentLoaded", () => {
+const API_BASE = window.location.port === "8000" ? "" : "http://localhost:8000";
+
+// Escuchar mensajes desde ventana padre (iframe o postMessage)
+window.addEventListener("message", (evento) => {
+    if (evento.data && (evento.data.tipo === "CARGAR_PLAN" || evento.data.plan)) {
+        const planRecibido = evento.data.plan || evento.data;
+        try {
+            localStorage.setItem("plan_estudio_actual", JSON.stringify(planRecibido));
+        } catch (e) {}
+        renderizarPlan(planRecibido);
+    }
+});
+
+document.addEventListener("DOMContentLoaded", async () => {
+    // 1. Si estamos en un iframe, solicitar el plan al padre inmediatamente
+    if (window.parent && window.parent !== window) {
+        try {
+            window.parent.postMessage({ tipo: 'SOLICITAR_PLAN' }, '*');
+            if (window.parent.ultimoPlanGenerado) {
+                renderizarPlan(window.parent.ultimoPlanGenerado);
+                return;
+            }
+        } catch (e) {}
+    }
+
+    // 2. Intentar cargar desde localStorage
     const guardado = localStorage.getItem("plan_estudio_actual");
     if (guardado) {
-        try { renderizarPlan(JSON.parse(guardado)); } catch (e) { console.error(e); }
+        try {
+            const planParsed = JSON.parse(guardado);
+            if (planParsed && (planParsed.modulos || (planParsed.plan && planParsed.plan.modulos) || planParsed.contenido_json)) {
+                renderizarPlan(planParsed);
+                return;
+            }
+        } catch (e) {
+            console.error("Error leyendo localStorage:", e);
+        }
+    }
+
+    // 3. Fallback: Buscar id en la URL (?id=X o #id=X) y consultar backend
+    const params = new URLSearchParams(window.location.search);
+    const idPlan = params.get('id') || (window.location.hash ? window.location.hash.replace('#id=', '').replace('#', '') : null);
+    if (idPlan && !isNaN(idPlan)) {
+        try {
+            const respuesta = await fetch(`${API_BASE}/plan-estudio/${idPlan}`);
+            if (respuesta.ok) {
+                const data = await respuesta.json();
+                if (data.plan) {
+                    renderizarPlan(data.plan);
+                    try { localStorage.setItem("plan_estudio_actual", JSON.stringify(data.plan)); } catch (e) {}
+                }
+            }
+        } catch (err) {
+            console.error("Error al consultar plan por ID:", err);
+        }
     }
 });

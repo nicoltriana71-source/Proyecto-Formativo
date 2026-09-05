@@ -27,6 +27,14 @@ def obtener_detalle_plan(id_plan: int, sesion: Session = Depends(obtener_sesion)
     if not plan:
         raise HTTPException(status_code=404, detail="Plan de estudio no encontrado")
     
+    if plan.contenido_json:
+        return {
+            "plan": plan.contenido_json,
+            "id_plan": plan.id_plan,
+            "titulo": plan.titulo,
+            "descripcion": plan.descripcion
+        }
+    
     modulos = sesion.exec(select(Modulo).where(Modulo.id_plan == id_plan)).all()
     
     estructura = []

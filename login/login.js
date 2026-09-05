@@ -1,0 +1,168 @@
+﻿const API_URL = window.location.port === "8000" ? "" : "http://localhost:8000";
+const SESSION_KEY = "studnova:session";
+
+// ==========================================
+// GUARDAR SESIÓN
+// ==========================================
+
+function guardarSesion(usuario) {
+    const session = {
+        id_usuario: usuario.id_usuario,
+        nombre: usuario.nombre,
+        correo: usuario.correo,
+        rol: usuario.rol,
+        since: Date.now()
+    };
+
+    localStorage.setItem(SESSION_KEY, JSON.stringify(session));
+    localStorage.setItem("user", JSON.stringify(usuario));
+    localStorage.setItem("userEmail", usuario.correo);
+    localStorage.setItem("userName", usuario.nombre);
+    localStorage.setItem("isLoggedIn", "true");
+}
+
+
+// ==========================================
+// OBTENER SESIÓN
+// ==========================================
+
+function obtenerSesion() {
+    try {
+        const raw = localStorage.getItem(SESSION_KEY);
+        return raw ? JSON.parse(raw) : null;
+    } catch (error) {
+        console.error("Error leyendo la sesión:", error);
+        return null;
+    }
+}
+
+
+// ==========================================
+// MOSTRAR LOGIN / REGISTRO
+// ==========================================
+
+function mostrarFormulario(id) {
+    document.querySelectorAll(".form-container").forEach(form => {
+        form.classList.remove("active");
+    });
+
+    const el = document.getElementById(id);
+    if (el) el.classList.add("active");
+}
+
+
+// ==========================================
+// REDIRECCIÓN INTELIGENTE
+// ==========================================
+
+function irAInterfaz() {
+    window.location.href = "/ia/interfaz.html";
+}
+
+
+// ==========================================
+// LOGIN
+// ==========================================
+
+document.getElementById("formLogin").addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const mensaje = document.getElementById("loginMensaje");
+    const correo = document.getElementById("loginCorreo").value.trim();
+    const contraseña = document.getElementById("loginPassword").value;
+
+    mensaje.textContent = "Iniciando sesión...";
+    mensaje.className = "form-mensaje";
+
+    try {
+        const respuesta = await fetch(`${API_URL}/usuario/login`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                correo: correo,
+                contraseña: contraseña
+            })
+        });
+
+        const data = await respuesta.json();
+
+        if (!respuesta.ok) {
+            throw new Error(data.detail || "No se pudo iniciar sesión.");
+        }
+
+        // Guardar usuario
+        guardarSesion(data);
+
+        mensaje.textContent = "Inicio de sesión exitoso.";
+        mensaje.style.color = "lightgreen";
+
+        // Ir a la interfaz
+        setTimeout(() => {
+            irAInterfaz();
+        }, 500);
+
+    } catch (error) {
+        console.error(error);
+        mensaje.textContent = error.message;
+        mensaje.className = "form-mensaje error";
+        mensaje.style.color = "#E9938A";
+    }
+});
+
+
+// ==========================================
+// REGISTRO
+// ==========================================
+
+document.getElementById("formRegister").addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const mensaje = document.getElementById("registerMensaje");
+    const nombre = document.getElementById("registerNombre").value.trim();
+    const correo = document.getElementById("registerCorreo").value.trim();
+    const contraseña = document.getElementById("registerPassword").value;
+
+    mensaje.hidden = false;
+    mensaje.textContent = "Creando cuenta...";
+    mensaje.className = "form-mensaje";
+
+    try {
+        const respuesta = await fetch(`${API_URL}/usuario/registro`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                nombre: nombre,
+                correo: correo,
+                contraseña: contraseña
+            })
+        });
+
+        const data = await respuesta.json();
+
+        if (!respuesta.ok) {
+            throw new Error(data.detail || "No se pudo crear la cuenta.");
+        }
+
+        // Guardar sesión automáticamente
+        guardarSesion(data);
+
+        mensaje.textContent = "Cuenta creada correctamente.";
+        mensaje.style.color = "lightgreen";
+
+        // Ir a la interfaz
+        setTimeout(() => {
+            irAInterfaz();
+        }, 500);
+
+    } catch (error) {
+        console.error(error);
+        mensaje.hidden = false;
+        mensaje.textContent = error.message;
+        mensaje.className = "form-mensaje error";
+        mensaje.style.color = "#E9938A";
+    }
+});

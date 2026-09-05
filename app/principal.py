@@ -42,6 +42,10 @@ app.include_router(ia_router)
 # -------------------------------------------------------------
 app.mount("/ia", StaticFiles(directory=str(BASE_DIR / "ia"), html=True), name="ia")
 app.mount("/principal", StaticFiles(directory=str(BASE_DIR / "principal"), html=True), name="principal")
+if (BASE_DIR / "login").exists():
+    app.mount("/login", StaticFiles(directory=str(BASE_DIR / "login"), html=True), name="login")
+if (BASE_DIR / "principal interfaz").exists():
+    app.mount("/landing", StaticFiles(directory=str(BASE_DIR / "principal interfaz"), html=True), name="landing")
 
 
 

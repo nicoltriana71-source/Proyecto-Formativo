@@ -1,0 +1,198 @@
+{
+  "titulo": "Plan Intensivo de Soldadura: De Principiante a Práctico",
+  "descripcion": "Objetivos pedagógicos para dominar las técnicas fundamentales de soldadura, seguridad industrial y aplicaciones prácticas en 3 semanas.",
+  "materia": "Soldadura",
+  "recomendacion_fatiga": "Estudia 25 min y descansa 5 min para consolidar la memoria y mantener la concentración.",
+  "modulos": [
+    {
+      "id": "mod-1",
+      "nivel_tag": "Nivel 1: Fundamentos y Seguridad",
+      "nivel_clase": "basico",
+      "titulo": "Introducción y Seguridad en la Soldadura",
+      "teoria_modulo": "La soldadura es un proceso de unión de materiales donde se logra la coalescencia mediante la fusión. En este módulo inicial abordaremos las normas de seguridad indispensables, el uso correcto del equipo de protección personal (EPP) y la identificación de las herramientas básicas necesarias para trabajar en el taller sin riesgos.",
+      "lecciones": [
+        {
+          "titulo": "Normas de Seguridad y Equipo de Protección Personal (EPP)",
+          "duracion_minutos": 45,
+          "concepto_teorico": "La seguridad es la máxima prioridad en cualquier taller de metalurgia. El arco eléctrico y las llamas abiertas emiten radiación ultravioleta e infrarroja peligrosa para los ojos y la piel, además de generar vapores tóxicos que requieren ventilación adecuada.\n\nEl EPP específico incluye careta de soldar con filtro de sombra adecuado, guantes de cuero descarne, mandil, polainas y calzado de seguridad con casquillo de acero. Nunca se debe soldar en ambientes húmedos o con ropa impregnada de grasa o aceite por riesgo de incendio.",
+          "puntos_clave": [
+            "Uso obligatorio de careta con el número de sombra correcto según el amperaje.",
+            "Ventilación adecuada para evitar la inhalación de humos metálicos.",
+            "Inspección previa de cables, conexiones y área de trabajo para eliminar materiales inflamables."
+          ],
+          "ejemplo_codigo_o_formula": "Distancia de seguridad recomendada: Mantener al menos 1.5 metros de distancia libre de materiales combustibles alrededor de la zona de trabajo. Fórmula de opacidad de filtro: Sombra óptima = Amperaje de soldadura / factor de visibilidad del arco.",
+          "ejercicio_practico": {
+            "enunciado": "Realiza una lista de verificación (checklist) de 5 puntos que debes revisar en tu zona de trabajo antes de encender cualquier máquina de soldar.",
+            "solucion_paso_a_paso": "Paso 1: Revisar que el extintor esté accesible y vigente. Paso 2: Comprobar el buen estado de los cables de pinza de masa y portaelectrodo. Paso 3: Verificar la ausencia de líquidos inflamables en un radio de 2 metros. Paso 4: Asegurar una ventilación cruzada en el taller. Paso 5: Colocar correctamente todo el EPP antes de conectar la máquina."
+          }
+        }
+      ],
+      "mini_quizzes": [
+        {
+          "titulo": "Comprobación de Seguridad",
+          "pregunta": "¿Qué tipo de radiación emitida por el arco eléctrico puede dañar seriamente la vista si no se usa la careta adecuada?",
+          "opciones": [
+            "Radiación ultravioleta e infrarroja",
+            "Ondas de radio de alta frecuencia",
+            "Radiación gamma",
+            "Luz visible de baja intensidad"
+          ],
+          "indice_correcto": 0,
+          "explicacion": "El arco eléctrico emite radiación ultravioleta e infrarroja muy intensa que requiere filtros especiales en la careta para prevenir daños oculares como la fotoqueratitis."
+        }
+      ]
+    },
+    {
+      "id": "mod-2",
+      "nivel_tag": "Nivel 2: Procesos Básicos",
+      "nivel_clase": "basico",
+      "titulo": "Fundamentos de Soldadura por Arco Manual (SMAW)",
+      "teoria_modulo": "La soldadura por arco eléctrico con electrodo revestido (SMAW, por sus siglas en inglés) es uno de los procesos más versátiles y utilizados. Comprender cómo se forma el arco eléctrico, la función del revestimiento del electrodo y la selección de la corriente es vital para lograr cordones de soldadura resistentes.",
+      "lecciones": [
+        {
+          "titulo": "Principio de Funcionamiento del Arco Eléctrico y Tipos de Corriente",
+          "duracion_minutos": 60,
+          "concepto_teorico": "El proceso SMAW utiliza un electrodo metálico recubierto que sirve como material de aporte y protección. Al cerrar el circuito eléctrico entre el electrodo y la pieza de trabajo, se genera un arco eléctrico con temperaturas que superan los 3500 °C.\n\nEl revestimiento del electrodo cumple múltiples funciones críticas: al fundirse, genera gases que desplazan el oxígeno atmosférico evitando la oxidación del metal fundido, produce una escoria que protege el cordón mientras se enfría, y aporta elementos estabilizadores para mantener el arco estable.",
+          "puntos_clave": [
+            "Diferencia entre Corriente Continua (CC) y Corriente Alterna (CA).",
+            "Función protectora del revestimiento y la escoria.",
+            "Control de la longitud del arco (debe ser aproximadamente igual al diámetro del electrodo)."
+          ],
+          "ejemplo_codigo_o_formula": "Polaridad Directa (CCEN): El portaelectrodo al negativo (-) y la pinza de masa al positivo (+). Mayor penetración en la pieza.\nPolaridad Inversa (DCEP): El portaelectrodo al positivo (+) y la pinza de masa al negativo (-). Mayor calor en el electrodo y limpieza superficial.",
+          "ejercicio_practico": {
+            "enunciado": "Explica brevemente qué ocurre con la calidad de la soldadura si el operador mantiene el arco demasiado largo durante todo el proceso.",
+            "solucion_paso_a_paso": "Paso 1: Identificar que un arco largo incrementa la resistencia eléctrica y dispersa el calor. Paso 2: Esto provoca salpicaduras excesivas, porosidad en el cordón por contaminación con el aire y una fusión deficiente del metal base. Paso 3: Conclusión: mantener siempre la distancia correcta según el diámetro del electrodo."
+          }
+        }
+      ],
+      "mini_quizzes": [
+        {
+          "titulo": "Comprobación de Proceso SMAW",
+          "pregunta": "¿Cuál es una de las funciones principales del revestimiento del electrodo en la soldadura SMAW?",
+          "opciones": [
+            "Enfriar rápidamente el metal de aporte",
+            "Generar gas protector y escoria para evitar la oxidación",
+            "Aumentar el peso de la pieza soldada",
+            "Conducir la electricidad sin generar calor"
+          ],
+          "indice_correcto": 1,
+          "explicacion": "El revestimiento se quema durante el proceso generando gases que desplazan el aire y formando una capa de escoria que protege el metal fundido de la atmósfera."
+        }
+      ]
+    },
+    {
+      "id": "mod-3",
+      "nivel_tag": "Nivel 3: Técnica y Destreza",
+      "nivel_clase": "intermedio",
+      "titulo": "Técnicas de Encendido y Cordones Básicos",
+      "teoria_modulo": "La práctica hace al maestro, especialmente en la soldadura manual. En este módulo aprenderás las técnicas físicas para iniciar el arco sin que el electrodo se pegue a la placa, así como el control del ángulo y la velocidad de avance para conseguir cordones uniformes.",
+      "lecciones": [
+        {
+          "titulo": "El Encendido del Arco y Movimiento de Avance",
+          "duracion_minutos": 60,
+          "concepto_teorico": "Existen dos métodos principales para iniciar el arco con electrodo revestido: el raspado (similar a encender un cerillo) y el picado (golpeando suavemente la punta contra la placa y levantándola de inmediato).\n\nUna vez establecido el arco, el soldador debe mantener un ángulo de inclinación constante (generalmente entre 60° y 75° en la dirección de avance) y una velocidad uniforme. Un avance muy rápido dejará un cordón delgado y con poca penetración, mientras que uno muy lento acumulará exceso de material.",
+          "puntos_clave": [
+            "Técnica de raspado y de punteado/golpe para iniciar el arco.",
+            "Control del ángulo de trabajo y ángulo de viaje.",
+            "Mantenimiento de una velocidad de avance constante para un ancho de cordón uniforme."
+          ],
+          "ejemplo_codigo_o_formula": "Ángulo de viaje ideal: 15° a 30° respecto a la vertical en dirección opuesta al avance (técnica de arrastre) o inclinando hacia adelante (técnica de empuje según el tipo de electrodo).",
+          "ejercicio_practico": {
+            "enunciado": "Describe los pasos correctos para solucionar el problema común cuando el electrodo se queda 'pegado' a la placa al intentar encenderlo.",
+            "solucion_paso_a_paso": "Paso 1: No tirar violentamente del portaelectrodo hacia arriba. Paso 2: Girar o inclinar rápidamente el portaelectrodo hacia los lados aplicando una pequeña torsión para desprenderlo. Paso 3: Si se mantiene fijo y comienza a ponerse al rojo vivo, soltar el portaelectrodo o desconectar momentáneamente la máquina para evitar daños."
+          }
+        }
+      ],
+      "mini_quizzes": [
+        {
+          "titulo": "Comprobación de Técnica",
+          "pregunta": "¿Qué defecto suele producirse si la velocidad de avance del soldador es demasiado rápida?",
+          "opciones": [
+            "Un cordón excesivamente abultado y pesado",
+            "Un cordón delgado con falta de penetración y fusión deficiente",
+            "Una acumulación masiva de escoria atrapada",
+            "Perforación total de la placa por exceso de calor"
+          ],
+          "indice_correcto": 1,
+          "explicacion": "Al avanzar muy rápido, el aporte de calor sobre el metal base es insuficiente, lo que resulta en un cordón angosto, poco penetrante y estructuralmente débil."
+        }
+      ]
+    },
+    {
+      "id": "mod-4",
+      "nivel_tag": "Nivel 4: Posiciones y Juntas",
+      "nivel_clase": "intermedio",
+      "titulo": "Tipos de Juntas y Soldadura en Posición Plana",
+      "teoria_modulo": "Las uniones metálicas pueden adoptar diversas geometrías según el diseño estructural (juntas a tope, en T, traslapadas y en esquina). Dominar la posición plana (1G y 1F) es el requisito fundamental antes de enfrentarse a posiciones verticales o cenitales más complejas.",
+      "lecciones": [
+        {
+          "titulo": "Preparación de Bordes y Ejecución de Juntas en T y a Tope",
+          "duracion_minutos": 60,
+          "concepto_teorico": "La preparación de los bordes mediante biseles en placas gruesas asegura que la soldadura penetre hasta la raíz de la unión. En la posición plana, la gravedad ayuda a que el metal fundido fluya de manera uniforme dentro de la junta.\n\nPara juntas en T (filé), es crucial repartir el calor equitativamente entre el alma y la placa base, realizando un ligero movimiento oscilatorio (en Z, círculo o medialuna) para garantizar una correcta fusión en ambos lados del filete.",
+          "puntos_clave": [
+            "Importancia de la separación de raíz (luz) entre placas para soldaduras a tope.",
+            "Patrones de oscilación para llenar juntas anchas.",
+            "Limpieza de la escoria entre pasadas sucesivas en cordones múltiples."
+          ],
+          "ejemplo_codigo_o_formula": "Regla de limpieza entre pases: Escoria removida al 100% mediante piqueta y cepillo de alambre antes de aplicar la siguiente capa para evitar inclusiones de escoria.",
+          "ejercicio_practico": {
+            "enunciado": "Explica por qué es obligatorio limpiar completamente la capa de escoria entre passadas (capas) en una soldadura multipase.",
+            "solucion_paso_a_paso": "Paso 1: La escoria es un residuo no metálico producto del revestimiento. Paso 2: Si se deposita un nuevo cordón de soldadura sobre la escoria no retirada, esta quedará atrapada dentro del metal. Paso 3: Las inclusiones de escoria actúan como puntos de concentración de esfuerzos, debilitando severamente la resistencia mecánica de la unión."
+          }
+        }
+      ],
+      "mini_quizzes": [
+        {
+          "titulo": "Comprobación de Juntas",
+          "pregunta": "¿Qué ocurre si se pasa una nueva capa de soldadura directamente sobre la escoria de la capa anterior?",
+          "opciones": [
+            "Se mejora la resistencia anticorrosiva de la pieza",
+            "Se producen inclusiones de escoria que debilitan la estructura",
+            "Se acelera el enfriamiento del metal",
+            "Se incrementa la conductividad eléctrica de la junta"
+          ],
+          "indice_correcto": 1,
+          "explicacion": "La escoria atrapada interrumpe la continuidad del metal de aporte, generando defectos internos graves conocidos como inclusiones de escoria."
+        }
+      ]
+    },
+    {
+      "id": "mod-5",
+      "nivel_tag": "Nivel 5: Control de Calidad",
+      "nivel_clase": "avanzado",
+      "titulo": "Inspección Visual, Defectos Comunes y Acabado",
+      "teoria_modulo": "Un buen soldador no solo une metales, sino que sabe evaluar su propio trabajo. En este módulo final estudiaremos los defectos más comunes en los cordones de soldadura, sus causas y cómo realizar una inspección visual rigurosa para garantizar la calidad final del proyecto.",
+      "lecciones": [
+        {
+          "titulo": "Identificación de Defectos y Criterios de Aceptación",
+          "duracion_minutos": 60,
+          "concepto_teorico": "La inspección visual es el primer y más importante método de control de calidad. Defectos como la mordedura (socavaduras en los bordes del cordón), la porosidad superficial, la falta de fusión y el exceso de salpicaduras revelan errores en los parámetros de amperaje, velocidad o técnica.\n\nUna vez finalizado el cordón y fría la pieza, se procede a limpiar la escoria, cepillar y evaluar visualmente la simetría, la altura y la uniformidad del ancho del cordón para determinar si cumple con los estándares de calidad.",
+          "puntos_clave": [
+            "Definición y causas de las socavaduras (mordeduras) en los bordes.",
+            "Identificación de porosidades y grietas superficiales.",
+            "Criterios de un cordón de calidad: uniforme, sin sobremontas excesivas y bien fusionado."
+          ],
+          "ejemplo_codigo_o_formula": "Causa principal de socavaduras: Amperaje demasiado alto o velocidad de avance inadecuada que quema los bordes del metal base sin rellenarlos correctamente con aporte.",
+          "ejercicio_practico": {
+            "enunciado": "Imagina que observas un cordón de soldadura con pequeños agujeros visibles en su superficie (porosidad). ¿Qué dos causas principales investigarías en tu equipo y proceso?",
+            "solucion_paso_a_paso": "Paso 1: Verificar la humedad en el electrodo (los electrodos húmedos generan gases que provocan poros). Paso 2: Comprobar que no haya corrientes de aire en el taller que desplacen el gas protector o revisar la protección del arco. Paso 3: Asegurar una limpieza adecuada del metal base (libre de óxido, pintura o grasa)."
+          }
+        }
+      ],
+      "mini_quizzes": [
+        {
+          "titulo": "Comprobación de Calidad",
+          "pregunta": "¿Qué defecto se manifiesta como una pequeña zanja o rebaje fundido en los bordes laterales del cordón de soldadura?",
+          "opciones": [
+            "Socavadura o mordedura",
+            "Inclusión de tungsteno",
+            "Porosidad vermicular",
+            "Sobrecalentamiento laminar"
+          ],
+          "indice_correcto": 0,
+          "explicacion": "La socavadura o mordedura ocurre cuando el metal base a los lados del cordón se funde y no se llena adecuadamente con el material de aporte, debilitando la sección."
+        }
+      ]
+    }
+  ]
+}

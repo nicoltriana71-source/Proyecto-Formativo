@@ -11,5 +11,6 @@ class PromptIA(SQLModel, table=True):
     prompt_usuario: str
     prompt_sistema: Optional[str] = None
     modelo_ia: Optional[str] = Field(default="gpt-4o-mini")
+    embedding: Optional[str] = Field(default=None)
     fecha_generacion: datetime = Field(default_factory=datetime.now)
     estado: Optional[str] = Field(default="completado")

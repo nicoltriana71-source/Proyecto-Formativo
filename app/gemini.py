@@ -6,6 +6,8 @@ from google import genai
 from google.genai import types
 from google.genai.errors import ServerError, APIError
 
+import math
+
 BASE_DIR = Path(__file__).resolve().parent
 ROOT_DIR = BASE_DIR.parent
 load_dotenv(BASE_DIR / ".env")
@@ -20,6 +22,35 @@ def get_gemini_client():
     if not api_key:
         raise ValueError("No se encontró GEMINI_API_KEY en las variables de entorno o en el archivo .env")
     return genai.Client(api_key=api_key)
+
+
+def calcular_similitud_coseno(vec_a: list, vec_b: list) -> float:
+    """Calcula la similitud de coseno entre dos vectores numéricos (0.0 a 1.0)."""
+    if not vec_a or not vec_b or len(vec_a) != len(vec_b):
+        return 0.0
+    dot_product = sum(a * b for a, b in zip(vec_a, vec_b))
+    norm_a = math.sqrt(sum(a * a for a in vec_a))
+    norm_b = math.sqrt(sum(b * b for b in vec_b))
+    if norm_a == 0.0 or norm_b == 0.0:
+        return 0.0
+    return dot_product / (norm_a * norm_b)
+
+
+def obtener_embedding(texto: str) -> list:
+    """Genera el embedding vectorial del texto utilizando el modelo oficial gemini-embedding-001."""
+    if not texto or not texto.strip():
+        return []
+    try:
+        client = get_gemini_client()
+        resultado = client.models.embed_content(
+            model="gemini-embedding-001",
+            contents=texto.strip()
+        )
+        if resultado and resultado.embeddings:
+            return resultado.embeddings[0].values
+    except Exception as e:
+        print(f"[IA Embeddings] Error al generar embedding: {e}")
+    return []
 
 
 # PROMPT DINÁMICO Y NATURAL
@@ -139,12 +170,4 @@ Responde ÚNICAMENTE con JSON válido:
         raise Exception(f"No fue posible conectar con los servidores de Gemini: {ultimo_error}")
 
     datos = json.loads(texto_json)
-
-    # Si se generó un plan, guardarlo en 'ia/'
-    if datos.get("tipo") == "plan_generado" and datos.get("plan"):
-        carpeta_ia = ROOT_DIR / "ia"
-        carpeta_ia.mkdir(parents=True, exist_ok=True)
-        with open(carpeta_ia / f"{nombre_archivo}.json", "w", encoding="utf-8") as f:
-            json.dump(datos["plan"], f, ensure_ascii=False, indent=2)
-
     return datos

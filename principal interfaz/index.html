@@ -16,7 +16,7 @@
   <nav class="wrap">
     <div class="logo">
       <div class="logo" id="logo"></div> 
-      <img src="../image.png" alt="logo Stud nova" class="logo-img">
+      <img src="/login/image.png" alt="logo Stud nova" class="logo-img">
       StudNova
     </div>
     <button type="button" class="hamburger" id="hamburgerBtn" aria-label="Abrir menú" aria-expanded="false" aria-controls="navCollapsible">
@@ -31,8 +31,7 @@
       </div>
       <div class="nav-cta" id="navCtaLoggedOut">
         <button type="button" class="theme-toggle" id="themeToggle" title="Cambiar modo">🌙</button>
-        <a href="../login.html"> Iniciar sesión </a>
-        <a href="../ia/interfaz.html">Plan de estudios</a>
+        <a href="/login/login.html"> Iniciar sesión </a>
       </div>
       <div class="nav-cta" id="navCtaLoggedIn" hidden>
         <button type="button" class="theme-toggle" title="Cambiar modo">🌙</button>
@@ -330,7 +329,7 @@
       <a href="#equipo">Equipo</a>
     </div>
     <div class="footer-note">Proyecto formativo · Análisis y Desarrollo de Software</div>
-  </div>
+  </nav>
 </footer>
 
 <!-- ===== MODAL: OVERLAY COMPARTIDO ===== -->
@@ -418,41 +417,23 @@
 
 <script>
 document.addEventListener("DOMContentLoaded", () => {
-
     const sesion = StudNovaSession.get();
-
     const navLoggedOut = document.getElementById("navCtaLoggedOut");
     const navLoggedIn = document.getElementById("navCtaLoggedIn");
-
     const userChipName = document.getElementById("userChipName");
     const userChipAvatar = document.getElementById("userChipAvatar");
 
-    if (sesion) {
-
-        // Ocultar "Iniciar sesión"
-        navLoggedOut.hidden = true;
-
-        // Mostrar información del usuario
-        navLoggedIn.hidden = false;
-
-        // Mostrar nombre
-        userChipName.textContent = sesion.nombre;
-
-        // Mostrar primera letra
-        userChipAvatar.textContent =
-            sesion.nombre.charAt(0).toUpperCase();
-
+    if (sesion && sesion.nombre) {
+        if (navLoggedOut) navLoggedOut.hidden = true;
+        if (navLoggedIn) navLoggedIn.hidden = false;
+        if (userChipName) userChipName.textContent = sesion.nombre;
+        if (userChipAvatar) userChipAvatar.textContent = sesion.nombre.charAt(0).toUpperCase();
     } else {
-
-        // No hay sesión
-        navLoggedOut.hidden = false;
-        navLoggedIn.hidden = true;
+        if (navLoggedOut) navLoggedOut.hidden = false;
+        if (navLoggedIn) navLoggedIn.hidden = true;
     }
-
 });
 </script>
 
-</body>
-</html>
 </body>
 </html>

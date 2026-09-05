@@ -65,6 +65,10 @@ if (BASE_DIR / "ia").exists():
     app.mount("/ia", StaticFiles(directory=str(BASE_DIR / "ia"), html=True), name="ia")
 if (BASE_DIR / "principal").exists():
     app.mount("/principal", StaticFiles(directory=str(BASE_DIR / "principal"), html=True), name="principal")
+if (BASE_DIR / "login").exists():
+    app.mount("/login", StaticFiles(directory=str(BASE_DIR / "login"), html=True), name="login")
+if (BASE_DIR / "principal interfaz").exists():
+    app.mount("/landing", StaticFiles(directory=str(BASE_DIR / "principal interfaz"), html=True), name="landing")
 
 @app.get("/", tags=["General"])
 def inicio():
