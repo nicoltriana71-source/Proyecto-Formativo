@@ -19,7 +19,8 @@ class Asignatura(SQLModel, table=True):
     id_asignatura: Optional[int] = Field(default=None, primary_key=True)
     nombre: str = Field(max_length=100)
     descripcion: Optional[str] = None
-    nivel_dificultad: NivelDificultad = Field(default=NivelDificultad.BASICO)
+    nivel_dificultad: Optional[str] = Field(default="BASICO", max_length=50)
 
     horarios: List["Horario"] = Relationship(back_populates="asignatura")
     planes: List["PlanDeEstudio"] = Relationship(back_populates="asignatura")
+

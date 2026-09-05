@@ -1,5 +1,10 @@
 import os
+from pathlib import Path
+from dotenv import load_dotenv
 from sqlmodel import SQLModel, Session, create_engine
+
+BASE_DIR = Path(__file__).resolve().parent
+load_dotenv(BASE_DIR / ".env")
 
 # Recomendado: Obtener desde variables de entorno con un fallback local
 DATABASE_URL = os.getenv(

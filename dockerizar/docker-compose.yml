@@ -1,24 +1,5 @@
 services:
-  # Base de Datos PostgreSQL 16
-  db:
-    image: postgres:16-alpine
-    container_name: studnova_db
-    restart: always
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: 1234
-      POSTGRES_DB: studnova
-    ports:
-      - "5432:5432"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres -d studnova"]
-      interval: 5s
-      timeout: 5s
-      retries: 5
-
-  # Aplicaci�n FastAPI + StudNova IA
+  # Aplicación FastAPI + StudNova IA
   web:
     build:
       context: ..
@@ -27,16 +8,12 @@ services:
     restart: always
     ports:
       - "8000:8000"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     environment:
-      - DATABASE_URL=postgresql://postgres:1234@db:5432/studnova
+      - DATABASE_URL=postgresql://postgres:1234@host.docker.internal:5432/studnova
     env_file:
       - ../.env
-    depends_on:
-      db:
-        condition: service_healthy
     volumes:
       - ../ia:/app/ia
       - ../principal:/app/principal
-
-volumes:
-  postgres_data:
