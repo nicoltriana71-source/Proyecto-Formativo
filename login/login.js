@@ -1,4 +1,6 @@
-﻿const API_URL = window.location.port === "8000" ? "" : "http://localhost:8000";
+const API_URL = (window.location.protocol === "http:" || window.location.protocol === "https:") && window.location.port === "8000"
+    ? ""
+    : "http://127.0.0.1:8000";
 const SESSION_KEY = "studnova:session";
 
 // ==========================================
@@ -61,18 +63,20 @@ function irAInterfaz() {
 
 
 // ==========================================
-// LOGIN
+// LOGIN (INICIAR SESIÓN)
 // ==========================================
 
 document.getElementById("formLogin").addEventListener("submit", async (e) => {
     e.preventDefault();
 
     const mensaje = document.getElementById("loginMensaje");
-    const correo = document.getElementById("loginCorreo").value.trim();
+    const correo = document.getElementById("loginCorreo").value.trim().toLowerCase();
     const contraseña = document.getElementById("loginPassword").value;
 
+    mensaje.hidden = false;
     mensaje.textContent = "Iniciando sesión...";
     mensaje.className = "form-mensaje";
+    mensaje.style.color = "#93c5fd";
 
     try {
         const respuesta = await fetch(`${API_URL}/usuario/login`, {
@@ -89,44 +93,55 @@ document.getElementById("formLogin").addEventListener("submit", async (e) => {
         const data = await respuesta.json();
 
         if (!respuesta.ok) {
+            if (respuesta.status === 401) {
+                throw new Error("Correo o contraseña incorrectos.");
+            }
             throw new Error(data.detail || "No se pudo iniciar sesión.");
         }
 
-        // Guardar usuario
+        // Guardar sesión en localStorage
         guardarSesion(data);
 
-        mensaje.textContent = "Inicio de sesión exitoso.";
+        mensaje.textContent = `¡Bienvenido, ${data.nombre}! Entrando a la plataforma...`;
         mensaje.style.color = "lightgreen";
 
         // Ir a la interfaz
         setTimeout(() => {
             irAInterfaz();
-        }, 500);
+        }, 600);
 
     } catch (error) {
-        console.error(error);
-        mensaje.textContent = error.message;
+        console.error("Error al iniciar sesión:", error);
+        mensaje.hidden = false;
         mensaje.className = "form-mensaje error";
         mensaje.style.color = "#E9938A";
+
+        if (error instanceof TypeError) {
+            mensaje.textContent = "No se pudo conectar con el servidor backend. Verifica que FastAPI esté corriendo en http://127.0.0.1:8000.";
+        } else {
+            mensaje.textContent = error.message;
+        }
     }
 });
 
 
 // ==========================================
-// REGISTRO
+// REGISTRO (CREAR CUENTA)
 // ==========================================
 
 document.getElementById("formRegister").addEventListener("submit", async (e) => {
     e.preventDefault();
 
-    const mensaje = document.getElementById("registerMensaje");
+    const mensajeRegister = document.getElementById("registerMensaje");
+    const mensajeLogin = document.getElementById("loginMensaje");
     const nombre = document.getElementById("registerNombre").value.trim();
-    const correo = document.getElementById("registerCorreo").value.trim();
+    const correo = document.getElementById("registerCorreo").value.trim().toLowerCase();
     const contraseña = document.getElementById("registerPassword").value;
 
-    mensaje.hidden = false;
-    mensaje.textContent = "Creando cuenta...";
-    mensaje.className = "form-mensaje";
+    mensajeRegister.hidden = false;
+    mensajeRegister.textContent = "Creando cuenta en el servidor...";
+    mensajeRegister.className = "form-mensaje";
+    mensajeRegister.style.color = "#93c5fd";
 
     try {
         const respuesta = await fetch(`${API_URL}/usuario/registro`, {
@@ -147,22 +162,42 @@ document.getElementById("formRegister").addEventListener("submit", async (e) => 
             throw new Error(data.detail || "No se pudo crear la cuenta.");
         }
 
-        // Guardar sesión automáticamente
-        guardarSesion(data);
+        // Cuenta creada exitosamente en la base de datos PostgreSQL
+        mensajeRegister.textContent = "¡Cuenta creada exitosamente! Cambiando a inicio de sesión...";
+        mensajeRegister.style.color = "lightgreen";
 
-        mensaje.textContent = "Cuenta creada correctamente.";
-        mensaje.style.color = "lightgreen";
+        // Prellenar el formulario de login con el correo recién registrado
+        const loginCorreoInput = document.getElementById("loginCorreo");
+        const loginPasswordInput = document.getElementById("loginPassword");
+        if (loginCorreoInput) loginCorreoInput.value = correo;
+        if (loginPasswordInput) {
+            loginPasswordInput.value = "";
+        }
 
-        // Ir a la interfaz
+        // Limpiar el formulario de registro
+        document.getElementById("formRegister").reset();
+
+        // Cambiar automáticamente a la vista de login tras 1 segundo para que el usuario inicie sesión
         setTimeout(() => {
-            irAInterfaz();
-        }, 500);
+            mostrarFormulario("login");
+            if (mensajeLogin) {
+                mensajeLogin.hidden = false;
+                mensajeLogin.textContent = `¡Cuenta creada para ${data.nombre}! Ingresa tu contraseña para entrar.`;
+                mensajeLogin.style.color = "lightgreen";
+            }
+            if (loginPasswordInput) loginPasswordInput.focus();
+        }, 1000);
 
     } catch (error) {
-        console.error(error);
-        mensaje.hidden = false;
-        mensaje.textContent = error.message;
-        mensaje.className = "form-mensaje error";
-        mensaje.style.color = "#E9938A";
+        console.error("Error al registrar cuenta:", error);
+        mensajeRegister.hidden = false;
+        mensajeRegister.className = "form-mensaje error";
+        mensajeRegister.style.color = "#E9938A";
+
+        if (error instanceof TypeError) {
+            mensajeRegister.textContent = "No se pudo conectar con el servidor backend. Verifica que FastAPI esté corriendo en http://127.0.0.1:8000.";
+        } else {
+            mensajeRegister.textContent = error.message;
+        }
     }
 });

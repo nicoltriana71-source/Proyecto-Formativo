@@ -159,28 +159,8 @@ def generar_interfaz(solicitud: SolicitudGeneracion, sesion: Session = Depends(o
                 usuario_id = nuevo_user.id_usuario
 
         # -------------------------------------------------------------
-        # 1. VERIFICAR CACHÉ SEMÁNTICO EN BASE DE DATOS (0 TOKENS)
+        # LLAMAR DIRECTAMENTE A GEMINI (Tutor inteligente y dinámico)
         # -------------------------------------------------------------
-        kw_actual = extraer_palabras_clave(solicitud.prompt)
-        plan_cache = None
-
-        if kw_actual:
-            # Si el usuario menciona un tema concreto (ej: "Inglés Técnico", "Mecánica"),
-            # buscamos ÚNICAMENTE su petición actual para no contaminar con temas viejos
-            plan_cache = buscar_plan_en_cache(sesion, solicitud.prompt, usuario_id=usuario_id)
-        else:
-            # Solo si el mensaje actual es una confirmación corta ("sí", "2 semanas", "hazlo"),
-            # buscamos el tema más reciente en el historial
-            for msg in reversed(solicitud.historial):
-                if msg.rol == "usuario":
-                    kw_prev = extraer_palabras_clave(msg.texto)
-                    if kw_prev:
-                        plan_cache = buscar_plan_en_cache(sesion, f"{msg.texto} {solicitud.prompt}", usuario_id=usuario_id)
-                        break
-
-        if plan_cache:
-            print(f"🎯 [CACHÉ SEMÁNTICO] Plan reutilizado (Similitud: {plan_cache.get('similitud')}) - 0 tokens usados.")
-            return plan_cache
 
         # -------------------------------------------------------------
         # 2. SI NO ESTÁ EN CACHÉ: LLAMAR A GEMINI

@@ -152,7 +152,7 @@ Responde ÚNICAMENTE con JSON válido:
 
     for modelo in MODELOS_CASCADA:
         try:
-            print(f"🚀 Procesando con {modelo}...")
+            print(f"[IA Gemini] Procesando con {modelo}...")
             respuesta = client.models.generate_content(
                 model=modelo,
                 contents=prompt_completo,
@@ -163,7 +163,7 @@ Responde ÚNICAMENTE con JSON válido:
                 break
         except Exception as e:
             ultimo_error = e
-            print(f"⚠️ Error en modelo {modelo}: {e}")
+            print(f"[IA Gemini] Error en modelo {modelo}: {e}")
             continue
 
     if not texto_json:

@@ -3,6 +3,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse, RedirectResponse
 
 from base_datos import crear_tablas
 
@@ -70,9 +71,22 @@ if (BASE_DIR / "login").exists():
 if (BASE_DIR / "principal interfaz").exists():
     app.mount("/landing", StaticFiles(directory=str(BASE_DIR / "principal interfaz"), html=True), name="landing")
 
+@app.get("/login", tags=["Vistas"])
+@app.get("/login/", tags=["Vistas"])
+def vista_login():
+    return FileResponse(BASE_DIR / "login" / "login.html")
+
+@app.get("/register", tags=["Vistas"])
+@app.get("/registro", tags=["Vistas"])
+def vista_registro():
+    return FileResponse(BASE_DIR / "login" / "login.html")
+
 @app.get("/", tags=["General"])
 def inicio():
     return {
         "mensaje": "StudNova API funcionando correctamente",
-        "docs": "/docs"
+        "docs": "/docs",
+        "login": "/login",
+        "interfaz_ia": "/ia/interfaz.html",
+        "landing": "/landing/index.html"
     }

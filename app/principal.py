@@ -7,6 +7,13 @@ from fastapi.staticfiles import StaticFiles
 
 from app.base_datos import engine
 import app.modelos  # Importa las tablas y resuelve relaciones
+import sys
+BASE_DIR = Path(__file__).resolve().parent.parent
+if str(BASE_DIR) not in sys.path:
+    sys.path.insert(0, str(BASE_DIR))
+
+from base_datos import engine
+import app.modelos
 from app.rutas.usuario import router as usuarios_router
 from app.rutas.ia import router as ia_router
 
