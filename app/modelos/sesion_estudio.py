@@ -1,6 +1,10 @@
-from typing import Optional
+from typing import Optional, TYPE_CHECKING
 from datetime import datetime
-from sqlmodel import SQLModel, Field
+from sqlmodel import SQLModel, Field, Relationship
+
+if TYPE_CHECKING:
+    from app.modelos.usuario import Usuario
+    from app.modelos.plan_estudio import PlanDeEstudio
 
 class SesionEstudio(SQLModel, table=True):
     __tablename__ = "sesion_estudio"
@@ -13,3 +17,6 @@ class SesionEstudio(SQLModel, table=True):
     fecha: datetime = Field(default_factory=datetime.now)
     duracion_minutos: Optional[int] = None
     completada: bool = Field(default=False) 
+
+    usuario: Optional["Usuario"] = Relationship(back_populates="sesiones")
+    plan: Optional["PlanDeEstudio"] = Relationship(back_populates="sesiones")

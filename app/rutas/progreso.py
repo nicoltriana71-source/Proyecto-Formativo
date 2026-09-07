@@ -20,6 +20,7 @@ def obtener_progreso(id_progreso: int, sesion: Session = Depends(obtener_sesion)
 @router.get("/plan/{id_plan}/usuario/{id_usuario}")
 def obtener_progreso_plan(id_plan: int, id_usuario: int, sesion: Session = Depends(obtener_sesion)):
     statement = select(Progreso).where(
+        Progreso.id_plan == id_plan,
         Progreso.id_usuario == id_usuario
     )
     registros = sesion.exec(statement).all()
@@ -33,11 +34,28 @@ def obtener_progreso_plan(id_plan: int, id_usuario: int, sesion: Session = Depen
         "id_usuario": id_usuario,
         "porcentaje_avance": round(porcentaje, 2),
         "temas_completados": temas_completados,
-        "temas_totales": temas_totales
+        "temas_totales": temas_totales,
+        "registros": registros
     }
 
 @router.post("/", response_model=Progreso, status_code=status.HTTP_201_CREATED)
-def crear_progreso(progreso: Progreso, sesion: Session = Depends(obtener_sesion)):
+def crear_o_actualizar_progreso(progreso: Progreso, sesion: Session = Depends(obtener_sesion)):
+    existente = sesion.exec(
+        select(Progreso).where(
+            Progreso.id_usuario == progreso.id_usuario,
+            Progreso.id_plan == progreso.id_plan,
+            Progreso.id_modulo == progreso.id_modulo,
+            Progreso.id_tema == progreso.id_tema
+        )
+    ).first()
+    if existente:
+        existente.completado = progreso.completado
+        existente.porcentaje = progreso.porcentaje
+        sesion.add(existente)
+        sesion.commit()
+        sesion.refresh(existente)
+        return existente
+
     sesion.add(progreso)
     sesion.commit()
     sesion.refresh(progreso)

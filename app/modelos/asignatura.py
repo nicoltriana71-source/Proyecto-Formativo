@@ -3,8 +3,7 @@ from enum import Enum
 from sqlmodel import SQLModel, Field, Relationship
 
 if TYPE_CHECKING:
-    from app.modelos.horario import Horario
-    from app.modelos.plan_de_estudio import PlanDeEstudio
+    from app.modelos.plan_estudio import PlanDeEstudio
 
 
 class NivelDificultad(str, Enum):
@@ -21,6 +20,5 @@ class Asignatura(SQLModel, table=True):
     descripcion: Optional[str] = None
     nivel_dificultad: Optional[str] = Field(default="BASICO", max_length=50)
 
-    horarios: List["Horario"] = Relationship(back_populates="asignatura")
     planes: List["PlanDeEstudio"] = Relationship(back_populates="asignatura")
 

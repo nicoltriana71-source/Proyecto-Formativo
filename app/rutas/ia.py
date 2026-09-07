@@ -205,6 +205,7 @@ def generar_interfaz(solicitud: SolicitudGeneracion, sesion: Session = Depends(o
             sesion.refresh(nuevo_plan)
 
             # Guardar Módulos y Temas
+            plan_data["id_plan"] = nuevo_plan.id_plan
             for idx_m, mod in enumerate(plan_data.get("modulos", [])):
                 nuevo_modulo = Modulo(
                     id_plan=nuevo_plan.id_plan,
@@ -217,6 +218,7 @@ def generar_interfaz(solicitud: SolicitudGeneracion, sesion: Session = Depends(o
                 sesion.add(nuevo_modulo)
                 sesion.commit()
                 sesion.refresh(nuevo_modulo)
+                mod["id_modulo"] = nuevo_modulo.id_modulo
 
                 for idx_t, lec in enumerate(mod.get("lecciones", [])):
                     nuevo_tema = Tema(
@@ -227,6 +229,13 @@ def generar_interfaz(solicitud: SolicitudGeneracion, sesion: Session = Depends(o
                         duracion_estimada=lec.get("duracion_minutos") or 45
                     )
                     sesion.add(nuevo_tema)
+                    sesion.commit()
+                    sesion.refresh(nuevo_tema)
+                    lec["id_tema"] = nuevo_tema.id_tema
+
+            nuevo_plan.contenido_json = plan_data
+            sesion.add(nuevo_plan)
+            sesion.commit()
 
             # Generar embedding del prompt para que quede disponible en el caché semántico futuro
             texto_para_embedding = f"{solicitud.prompt} {nombre_materia} {nuevo_plan.titulo}"
@@ -234,7 +243,6 @@ def generar_interfaz(solicitud: SolicitudGeneracion, sesion: Session = Depends(o
 
             # Guardar registro en PromptIA con su vector embedding
             registro_prompt = PromptIA(
-                id_usuario=usuario_id,
                 id_plan=nuevo_plan.id_plan,
                 prompt_usuario=solicitud.prompt,
                 prompt_sistema=resultado.get("mensaje") or "Plan generado",

@@ -1,6 +1,10 @@
-from typing import Optional
+from typing import Optional, TYPE_CHECKING
 from datetime import datetime
-from sqlmodel import SQLModel, Field
+from sqlmodel import SQLModel, Field, Relationship
+
+if TYPE_CHECKING:
+    from app.modelos.usuario import Usuario
+    from app.modelos.plan_estudio import PlanDeEstudio
 
 class Progreso(SQLModel, table=True):
     __tablename__ = "progreso"
@@ -14,3 +18,6 @@ class Progreso(SQLModel, table=True):
     completado: bool = Field(default=False)
     fecha_inicio: datetime = Field(default_factory=datetime.now)
     fecha_ultima_actividad: datetime = Field(default_factory=datetime.now)
+
+    usuario: Optional["Usuario"] = Relationship(back_populates="progresos")
+    plan: Optional["PlanDeEstudio"] = Relationship(back_populates="progresos")

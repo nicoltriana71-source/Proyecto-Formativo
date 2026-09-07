@@ -41,10 +41,23 @@ async function enviarMensaje() {
     scrollAlFondo();
 
     try {
+        let idUsuario = null;
+        try {
+            const sesionUser = localStorage.getItem("studnova:session") || localStorage.getItem("user");
+            if (sesionUser) {
+                const parsed = JSON.parse(sesionUser);
+                idUsuario = parsed.id_usuario || parsed.id || null;
+            }
+        } catch (e) {}
+
         const respuesta = await fetch(`${API_BASE}/api/ia/generar`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ prompt: texto, historial: historialConversacion })
+            body: JSON.stringify({
+                prompt: texto,
+                historial: historialConversacion,
+                id_usuario: idUsuario
+            })
         });
 
         let datos;

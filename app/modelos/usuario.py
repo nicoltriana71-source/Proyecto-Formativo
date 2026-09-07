@@ -1,16 +1,11 @@
 from typing import Optional, List, TYPE_CHECKING
-from enum import Enum
 from sqlmodel import SQLModel, Field, Relationship
 
 if TYPE_CHECKING:
-    from app.modelos.chat_ia import ChatIA
-    from app.modelos.plan_de_estudio import PlanDeEstudio
-    from app.modelos.sesion_de_estudio import SesionDeEstudio
-
-
-class RolUsuario(str, Enum):
-    ADMINISTRADOR = "ADMINISTRADOR"
-    ESTUDIANTE = "ESTUDIANTE"
+    from app.modelos.plan_estudio import PlanDeEstudio
+    from app.modelos.progreso import Progreso
+    from app.modelos.control_fatiga import ControlFatiga
+    from app.modelos.sesion_estudio import SesionEstudio
 
 
 class Usuario(SQLModel, table=True):
@@ -20,8 +15,8 @@ class Usuario(SQLModel, table=True):
     nombre: str = Field(max_length=100)
     correo: str = Field(max_length=150, unique=True, index=True)
     contraseña: str = Field(max_length=255)
-    rol: RolUsuario = Field(default=RolUsuario.ESTUDIANTE)
 
-    chats: List["ChatIA"] = Relationship(back_populates="usuario")
     planes: List["PlanDeEstudio"] = Relationship(back_populates="usuario")
-    sesiones: List["SesionDeEstudio"] = Relationship(back_populates="usuario")
+    progresos: List["Progreso"] = Relationship(back_populates="usuario")
+    fatigas: List["ControlFatiga"] = Relationship(back_populates="usuario")
+    sesiones: List["SesionEstudio"] = Relationship(back_populates="usuario")

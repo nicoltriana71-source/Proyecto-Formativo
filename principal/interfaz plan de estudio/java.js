@@ -1,11 +1,25 @@
 // principal/interfaz plan de estudio/java.js
 
+let planActualGlobal = null;
+
+function getSesionUsuarioId() {
+    try {
+        const raw = localStorage.getItem("studnova:session") || localStorage.getItem("user");
+        if (raw) {
+            const parsed = JSON.parse(raw);
+            return parsed.id_usuario || parsed.id || null;
+        }
+    } catch (e) {}
+    return null;
+}
+
 function renderizarPlan(plan) {
     if (!plan) return;
     if (plan.plan_json) plan = plan.plan_json;
     if (plan.contenido_json) plan = plan.contenido_json;
     if (plan.plan) plan = plan.plan;
     if (plan.contenido_json) plan = plan.contenido_json;
+    planActualGlobal = plan;
 
     // Header
     const titulo = plan.titulo || "Plan de Estudio Personalizado";
@@ -50,6 +64,8 @@ function renderizarPlan(plan) {
             const idLec = `lec-${idMod}-${lIdx}`;
             const tituloLec = lec.titulo || `Lección ${lIdx + 1}`;
             const duracion = lec.duracion_minutos || 45;
+            const idModDB = modulo.id_modulo || (index + 1);
+            const idTemaDB = lec.id_tema || (lIdx + 1);
 
             // Extraer teoría y detalles
             const teoria = lec.concepto_teorico || (lec.guia_aprendizaje && lec.guia_aprendizaje.explicacion_teorica) || lec.detalle || '';
@@ -104,7 +120,7 @@ function renderizarPlan(plan) {
                 <div class="tarea-contenedor" style="margin-bottom: 12px;">
                     <div class="tarea-item" style="display: flex; justify-content: space-between; align-items: center;">
                         <label style="display: flex; align-items: center; gap: 12px; cursor: pointer; flex: 1;">
-                            <input type="checkbox" onchange="actualizarProgreso(); autoIniciarTimer();">
+                            <input type="checkbox" data-modulo="${idModDB}" data-tema="${idTemaDB}" onchange="actualizarProgreso(this); autoIniciarTimer();">
                             <span class="check-custom"></span>
                             <div class="tarea-texto">
                                 <strong>${escapar(tituloLec)}</strong>
@@ -202,7 +218,7 @@ function escapar(str) {
     return String(str).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 }
 
-function actualizarProgreso() {
+function actualizarProgreso(checkboxEl) {
     const checkboxes = document.querySelectorAll('.tarea-item input[type="checkbox"]');
     const total = checkboxes.length;
     let marcadas = 0;
@@ -216,6 +232,30 @@ function actualizarProgreso() {
     if (elBarra) elBarra.style.width = porcentaje + '%';
     if (elTexto) elTexto.innerText = porcentaje + '%';
     if (elContador) elContador.innerText = `${marcadas} de ${total} lecciones completadas`;
+
+    // Persistencia en el backend (PostgreSQL)
+    if (checkboxEl) {
+        const idUsuario = getSesionUsuarioId();
+        const params = new URLSearchParams(window.location.search);
+        const idPlan = (planActualGlobal && planActualGlobal.id_plan) || params.get('id');
+        const idModulo = parseInt(checkboxEl.getAttribute('data-modulo')) || 1;
+        const idTema = parseInt(checkboxEl.getAttribute('data-tema')) || 1;
+
+        if (idUsuario && idPlan) {
+            fetch(`${API_BASE}/progreso/`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    id_usuario: parseInt(idUsuario),
+                    id_plan: parseInt(idPlan),
+                    id_modulo: idModulo,
+                    id_tema: idTema,
+                    porcentaje: parseFloat(porcentaje),
+                    completado: checkboxEl.checked
+                })
+            }).catch(err => console.warn("Aviso: no se pudo guardar progreso en backend:", err));
+        }
+    }
 }
 
 function alternarModulo(id) {
@@ -284,6 +324,36 @@ function alternarTimer() {
                 enPausa = true;
                 if (btn) btn.innerText = "Iniciar Descanso";
                 actualizarDisplayTimer();
+
+                // Registrar sesión y control de fatiga en el backend
+                const idUsuario = getSesionUsuarioId();
+                const params = new URLSearchParams(window.location.search);
+                const idPlan = (planActualGlobal && planActualGlobal.id_plan) || params.get('id');
+                if (idUsuario && idPlan) {
+                    fetch(`${API_BASE}/sesion-estudio/`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            id_usuario: parseInt(idUsuario),
+                            id_plan: parseInt(idPlan),
+                            id_modulo: 1,
+                            id_tema: 1,
+                            duracion_minutos: 25,
+                            completada: true
+                        })
+                    }).catch(e => console.warn(e));
+
+                    fetch(`${API_BASE}/control-fatiga/`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            id_usuario: parseInt(idUsuario),
+                            id_plan: parseInt(idPlan),
+                            nivel_fatiga: 2,
+                            observacion: "Pausa activa recomendada tras 25 min de estudio completados"
+                        })
+                    }).catch(e => console.warn(e));
+                }
             }
         }, 1000);
     } else {

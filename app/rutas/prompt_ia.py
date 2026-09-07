@@ -3,17 +3,24 @@ from sqlmodel import Session, select
 from base_datos import obtener_sesion
 from app.esquemas.prompt_ia import ChatSolicitud, GenerarPlanSolicitud
 from app.modelos.prompt_ia import PromptIA
+from app.modelos.plan_estudio import PlanDeEstudio
 
 router = APIRouter(prefix="/prompt-ia", tags=["Asistente IA"])
 
 @router.post("/chat", status_code=status.HTTP_201_CREATED)
 def interactuar_ia(solicitud: ChatSolicitud, sesion: Session = Depends(obtener_sesion)):
-    # Simulación de respuesta del modelo de IA (OpenAI / Gemini)
     respuesta_ia = f"Procesando tu solicitud sobre: '{solicitud.mensaje}'"
     
+    plan_id = solicitud.id_plan
+    if not plan_id:
+        primer_plan = sesion.exec(select(PlanDeEstudio).where(PlanDeEstudio.id_usuario == solicitud.id_usuario)).first()
+        if primer_plan:
+            plan_id = primer_plan.id_plan
+        else:
+            raise HTTPException(status_code=400, detail="Debes indicar un id_plan o tener al menos un plan creado.")
+
     registro_prompt = PromptIA(
-        id_usuario=solicitud.id_usuario,
-        id_plan=solicitud.id_plan,
+        id_plan=plan_id,
         prompt_usuario=solicitud.mensaje,
         prompt_sistema=respuesta_ia
     )
@@ -25,7 +32,11 @@ def interactuar_ia(solicitud: ChatSolicitud, sesion: Session = Depends(obtener_s
 
 @router.get("/historial/{id_usuario}")
 def obtener_historial(id_usuario: int, sesion: Session = Depends(obtener_sesion)):
-    statement = select(PromptIA).where(PromptIA.id_usuario == id_usuario)
+    statement = (
+        select(PromptIA)
+        .join(PlanDeEstudio, PromptIA.id_plan == PlanDeEstudio.id_plan)
+        .where(PlanDeEstudio.id_usuario == id_usuario)
+    )
     return sesion.exec(statement).all()
 
 @router.get("/historial/plan/{id_plan}")

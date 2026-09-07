@@ -1,5 +1,9 @@
-from typing import Optional
-from sqlmodel import SQLModel, Field
+from typing import Optional, List, TYPE_CHECKING
+from sqlmodel import SQLModel, Field, Relationship
+
+if TYPE_CHECKING:
+    from app.modelos.plan_estudio import PlanDeEstudio
+    from app.modelos.tema import Tema
 
 class Modulo(SQLModel, table=True):
     __tablename__ = "modulo"
@@ -10,4 +14,7 @@ class Modulo(SQLModel, table=True):
     descripcion: Optional[str] = None
     numero_modulo: int
     objetivo: Optional[str] = None
-    estado: Optional[str] = None
+    estado: Optional[str] = Field(default="activo", max_length=50)
+
+    plan: Optional["PlanDeEstudio"] = Relationship(back_populates="modulos")
+    temas: List["Tema"] = Relationship(back_populates="modulo")
