@@ -35,6 +35,29 @@ body {
     gap: 20px;
 }
 
+.btn-volver {
+  display: inline-block;
+  background-color: #1e293b;
+  color: #ffffff;
+  padding: 6px 14px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: bold;
+  margin-bottom: 12px;
+  border: 1px solid #334155;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  text-decoration: none; /* QUITA EL SUBRAYADO EN ESTADO NORMAL */
+}
+
+/* Evita que cambie de color o vuelva a subrayarse al hacer hover o dar clic */
+.btn-volver:visited,
+.btn-volver:hover,
+.btn-volver:active {
+  color: #ffffff;
+  text-decoration: none;
+}
+
 .badge-ruta {
     background: #2563eb;
     color: white;

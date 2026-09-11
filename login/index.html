@@ -105,25 +105,42 @@
     }
   }
 
-  window.onload = () => {
-    // Inicializa el cliente que abre POPUP siempre
-    tokenClient = google.accounts.oauth2.initTokenClient({
-      client_id: GOOGLE_CLIENT_ID,
-      scope: "email profile openid",
-      callback: async (tokenResponse) => {
-        // Con el token pedimos los datos del usuario
-        const res = await fetch("https://www.googleapis.com/oauth2/v3/userinfo", {
-          headers: { Authorization: `Bearer ${tokenResponse.access_token}` }
-        });
-        const user = await res.json();
-        handleGoogleResponse(user);
-      },
-    });
+  function abrirGoogleAuth() {
+    if (typeof google === 'undefined' || !google.accounts || !google.accounts.oauth2) {
+      alert("El servicio de Google aún se está conectando. Por favor espera unos segundos e intenta nuevamente.");
+      return;
+    }
+    if (!tokenClient) {
+      tokenClient = google.accounts.oauth2.initTokenClient({
+        client_id: GOOGLE_CLIENT_ID,
+        scope: "email profile openid",
+        callback: async (tokenResponse) => {
+          if (tokenResponse.error) {
+            console.error("Error al obtener token de Google:", tokenResponse);
+            return;
+          }
+          try {
+            const res = await fetch("https://www.googleapis.com/oauth2/v3/userinfo", {
+              headers: { Authorization: `Bearer ${tokenResponse.access_token}` }
+            });
+            const user = await res.json();
+            handleGoogleResponse(user);
+          } catch (e) {
+            console.error("Error obteniendo datos de usuario Google:", e);
+          }
+        },
+      });
+    }
+    tokenClient.requestAccessToken({ prompt: 'select_account' });
+  }
 
-    document.getElementById("btnGoogle").addEventListener("click", () => {
-      tokenClient.requestAccessToken(); // Esto SI abre el coso de Google
+  const btnGoogle = document.getElementById("btnGoogle");
+  if (btnGoogle) {
+    btnGoogle.addEventListener("click", (e) => {
+      e.preventDefault();
+      abrirGoogleAuth();
     });
-  };
+  }
 </script>
 </body>
 </html>
