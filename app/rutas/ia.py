@@ -142,21 +142,22 @@ def generar_interfaz(solicitud: SolicitudGeneracion, sesion: Session = Depends(o
     
     try:
         # Obtener o asignar usuario por defecto
+        # Obtener o asignar usuario validado en la base de datos
         usuario_id = solicitud.id_usuario
-        if not usuario_id:
-            primer_usuario = sesion.exec(select(Usuario)).first()
-            if primer_usuario:
-                usuario_id = primer_usuario.id_usuario
-            else:
-                nuevo_user = Usuario(
+        usuario_db = sesion.get(Usuario, usuario_id) if usuario_id else None
+        if not usuario_db:
+            usuario_db = sesion.exec(select(Usuario)).first()
+            if not usuario_db:
+                usuario_db = Usuario(
+                    id_usuario=usuario_id if usuario_id else None,
                     nombre="Estudiante StudNova",
                     correo="estudiante@studnova.com",
                     contraseña="123"
                 )
-                sesion.add(nuevo_user)
+                sesion.add(usuario_db)
                 sesion.commit()
-                sesion.refresh(nuevo_user)
-                usuario_id = nuevo_user.id_usuario
+                sesion.refresh(usuario_db)
+            usuario_id = usuario_db.id_usuario
 
         # -------------------------------------------------------------
         # LLAMAR DIRECTAMENTE A GEMINI (Tutor inteligente y dinámico)

@@ -18,6 +18,7 @@ function guardarSesion(usuario) {
 
     localStorage.setItem(SESSION_KEY, JSON.stringify(session));
     localStorage.setItem("user", JSON.stringify(usuario));
+    localStorage.setItem("id_usuario", usuario.id_usuario);
     localStorage.setItem("userEmail", usuario.correo);
     localStorage.setItem("userName", usuario.nombre);
     localStorage.setItem("isLoggedIn", "true");

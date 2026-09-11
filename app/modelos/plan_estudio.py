@@ -26,6 +26,7 @@ class PlanDeEstudio(SQLModel, table=True):
     estado: Optional[str] = Field(default="activo", max_length=50)
     nivel_objetivo: Optional[str] = Field(default=None, max_length=50)
     duracion: Optional[int] = None
+    id_ruta: Optional[int] = Field(default=None)
     contenido_json: Optional[Any] = Field(default=None, sa_column=Column(JSONB))
 
     usuario: Optional["Usuario"] = Relationship(back_populates="planes")

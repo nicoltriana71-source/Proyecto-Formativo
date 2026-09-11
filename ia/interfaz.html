@@ -4,23 +4,40 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>StudNova IA - Chat</title>
-    <link rel="stylesheet" href="css.css">
+    <link rel="stylesheet" href="/ia/css.css">
 </head>
 <body>
 
+    <!-- Overlay para cerrar el menú al hacer clic afuera -->
+    <div class="overlay" id="overlay" onclick="toggleMenu()"></div>
+
+    <!-- Menú Lateral Izquierdo (Historial) -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h2>Historial de Planes</h2>
+            <button class="close-btn" id="closeBtn" onclick="toggleMenu()">&times;</button>
+        </div>
+        <div class="sidebar-content">
+            <ul class="history-list" id="history-list">
+                <!-- Los planes guardados se cargarán aquí dinámicamente desde la BD -->
+            </ul>
+        </div>
+    </aside>
+
     <div class="contenedor">
-        
-        <!-- Header con botón Cerrar Sesión -->
         <div class="header">
-            <button type="button" class="cerrar-sesion" onclick="cerrarSesion()">Cerrar Sesión</button>
+            <!-- Botón Menú Hamburguesa en la zona izquierda -->
+            <button class="hamburger-btn" id="menuToggle" onclick="toggleMenu()" aria-label="Abrir historial">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <button type="button" class="cerrar-sesion" onclick="cerrarSesion()">Cerrar Sesion</button>
             <h1>StudNova IA</h1>
             <p>Tu asistente inteligente para generar planes de estudio interactivos</p>
         </div>
 
-        <!-- Área de Chat -->
         <div class="chat" id="chat-box">
-            
-            <!-- Mensaje inicial de bienvenida de la IA -->
             <div class="mensaje">
                 <div class="avatar">
                     <img src="/login/image.png" alt="Logo" width="50" height="50" class="logo" style="border-radius:50%; object-fit:cover;">
@@ -30,23 +47,15 @@
                     <p style="margin-top: 8px;">Cuéntame, ¿qué materia o tema te gustaría aprender hoy?</p>
                 </div>
             </div>
-
         </div>
 
-        <!-- Barra inferior para escribir -->
         <div class="escribir">
-            <textarea 
-                id="prompt-input" 
-                rows="2" 
-                placeholder="Escribe tu mensaje aquí..." 
-                onkeydown="manejarEnter(event)"
-            ></textarea>
+            <textarea id="prompt-input" rows="2" placeholder="Escribe tu mensaje aquí..." onkeydown="manejarEnter(event)"></textarea>
             <button id="btn-enviar" onclick="enviarMensaje()">Enviar</button>
         </div>
-
     </div>
 
-    <!-- Script del Chat y Lógica de StudNova IA -->
-    <script src="renderizador.js"></script>
+    <!-- Script modular de StudNova IA -->
+    <script src="/ia/renderizador.js"></script>
 </body>
 </html>

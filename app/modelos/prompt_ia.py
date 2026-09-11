@@ -9,7 +9,8 @@ class PromptIA(SQLModel, table=True):
     __tablename__ = "prompt_ia"
 
     id_prompt: Optional[int] = Field(default=None, primary_key=True)
-    id_plan: int = Field(foreign_key="plan_de_estudio.id_plan")
+    id_usuario: Optional[int] = Field(default=None, foreign_key="usuario.id_usuario")
+    id_plan: Optional[int] = Field(default=None, foreign_key="plan_de_estudio.id_plan")
     prompt_usuario: Optional[str] = None
     prompt_sistema: Optional[str] = None
     modelo_ia: Optional[str] = Field(default="gemini-2.5-flash", max_length=100)

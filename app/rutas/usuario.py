@@ -1,3 +1,5 @@
+from typing import Optional
+from pydantic import BaseModel
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlmodel import Session, select
 from base_datos import obtener_sesion
@@ -19,6 +21,28 @@ def login(credenciales: UsuarioLogin, sesion: Session = Depends(obtener_sesion))
     usuario = obtener_usuario_por_correo(sesion, credenciales.correo)
     if not usuario or usuario.contraseña != credenciales.contraseña:
         raise HTTPException(status_code=401, detail="Credenciales incorrectas.")
+    return usuario
+
+class UsuarioGoogle(BaseModel):
+    nombre: str
+    correo: str
+    google_id: Optional[str] = None
+    foto: Optional[str] = None
+
+@router.post("/google", response_model=UsuarioRespuesta)
+def login_con_google(datos: UsuarioGoogle, sesion: Session = Depends(obtener_sesion)):
+    """Inicia sesión o registra automáticamente en PostgreSQL a un usuario autenticado con Google."""
+    correo_limpio = datos.correo.strip().lower()
+    usuario = obtener_usuario_por_correo(sesion, correo_limpio)
+    if not usuario:
+        usuario = Usuario(
+            nombre=datos.nombre.strip() or "Usuario Google",
+            correo=correo_limpio,
+            contraseña=f"google_oauth_{datos.google_id or 'token'}"
+        )
+        sesion.add(usuario)
+        sesion.commit()
+        sesion.refresh(usuario)
     return usuario
 
 @router.get("/", response_model=list[UsuarioRespuesta])

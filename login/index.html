@@ -51,18 +51,58 @@
 
   let tokenClient;
 
-  function handleGoogleResponse(user) {
-    localStorage.setItem("user", JSON.stringify(user));
-    localStorage.setItem("userEmail", user.email);
-    localStorage.setItem("userName", user.name);
-    localStorage.setItem("userPhoto", user.picture);
-    localStorage.setItem("isLoggedIn", "true");
-    localStorage.setItem("loginMethod", "google");
-    document.getElementById("loginMensaje").textContent = "¡Bienvenido " + user.name + "!";
-    document.getElementById("loginMensaje").style.color = "lightgreen";
-    setTimeout(() => {
+  async function handleGoogleResponse(user) {
+    const mensaje = document.getElementById("loginMensaje");
+    if (mensaje) {
+      mensaje.hidden = false;
+      mensaje.textContent = "Sincronizando cuenta con StudNova...";
+      mensaje.style.color = "#93c5fd";
+    }
+
+    try {
+      const apiUrl = (typeof API_URL !== 'undefined') ? API_URL : ((window.location.port === "8000" || window.location.port === "") ? "" : "http://127.0.0.1:8000");
+      const resBackend = await fetch(`${apiUrl}/usuario/google`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          nombre: user.name,
+          correo: user.email,
+          google_id: user.sub,
+          foto: user.picture
+        })
+      });
+
+      if (!resBackend.ok) {
+        let detalle = "";
+        try { const errJson = await resBackend.json(); detalle = errJson.detail; } catch (e) { detalle = await resBackend.text(); }
+        throw new Error(detalle || "No se pudo registrar la cuenta en el servidor.");
+      }
+
+      const usuarioBD = await resBackend.json();
+
+      // Guardar sesión completa en localStorage con el id_usuario real de PostgreSQL
+      guardarSesion(usuarioBD);
+      localStorage.setItem("id_usuario", usuarioBD.id_usuario);
+      localStorage.setItem("userPhoto", user.picture || "");
+      localStorage.setItem("loginMethod", "google");
+
+      if (mensaje) {
+        mensaje.textContent = "¡Bienvenido " + usuarioBD.nombre + "!";
+        mensaje.style.color = "lightgreen";
+      }
+
+      setTimeout(() => {
         window.location.href = "/ia/interfaz.html";
-    }, 800);
+      }, 600);
+
+    } catch (err) {
+      console.error("Error al conectar con el servidor:", err);
+      if (mensaje) {
+        mensaje.hidden = false;
+        mensaje.textContent = "Error al sincronizar: " + err.message;
+        mensaje.style.color = "#E9938A";
+      }
+    }
   }
 
   window.onload = () => {

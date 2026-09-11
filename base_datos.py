@@ -22,10 +22,13 @@ def crear_tablas():
     import app.modelos
     SQLModel.metadata.create_all(engine)
     
-    # Auto-migración: Asegurar que columnas nuevas como 'embedding' existan en la tabla prompt_ia
+    # Auto-migración: Asegurar columnas nuevas en la BD
     try:
         with engine.connect() as conn:
             conn.execute(text("ALTER TABLE prompt_ia ADD COLUMN IF NOT EXISTS embedding TEXT;"))
+            conn.execute(text("ALTER TABLE prompt_ia ADD COLUMN IF NOT EXISTS id_usuario INTEGER REFERENCES usuario(id_usuario);"))
+            conn.execute(text("ALTER TABLE prompt_ia ALTER COLUMN id_plan DROP NOT NULL;"))
+            conn.execute(text("ALTER TABLE plan_de_estudio ADD COLUMN IF NOT EXISTS id_ruta INTEGER;"))
             conn.commit()
     except Exception as e:
-        print(f"⚠️ Info sobre migración de prompt_ia.embedding: {e}")
+        print(f"⚠️ Info sobre migración de base de datos: {e}")
