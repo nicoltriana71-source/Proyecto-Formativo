@@ -418,9 +418,10 @@ document.addEventListener("DOMContentLoaded", async () => {
             const respuesta = await fetch(`${API_BASE}/plan-estudio/${idPlan}`);
             if (respuesta.ok) {
                 const data = await respuesta.json();
-                if (data.plan) {
-                    renderizarPlan(data.plan);
-                    try { localStorage.setItem("plan_estudio_actual", JSON.stringify(data.plan)); } catch (e) {}
+                const targetPlan = data.contenido_json || data.plan;
+                if (targetPlan) {
+                    renderizarPlan(targetPlan);
+                    try { localStorage.setItem("plan_estudio_actual", JSON.stringify(targetPlan)); } catch (e) {}
                 }
             }
         } catch (err) {

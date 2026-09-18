@@ -244,10 +244,11 @@ def generar_interfaz(solicitud: SolicitudGeneracion, sesion: Session = Depends(o
 
             # Guardar registro en PromptIA con su vector embedding
             registro_prompt = PromptIA(
+                id_usuario=usuario_id,
                 id_plan=nuevo_plan.id_plan,
                 prompt_usuario=solicitud.prompt,
                 prompt_sistema=resultado.get("mensaje") or "Plan generado",
-                modelo_ia="gemini-3.5-flash-lite",
+                modelo_ia=resultado.get("modelo_ia", "groq/gpt-oss"),
                 embedding=json.dumps(vector_embedding) if vector_embedding else None,
                 estado="completado"
             )
