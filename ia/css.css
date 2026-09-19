@@ -268,12 +268,131 @@ body {
   line-height: 1.6;
 }
 
+/* ==========================================
+   ADJUNTO DE ARCHIVOS Y OPCIONES DE MÓDULOS
+   ========================================== */
+.contenedor-adjunto {
+  background: #0f172a;
+  border-top: 1px solid #3b82f6;
+  border-left: 4px solid #3b82f6;
+  padding: 12px 20px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  animation: fadeIn 0.2s ease-in-out;
+}
+
+.adjunto-info {
+  display: flex;
+  align-items: center;
+  background: #1e293b;
+  border: 1px solid #475569;
+  border-radius: 20px;
+  padding: 4px 12px;
+  gap: 8px;
+  color: #f1f5f9;
+  font-size: 13.5px;
+  max-width: 320px;
+}
+
+.icono-archivo {
+  font-size: 16px;
+}
+
+.nombre-archivo {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 230px;
+  font-weight: 500;
+}
+
+.btn-quitar-adjunto {
+  background: transparent;
+  border: none;
+  color: #94a3b8;
+  font-size: 16px;
+  cursor: pointer;
+  width: auto;
+  padding: 0 4px;
+  line-height: 1;
+  transition: color 0.2s;
+}
+
+.btn-quitar-adjunto:hover {
+  color: #ef4444;
+  background: transparent;
+}
+
+.adjunto-opciones {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  font-size: 13.5px;
+  color: #cbd5e1;
+}
+
+.adjunto-opciones label {
+  font-weight: 600;
+  color: #93c5fd;
+}
+
+.selector-opcion {
+  background: #1e293b;
+  border: 1px solid #475569;
+  color: #f8fafc;
+  padding: 6px 10px;
+  border-radius: 8px;
+  font-size: 13px;
+  outline: none;
+  cursor: pointer;
+  transition: border-color 0.2s;
+}
+
+.selector-opcion:focus {
+  border-color: #3b82f6;
+}
+
+.btn-adjuntar {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  background: #334155;
+  color: #cbd5e1;
+  font-size: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: 1px solid transparent;
+  align-self: center;
+  flex-shrink: 0;
+}
+
+.btn-adjuntar:hover {
+  background: #475569;
+  color: #38bdf8;
+  border-color: #38bdf8;
+  transform: translateY(-1px);
+}
+
+.btn-adjuntar.activo {
+  background: #1e3a8a;
+  color: #60a5fa;
+  border-color: #3b82f6;
+}
+
 .escribir {
   display: flex;
-  gap: 15px;
-  padding: 20px;
+  gap: 12px;
+  padding: 16px 20px;
   background: #1e293b;
   border-top: 1px solid #334155;
+  align-items: center;
 }
 
 textarea {
@@ -341,4 +460,114 @@ button:hover {
 .btn-volver:active {
   color: #ffffff;
   text-decoration: none;
+}
+
+/* ==========================================
+   TARJETA DE RECOMENDACIÓN DE PLAN EXISTENTE
+   ========================================== */
+.tarjeta-sugerencia {
+  background: #0f172a;
+  border: 1px solid #38bdf8;
+  border-left: 4px solid #38bdf8;
+  border-radius: 12px;
+  padding: 16px;
+  margin-top: 6px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.sugerencia-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(56, 189, 248, 0.15);
+  color: #38bdf8;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+
+.sugerencia-titulo {
+  font-size: 1.1rem;
+  font-weight: bold;
+  color: #f8fafc;
+  margin-bottom: 6px;
+}
+
+.sugerencia-desc {
+  font-size: 0.9rem;
+  color: #cbd5e1;
+  line-height: 1.4;
+  margin-bottom: 12px;
+}
+
+.sugerencia-meta {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+
+.meta-item {
+  background: #1e293b;
+  border: 1px solid #334155;
+  color: #94a3b8;
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-size: 0.78rem;
+  font-weight: 500;
+}
+
+.meta-item.ahorro {
+  color: #34d399;
+  border-color: rgba(52, 211, 153, 0.3);
+  background: rgba(52, 211, 153, 0.1);
+}
+
+.sugerencia-acciones {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.btn-sugerencia {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: bold;
+  cursor: pointer;
+  border: none;
+  width: auto;
+  transition: all 0.2s ease;
+}
+
+.btn-sugerencia-aceptar {
+  background: #10b981;
+  color: #ffffff;
+}
+
+.btn-sugerencia-aceptar:hover {
+  background: #059669;
+  transform: translateY(-1px);
+}
+
+.btn-sugerencia-nuevo {
+  background: #2563eb;
+  color: #ffffff;
+}
+
+.btn-sugerencia-nuevo:hover {
+  background: #1d4ed8;
+  transform: translateY(-1px);
+}
+
+.btn-sugerencia:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
 }

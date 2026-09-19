@@ -49,8 +49,44 @@
             </div>
         </div>
 
+        <!-- Contenedor del archivo adjunto y opciones de configuración del plan -->
+        <div id="contenedor-adjunto" class="contenedor-adjunto" style="display: none;">
+            <div class="adjunto-info">
+                <span class="icono-archivo">📄</span>
+                <span id="nombre-archivo-adjunto" class="nombre-archivo">archivo.pdf</span>
+                <button type="button" class="btn-quitar-adjunto" onclick="quitarArchivoAdjunto()" title="Quitar archivo">&times;</button>
+            </div>
+            <div class="adjunto-opciones">
+                <label for="select-modulos">Módulos:</label>
+                <select id="select-modulos" class="selector-opcion">
+                    <option value="">Automático</option>
+                    <option value="2">2 módulos</option>
+                    <option value="3">3 módulos</option>
+                    <option value="4">4 módulos</option>
+                    <option value="5">5 módulos</option>
+                    <option value="6">6 módulos</option>
+                </select>
+
+                <label for="select-duracion">Duración:</label>
+                <select id="select-duracion" class="selector-opcion">
+                    <option value="">Automática</option>
+                    <option value="1 semana">1 semana</option>
+                    <option value="2 semanas">2 semanas</option>
+                    <option value="3 semanas">3 semanas</option>
+                    <option value="4 semanas">4 semanas</option>
+                    <option value="2 meses">2 meses</option>
+                </select>
+            </div>
+        </div>
+
         <div class="escribir">
-            <textarea id="prompt-input" rows="2" placeholder="Escribe tu mensaje aquí..." onkeydown="manejarEnter(event)"></textarea>
+            <!-- Botón Clip para adjuntar documentos (PDF, TXT, OCR) -->
+            <button type="button" id="btn-adjuntar" class="btn-adjuntar" onclick="activarInputArchivo()" title="Adjuntar temario o documento (PDF, TXT, OCR)">
+                📎
+            </button>
+            <input type="file" id="input-archivo" accept=".pdf,.txt,.md,.csv,.png,.jpg,.jpeg" style="display: none;" onchange="manejarArchivoSeleccionado(event)">
+
+            <textarea id="prompt-input" rows="2" placeholder="Escribe tu mensaje o instrucciones para el plan..." onkeydown="manejarEnter(event)"></textarea>
             <button id="btn-enviar" onclick="enviarMensaje()">Enviar</button>
         </div>
     </div>

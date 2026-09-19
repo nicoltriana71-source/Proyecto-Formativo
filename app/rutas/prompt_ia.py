@@ -71,7 +71,7 @@ def interactuar_ia(solicitud: ChatSolicitud, sesion: Session = Depends(obtener_s
         id_usuario_valido = user_db.id_usuario
 
         response = client.models.generate_content(
-            model='gemini-2.5-flash',
+            model='gemini-3.5-flash-lite',
             contents=prompt_instrucciones
         )
         respuesta_raw = response.text.replace("```json", "").replace("```", "").strip()

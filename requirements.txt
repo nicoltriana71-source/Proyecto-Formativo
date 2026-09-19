@@ -26,3 +26,8 @@ email-validator
 google-genai
 python-dotenv
 beautifulsoup4
+python-multipart
+pypdf
+pymupdf
+pytesseract
+Pillow

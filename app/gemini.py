@@ -1,6 +1,7 @@
 from pathlib import Path
 import os
 import json
+import re
 import requests
 from dotenv import load_dotenv
 from google import genai
@@ -15,8 +16,8 @@ load_dotenv(BASE_DIR / ".env")
 load_dotenv(ROOT_DIR / ".env")
 
 MODELOS_CASCADA = [
-    "gemini-3.5-flash-lite"
     
+    "gemini-flash-lite-latest"
 ]
 
 def get_gemini_client():
@@ -123,15 +124,102 @@ CASO 2: CUANDO YA TENGAS LOS DATOS Y GENERES EL PLAN:
 }
 """
 
-def generar_codigo_ia(prompt_usuario: str, historial: list = None, nombre_archivo="plan_estudio"):
+def generar_codigo_ia(
+    prompt_usuario: str,
+    historial: list = None,
+    nombre_archivo: str = "plan_estudio",
+    texto_documento: str = None,
+    cantidad_modulos: int = None,
+    duracion_personalizada: str = None
+):
     if historial is None:
         historial = []
 
+    # Construir bloque de documento y especificaciones personalizadas
+    bloque_documento = ""
+    if texto_documento and texto_documento.strip():
+        bloque_documento = f"""
+DOCUMENTO / TEMARIO ADJUNTO POR EL ESTUDIANTE:
+--------------------------------------------------
+{texto_documento.strip()}
+--------------------------------------------------
+INSTRUCCIÓN OBLIGATORIA DEL DOCUMENTO:
+Debes estructurar el plan de estudio basándote FIELMENTE en los temas, capítulos y conceptos de este documento adjunto. Genera directamente el plan pedagógico con "tipo": "plan_generado".
+"""
+
+    bloque_restricciones = ""
+    if cantidad_modulos and int(cantidad_modulos) > 0:
+        bloque_restricciones += f"\n- REQUISITO DE MÓDULOS: El plan DEBE contener EXACTAMENTE {cantidad_modulos} módulos (ni más ni menos)."
+    if duracion_personalizada and str(duracion_personalizada).strip():
+        bloque_restricciones += f"\n- REQUISITO DE TIEMPO: El plan debe estructurarse para completarse en {str(duracion_personalizada).strip()}."
+
     # -------------------------------------------------------------
-    # 1. INTENTAR CON GROQ (Rápido, Gratuito y Estable)
+    # 1. INTENTAR CON GEMINI (1ª OPCIÓN: gemini-3.5-flash-lite)
+    # -------------------------------------------------------------
+    conversacion_texto = ""
+    for msg in historial:
+        rol = "Estudiante" if msg.get("rol") == "usuario" else "Tutor StudNova"
+        conversacion_texto += f"{rol}: {msg.get('texto')}\n"
+
+    conversacion_texto += f"Estudiante: {prompt_usuario}\n"
+
+    instruccion_accion = (
+        "Dado que el estudiante ha adjuntado un documento o especificado módulos, GENERA DIRECTAMENTE el plan con 'tipo': 'plan_generado'."
+        if (bloque_documento or bloque_restricciones)
+        else "Lee atentamente todo el historial. Si faltan datos, responde conversando con 'tipo': 'conversacion' de forma única y humana. Si ya tienes la materia y el tiempo/nivel, genera el plan con 'tipo': 'plan_generado'."
+    )
+
+    prompt_completo = f"""
+INSTRUCCIONES DEL TUTOR STUDNOVA:
+{PROMPT_TUTOR_PROFUNDO}
+{bloque_documento}
+{bloque_restricciones}
+
+HISTORIAL DE LA CONVERSACIÓN ACUMULADA:
+{conversacion_texto}
+
+INSTRUCCIÓN:
+{instruccion_accion}
+Responde ÚNICAMENTE con JSON válido:
+"""
+
+    ultimo_error_gemini = None
+
+    try:
+        configuracion = types.GenerateContentConfig(response_mime_type="application/json")
+        client = get_gemini_client()
+        for modelo in MODELOS_CASCADA:
+            try:
+                print(f"[IA Gemini] (Opción 1) Procesando con {modelo}...")
+                respuesta = client.models.generate_content(
+                    model=modelo,
+                    contents=prompt_completo,
+                    config=configuracion
+                )
+                if respuesta and respuesta.text:
+                    limpio = respuesta.text.strip()
+                    if limpio.startswith("```"):
+                        limpio = re.sub(r"^```(?:json)?\s*", "", limpio)
+                        limpio = re.sub(r"\s*```$", "", limpio)
+                    datos = json.loads(limpio)
+                    datos["modelo_ia"] = f"gemini/{modelo}"
+                    print(f"[IA Gemini] ¡Éxito con {modelo}!")
+                    return datos
+            except Exception as e_mod:
+                ultimo_error_gemini = e_mod
+                print(f"[IA Gemini] Error en modelo {modelo}: {e_mod}")
+                continue
+    except Exception as e_client:
+        ultimo_error_gemini = e_client
+        print(f"[IA Gemini] No se pudo inicializar cliente Gemini: {e_client}")
+
+    # -------------------------------------------------------------
+    # 2. INTENTAR CON GROQ (2ª OPCIÓN: Fallback si Gemini falla)
     # -------------------------------------------------------------
     groq_api_key = os.getenv("GROQ_API_KEY")
+    ultimo_error_groq = None
     if groq_api_key:
+        print(f"[IA Groq] Gemini no estuvo disponible ({ultimo_error_gemini}). Intentando con Groq (2ª opción)...")
         groq_models = [
             "openai/gpt-oss-20b",
             "openai/gpt-oss-120b"
@@ -147,11 +235,14 @@ def generar_codigo_ia(prompt_usuario: str, historial: list = None, nombre_archiv
             rol = "user" if msg.get("rol") == "usuario" else "assistant"
             messages.append({"role": rol, "content": msg.get("texto") or ""})
             
-        messages.append({"role": "user", "content": prompt_usuario})
+        prompt_groq_final = prompt_usuario
+        if bloque_documento or bloque_restricciones:
+            prompt_groq_final = f"{prompt_usuario}\n\n{bloque_documento}\n{bloque_restricciones}\n\nGenera directamente el plan completo en JSON con 'tipo': 'plan_generado'."
+        messages.append({"role": "user", "content": prompt_groq_final})
 
         for modelo in groq_models:
             try:
-                print(f"[IA Groq] Procesando con {modelo}...")
+                print(f"[IA Groq] (Opción 2) Procesando con {modelo}...")
                 resp = requests.post(
                     "https://api.groq.com/openai/v1/chat/completions",
                     headers={
@@ -169,73 +260,28 @@ def generar_codigo_ia(prompt_usuario: str, historial: list = None, nombre_archiv
                 )
                 if resp.status_code == 200:
                     raw_content = resp.json()["choices"][0]["message"]["content"]
-                    datos = json.loads(raw_content)
+                    limpio = raw_content.strip()
+                    if limpio.startswith("```"):
+                        limpio = re.sub(r"^```(?:json)?\s*", "", limpio)
+                        limpio = re.sub(r"\s*```$", "", limpio)
+                    datos = json.loads(limpio)
                     datos["modelo_ia"] = f"groq/{modelo}"
                     print(f"[IA Groq] ¡Éxito con {modelo}!")
                     return datos
                 else:
-                    print(f"[IA Groq] Error en {modelo}: {resp.status_code} - {resp.text[:200]}")
+                    ultimo_error_groq = f"{resp.status_code} - {resp.text[:200]}"
+                    print(f"[IA Groq] Error en {modelo}: {ultimo_error_groq}")
             except Exception as e_groq:
+                ultimo_error_groq = e_groq
                 print(f"[IA Groq] Excepción con {modelo}: {e_groq}")
                 continue
-
-    # -------------------------------------------------------------
-    # 2. INTENTAR CON GEMINI (si Groq no responde o no está configurado)
-    # -------------------------------------------------------------
-    conversacion_texto = ""
-    for msg in historial:
-        rol = "Estudiante" if msg.get("rol") == "usuario" else "Tutor StudNova"
-        conversacion_texto += f"{rol}: {msg.get('texto')}\n"
-
-    conversacion_texto += f"Estudiante: {prompt_usuario}\n"
-
-    prompt_completo = f"""
-INSTRUCCIONES DEL TUTOR STUDNOVA:
-{PROMPT_TUTOR_PROFUNDO}
-
-HISTORIAL DE LA CONVERSACIÓN ACUMULADA:
-{conversacion_texto}
-
-INSTRUCCIÓN:
-Lee atentamente todo el historial. Si faltan datos, responde conversando con "tipo": "conversacion" de forma única y humana. Si ya tienes la materia y el tiempo/nivel, genera el plan con "tipo": "plan_generado".
-Responde ÚNICAMENTE con JSON válido:
-"""
-
-    texto_json = None
-    ultimo_error = None
-
-    try:
-        configuracion = types.GenerateContentConfig(response_mime_type="application/json")
-        client = get_gemini_client()
-        for modelo in MODELOS_CASCADA:
-            try:
-                print(f"[IA Gemini] Procesando con {modelo}...")
-                respuesta = client.models.generate_content(
-                    model=modelo,
-                    contents=prompt_completo,
-                    config=configuracion
-                )
-                if respuesta and respuesta.text:
-                    texto_json = respuesta.text
-                    break
-            except Exception as e:
-                ultimo_error = e
-                print(f"[IA Gemini] Error en modelo {modelo}: {e}")
-                continue
-    except Exception as e_client:
-        ultimo_error = e_client
-        print(f"[IA Gemini] No se pudo inicializar cliente Gemini: {e_client}")
-
-    if texto_json:
-        try:
-            return json.loads(texto_json)
-        except Exception as err_parse:
-            print(f"[IA Gemini] Error parseando respuesta JSON de Gemini: {err_parse}")
+    else:
+        print("[IA Groq] GROQ_API_KEY no configurada para fallback.")
 
     # -------------------------------------------------------------
     # 3. MODO CONTINGENCIA SEGURO (Nunca falla, garantiza HTTP 200)
     # -------------------------------------------------------------
-    print(f"[IA Contingencia] Activando modo contingencia por error en proveedores ({ultimo_error})")
+    print(f"[IA Contingencia] Activando modo contingencia por error en proveedores (Gemini: {ultimo_error_gemini}, Groq: {ultimo_error_groq})")
     return generar_plan_contingencia(prompt_usuario)
 
 

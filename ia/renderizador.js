@@ -150,6 +150,48 @@ function cargarPlanSeleccionado(plan) {
 }
 
 // ==========================================
+// GESTIÓN DE ARCHIVOS ADJUNTOS Y CONFIGURACIÓN
+// ==========================================
+let archivoAdjuntoActual = null;
+
+function activarInputArchivo() {
+    const input = document.getElementById('input-archivo');
+    if (input) input.click();
+}
+
+function manejarArchivoSeleccionado(evento) {
+    const file = evento.target.files && evento.target.files[0];
+    if (!file) return;
+
+    archivoAdjuntoActual = file;
+    const contenedor = document.getElementById('contenedor-adjunto');
+    const txtNombre = document.getElementById('nombre-archivo-adjunto');
+    const btnClip = document.getElementById('btn-adjuntar');
+
+    if (txtNombre) txtNombre.innerText = file.name;
+    if (contenedor) contenedor.style.display = 'flex';
+    if (btnClip) btnClip.classList.add('activo');
+}
+
+function quitarArchivoAdjunto() {
+    archivoAdjuntoActual = null;
+    const input = document.getElementById('input-archivo');
+    if (input) input.value = '';
+
+    const selModulos = document.getElementById('select-modulos');
+    if (selModulos) selModulos.value = '';
+
+    const selDuracion = document.getElementById('select-duracion');
+    if (selDuracion) selDuracion.value = '';
+
+    const contenedor = document.getElementById('contenedor-adjunto');
+    const btnClip = document.getElementById('btn-adjuntar');
+
+    if (contenedor) contenedor.style.display = 'none';
+    if (btnClip) btnClip.classList.remove('activo');
+}
+
+// ==========================================
 // ENVÍO DE MENSAJES Y CHAT
 // ==========================================
 function manejarEnter(e) {
@@ -159,18 +201,40 @@ function manejarEnter(e) {
     }
 }
 
-async function enviarMensaje() {
+async function enviarMensaje(forzarNuevo = false, promptPersonalizado = null) {
     const input = document.getElementById('prompt-input') || promptInput;
     const boton = document.getElementById('btn-enviar') || btnEnviar;
-    const texto = input ? input.value.trim() : '';
-    if (!texto) return;
+    const texto = promptPersonalizado !== null ? promptPersonalizado.trim() : (input ? input.value.trim() : '');
+
+    if (!texto && !archivoAdjuntoActual) return;
 
     const idUsuario = obtenerIdUsuario();
 
-    agregarMensajeUsuario(texto);
-    historialConversacion.push({ rol: "usuario", texto: texto });
+    // Solo usar opciones de módulos/duración si hay un archivo temario adjunto actualmente
+    const hayAdjunto = Boolean(archivoAdjuntoActual);
+    const selModulos = document.getElementById('select-modulos');
+    const selDuracion = document.getElementById('select-duracion');
+    const cantModulos = (hayAdjunto && selModulos && selModulos.value) ? Number(selModulos.value) : null;
+    const duracionDeseada = (hayAdjunto && selDuracion && selDuracion.value) ? selDuracion.value : null;
 
-    if (input) input.value = '';
+    // Etiqueta visual para el mensaje del usuario en el chat
+    let textoAMostrar = texto;
+    if (forzarNuevo && promptPersonalizado) {
+        textoAMostrar = `✨ Prefiero generar un plan nuevo desde cero sobre: "${texto}"`;
+    } else if (hayAdjunto) {
+        let detalleExtra = [];
+        if (cantModulos) detalleExtra.push(`${cantModulos} módulos`);
+        if (duracionDeseada) detalleExtra.push(duracionDeseada);
+        const strDetalle = detalleExtra.length > 0 ? ` (${detalleExtra.join(', ')})` : '';
+
+        const mensajeBase = texto || "Crea un plan de estudio a partir de este documento adjunto.";
+        textoAMostrar = `📄 [Adjunto: ${archivoAdjuntoActual.name}${strDetalle}]\n${mensajeBase}`;
+    }
+
+    agregarMensajeUsuario(textoAMostrar);
+    historialConversacion.push({ rol: "usuario", texto: textoAMostrar });
+
+    if (input && !promptPersonalizado) input.value = '';
     if (boton) {
         boton.disabled = true;
         boton.style.opacity = '0.5';
@@ -180,19 +244,38 @@ async function enviarMensaje() {
     scrollAlFondo();
 
     try {
-        // Consultar el generador de IA que crea planes con Gemini y guarda en la BD
-        const respuesta = await fetch(`${API_BASE}/api/ia/generar`, {
-            method: 'POST',
-            headers: { 
-                'Content-Type': 'application/json',
-                'Accept': 'application/json'
-            },
-            body: JSON.stringify({
-                prompt: texto,
-                historial: historialConversacion,
-                id_usuario: Number(idUsuario)
-            })
-        });
+        let respuesta;
+
+        // Si hay archivo adjunto real, usar el endpoint multipart
+        if (hayAdjunto) {
+            const formData = new FormData();
+            formData.append('prompt', texto || "Genera un plan de estudio pedagógico a partir de este documento.");
+            formData.append('id_usuario', Number(idUsuario));
+            if (cantModulos) formData.append('cantidad_modulos', cantModulos);
+            if (duracionDeseada) formData.append('duracion_personalizada', duracionDeseada);
+            formData.append('historial_json', JSON.stringify(historialConversacion.slice(0, -1)));
+            formData.append('archivo', archivoAdjuntoActual);
+
+            respuesta = await fetch(`${API_BASE}/api/ia/generar-con-archivo`, {
+                method: 'POST',
+                body: formData
+            });
+        } else {
+            // Flujo estándar conversacional JSON con bandera de forzar_nuevo
+            respuesta = await fetch(`${API_BASE}/api/ia/generar`, {
+                method: 'POST',
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({
+                    prompt: texto,
+                    historial: historialConversacion,
+                    id_usuario: Number(idUsuario),
+                    forzar_nuevo: Boolean(forzarNuevo)
+                })
+            });
+        }
 
         let datos;
         const textoRespuesta = await respuesta.text();
@@ -207,10 +290,18 @@ async function enviarMensaje() {
             throw new Error(datos.detail || 'Ocurrió un error al procesar la solicitud');
         }
 
-        const textoIA = datos.mensaje || datos.respuesta || "He procesado tu respuesta.";
-        historialConversacion.push({ rol: "ia", texto: textoIA });
-
         removerElemento(idCarga);
+
+        // CASO 1: Sugerencia de plan existente (Ahorro de tokens)
+        if (datos.tipo === "sugerencia_plan_existente") {
+            const textoIA = datos.mensaje || "He encontrado un plan existente similar a tu solicitud.";
+            historialConversacion.push({ rol: "ia", texto: textoIA });
+            agregarMensajeSugerenciaPlan(datos);
+            return;
+        }
+
+        const textoIA = datos.mensaje || datos.respuesta || "He procesado tu solicitud.";
+        historialConversacion.push({ rol: "ia", texto: textoIA });
 
         const tienePlan = (datos.tipo === "plan_generado") || 
                           (datos.plan && datos.plan.modulos && datos.plan.modulos.length > 0) || 
@@ -228,6 +319,9 @@ async function enviarMensaje() {
         } else {
             agregarMensajeIATexto(textoIA);
         }
+
+        // Limpiar archivo adjunto tras envío exitoso
+        quitarArchivoAdjunto();
 
     } catch (error) {
         removerElemento(idCarga);
@@ -277,6 +371,133 @@ function agregarMensajeIATexto(texto) {
         <div class="contenido"><p>${escaparHTML(texto)}</p></div>
     `;
     chatBox.appendChild(div);
+}
+
+// ==========================================
+// SUGERENCIA INTERACTIVA DE PLAN EXISTENTE
+// ==========================================
+window.planesSugeridos = window.planesSugeridos || {};
+
+function agregarMensajeSugerenciaPlan(datos) {
+    const div = document.createElement('div');
+    div.className = 'mensaje';
+
+    const plan = datos.plan_sugerido || {};
+    const idPlan = datos.id_plan;
+    window.planesSugeridos[idPlan] = plan;
+
+    const titulo = plan.titulo || "Plan de Estudio";
+    const descripcion = plan.descripcion || "Ruta estructurada de aprendizaje interactivo.";
+    const modulosCount = (plan.modulos && Array.isArray(plan.modulos)) ? plan.modulos.length : 3;
+    const materia = plan.materia || "Materia Principal";
+    const idCard = `sugerencia-${Date.now()}`;
+
+    div.innerHTML = `
+        <div class="avatar">🤖</div>
+        <div class="contenido" style="width: 85%;">
+            <div class="tarjeta-sugerencia" id="${idCard}">
+                <div class="sugerencia-badge">💡 Plan similar encontrado en biblioteca</div>
+                <div class="sugerencia-titulo">${escaparHTML(titulo)}</div>
+                <div class="sugerencia-desc">${escaparHTML(descripcion)}</div>
+                
+                <div class="sugerencia-meta">
+                    <span class="meta-item">📖 ${modulosCount} módulos</span>
+                    <span class="meta-item">🏷️ ${escaparHTML(materia)}</span>
+                    <span class="meta-item ahorro">⚡ 0 tokens requeridos (Carga instantánea)</span>
+                </div>
+
+                <p style="font-size: 0.9rem; color: #f1f5f9; margin-bottom: 12px; font-weight: 500;">
+                    Ya existe este plan estructurado que cubre tu consulta. ¿Qué deseas hacer?
+                </p>
+
+                <div class="sugerencia-acciones">
+                    <button type="button" class="btn-sugerencia btn-sugerencia-aceptar" onclick="aceptarPlanSugerido(${idPlan}, '${idCard}')">
+                        📖 1. Ver este plan existente
+                    </button>
+                    <button type="button" class="btn-sugerencia btn-sugerencia-nuevo" onclick="forzarGeneracionNueva('${escaparHTML(datos.prompt_original)}', '${idCard}')">
+                        ✨ 2. Generar un plan nuevo con IA
+                    </button>
+                </div>
+            </div>
+        </div>
+    `;
+
+    chatBox.appendChild(div);
+    scrollAlFondo();
+}
+
+async function aceptarPlanSugerido(idPlan, idCard) {
+    const contenedorCard = document.getElementById(idCard);
+    if (contenedorCard) {
+        const botones = contenedorCard.querySelectorAll('button');
+        botones.forEach(b => {
+            b.disabled = true;
+            b.style.opacity = '0.5';
+        });
+    }
+
+    const idCarga = agregarMensajeCarga();
+    scrollAlFondo();
+
+    try {
+        const idUsuario = obtenerIdUsuario();
+        const res = await fetch(`${API_BASE}/api/ia/aceptar-sugerencia`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify({
+                id_plan: Number(idPlan),
+                id_usuario: Number(idUsuario)
+            })
+        });
+
+        removerElemento(idCarga);
+
+        if (!res.ok) {
+            const errData = await res.json().catch(() => ({}));
+            throw new Error(errData.detail || "Error al cargar el plan existente");
+        }
+
+        const datos = await res.json();
+        const planObjeto = datos.plan || window.planesSugeridos[idPlan];
+
+        window.ultimoPlanGenerado = planObjeto;
+        localStorage.setItem("plan_estudio_actual", JSON.stringify(planObjeto));
+        cargarHistorialPlanes();
+
+        if (contenedorCard) {
+            contenedorCard.style.borderColor = '#10b981';
+            const acciones = contenedorCard.querySelector('.sugerencia-acciones');
+            if (acciones) {
+                acciones.innerHTML = '<span style="color: #34d399; font-size: 0.85rem; font-weight: bold;">✔️ Has seleccionado ver este plan existente</span>';
+            }
+        }
+
+        agregarMensajeIARespuestaPlan(datos, planObjeto);
+
+    } catch (e) {
+        removerElemento(idCarga);
+        agregarMensajeError(e.message);
+    }
+}
+
+function forzarGeneracionNueva(promptOriginal, idCard) {
+    const contenedorCard = document.getElementById(idCard);
+    if (contenedorCard) {
+        const botones = contenedorCard.querySelectorAll('button');
+        botones.forEach(b => {
+            b.disabled = true;
+            b.style.opacity = '0.5';
+        });
+        const acciones = contenedorCard.querySelector('.sugerencia-acciones');
+        if (acciones) {
+            acciones.innerHTML = '<span style="color: #60a5fa; font-size: 0.85rem; font-weight: bold;">⚙️ Generando nueva versión personalizada...</span>';
+        }
+    }
+
+    enviarMensaje(true, promptOriginal);
 }
 
 function agregarMensajeIARespuestaPlan(datos, planObjeto) {

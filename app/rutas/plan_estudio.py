@@ -68,7 +68,7 @@ def generar_y_crear_plan(solicitud: GenerarPlanSchema, sesion: Session = Depends
 
     try:
         response = client.models.generate_content(
-            model='gemini-2.5-flash',
+            model='gemini-3.5-flash-lite',
             contents=prompt
         )
         texto_limpio = response.text.replace("```json", "").replace("```", "").strip()
