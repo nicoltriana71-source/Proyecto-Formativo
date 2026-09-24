@@ -10,7 +10,6 @@
    POST /usuario/login
 
    La sesión del usuario se mantiene en localStorage.
-   Las cuentas YA NO se almacenan en localStorage.
    ============================================================ */
 
 (function () {
@@ -108,7 +107,6 @@
 
     /* ============================================================
        STUDNOVA SESSION
-       Compatible con interfaz.html
        ============================================================ */
 
     window.StudNovaSession = {
@@ -123,6 +121,15 @@
         },
         isAuthenticated: function () {
             return getSession() !== null;
+        },
+        openChat: function () {
+            if (!this.isAuthenticated()) {
+                showToast("Debes iniciar sesión para acceder al chat de IA.", "error");
+                openModal("login");
+                return;
+            }
+            // Redirige a la interfaz del chat dentro de la carpeta /ia
+            window.location.href = "../ia/interfaz.html";
         }
     };
 
@@ -553,6 +560,7 @@
     const navLoggedIn = document.getElementById("navCtaLoggedIn");
     const userChipAvatar = document.getElementById("userChipAvatar");
     const userChipName = document.getElementById("userChipName");
+    const openChatBtn = document.getElementById("openChatBtn");
     const logoutBtn = document.getElementById("logoutBtn");
     const dashboardBanner = document.getElementById("dashboardBanner");
     const dashboardGreeting = document.getElementById("dashboardGreeting");
@@ -583,8 +591,14 @@
 
 
     /* ============================================================
-       CERRAR SESIÓN
+       ACCIONES DE BOTONES
        ============================================================ */
+
+    if (openChatBtn) {
+        openChatBtn.addEventListener("click", () => {
+            window.StudNovaSession.openChat();
+        });
+    }
 
     if (logoutBtn) {
         logoutBtn.addEventListener("click", () => {

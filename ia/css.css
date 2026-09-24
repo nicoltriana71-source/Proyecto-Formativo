@@ -237,7 +237,7 @@ body {
 .btn-nuevo-chat {
   position: absolute;
   top: 20px;
-  right: 160px;
+  right: 140px;
   z-index: 10;
   width: auto;
   height: 35px;
@@ -245,12 +245,12 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  background: #2563eb;
+  background: #16446A;
   color: white;
   font-weight: bold;
   font-size: 13px;
   border-radius: 8px;
-  border: 1px solid #3b82f6;
+  border: 1px solid #16446A;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
   cursor: pointer;
   text-decoration: none;
@@ -258,21 +258,21 @@ body {
 }
 
 .btn-nuevo-chat:hover {
-  background: #1d4ed8;
-  border-color: #60a5fa;
+  background: #16446A;
+  border-color: #0e4282;
   transform: translateY(-1px);
 }
 
 .btn-sidebar-nuevo-chat {
   width: 100%;
   padding: 10px 14px;
-  margin-bottom: 15px;
-  background: #2563eb;
+  margin-bottom: 10px;
+  background: #16446A;
   color: white;
   font-weight: bold;
   font-size: 13px;
   border-radius: 8px;
-  border: 1px solid #3b82f6;
+  border: 1px solid #0e336d;
   cursor: pointer;
   display: flex;
   justify-content: center;
@@ -282,7 +282,7 @@ body {
 }
 
 .btn-sidebar-nuevo-chat:hover {
-  background: #1d4ed8;
+  background: #16446A;
 }
 
 .chat {
@@ -463,7 +463,8 @@ textarea::placeholder {
 }
 
 button {
-  width: 130px;
+  width: 100px;
+  height: 67px;
   border: none;
   border-radius: 12px;
   background: #18345A;

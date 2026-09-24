@@ -12,12 +12,10 @@
 <body>
 
 <header>
-  
   <nav class="wrap">
     <div class="logo">
-      <div class="logo" id="logo"></div> 
-      <img src="/login/image.png" alt="logo Stud nova" class="logo-img">
-      StudNova
+      <img src="/login/image.png" alt="logo StudNova" class="logo-img">
+      <span>StudNova</span>
     </div>
     <button type="button" class="hamburger" id="hamburgerBtn" aria-label="Abrir menú" aria-expanded="false" aria-controls="navCollapsible">
       <span></span><span></span><span></span>
@@ -31,15 +29,16 @@
       </div>
       <div class="nav-cta" id="navCtaLoggedOut">
         <button type="button" class="theme-toggle" id="themeToggle" title="Cambiar modo">🌙</button>
-        <a href="/login/login.html"> Iniciar sesión </a>
+        <a href="/login/login.html" class="btn btn-primary">Iniciar sesión</a>
       </div>
       <div class="nav-cta" id="navCtaLoggedIn" hidden>
         <button type="button" class="theme-toggle" title="Cambiar modo">🌙</button>
         <span class="user-chip">
-          <span class="user-chip-avatar" id="userChipAvatar">?</span>
-          <span class="user-chip-name" id="userChipName">Usuario</span>
+            <span class="user-chip-avatar" id="userChipAvatar">L</span>
+            <span class="user-chip-name" id="userChipName">Laura Tavera</span>
         </span>
-        <button type="button" class="btn btn-primary" id="logoutBtn">Cerrar sesión</button>
+        <button type="button" class="btn btn-primary" id="openChatBtn">Abrir chat</button>
+        <button type="button" class="btn btn-secondary" id="logoutBtn">Cerrar sesión</button>
       </div>
     </div>
   </nav>
@@ -263,7 +262,7 @@
         <span class="style-badge v">Práctica</span>
         <div>
           <h4>Actividades</h4>
-          <p>Recomendaqcion de ejercicios al final de cada nivel para medir tu progreso real, no solo tu avance en el temario.</p>
+          <p>Recomendación de ejercicios al final de cada nivel para medir tu progreso real, no solo tu avance en el temario.</p>
         </div>
       </div>
     </div>
@@ -318,9 +317,8 @@
 <footer>
   <nav class="wrap">
     <div class="logo">
-      <div class="logo" id="logo"></div> 
-      <img src="../image.png" alt="logo Stud nova" class="logo-img">
-      StudNova
+      <img src="../image.png" alt="logo StudNova" class="logo-img">
+      <span>StudNova</span>
     </div>
     <div class="footer-links">
       <a href="#problema">El problema</a>
@@ -331,87 +329,6 @@
     <div class="footer-note">Proyecto formativo · Análisis y Desarrollo de Software</div>
   </nav>
 </footer>
-
-<!-- ===== MODAL: OVERLAY COMPARTIDO ===== -->
-<div class="modal-overlay" id="modalOverlay">
-
-  <!-- ----- Modal: Iniciar sesión ----- -->
-  <div class="modal-card" id="loginModal" role="dialog" aria-modal="true" aria-labelledby="loginTitle">
-    <button type="button" class="modal-close" data-close-modal aria-label="Cerrar">✕</button>
-    <span class="eyebrow">Bienvenido de nuevo</span>
-    <h2 class="modal-title" id="loginTitle">Inicia sesión</h2>
-    <p class="modal-sub">Entra para seguir con tu ruta de aprendizaje.</p>
-
-    <form id="loginForm" novalidate>
-      <div class="field">
-        <label for="loginEmail">Correo electrónico</label>
-        <input type="email" id="loginEmail" name="email" autocomplete="email" placeholder="tucorreo@ejemplo.com">
-        <span class="field-error" id="loginEmailError"></span>
-      </div>
-      <div class="field">
-        <label for="loginPassword">Contraseña</label>
-        <div class="password-wrap">
-          <input type="password" id="loginPassword" name="password" autocomplete="current-password" placeholder="••••••••">
-          <button type="button" class="toggle-pass" data-toggle-pass="loginPassword" aria-label="Mostrar contraseña">Ver</button>
-        </div>
-        <span class="field-error" id="loginPasswordError"></span>
-      </div>
-
-      <div class="form-banner" id="loginFormBanner" hidden></div>
-
-      <button type="submit" class="btn btn-primary btn-block">Iniciar sesión</button>
-    </form>
-
-    <p class="modal-switch">¿No tienes cuenta? <button type="button" class="link-btn" data-open-modal="signup">Crear una cuenta</button></p>
-  </div>
-
-  <!-- ----- Modal: Crear cuenta ----- -->
-  <div class="modal-card" id="signupModal" role="dialog" aria-modal="true" aria-labelledby="signupTitle" hidden>
-    <button type="button" class="modal-close" data-close-modal aria-label="Cerrar">✕</button>
-    <span class="eyebrow">Empieza hoy</span>
-    <h2 class="modal-title" id="signupTitle">Crea tu cuenta</h2>
-    <p class="modal-sub">Tu primer paso hacia un plan de estudios hecho a tu medida.</p>
-
-    <form id="signupForm" novalidate>
-      <div class="field">
-        <label for="signupName">Nombre completo</label>
-        <input type="text" id="signupName" name="name" autocomplete="name" placeholder="Tu nombre">
-        <span class="field-error" id="signupNameError"></span>
-      </div>
-      <div class="field">
-        <label for="signupEmail">Correo electrónico</label>
-        <input type="email" id="signupEmail" name="email" autocomplete="email" placeholder="tucorreo@ejemplo.com">
-        <span class="field-error" id="signupEmailError"></span>
-      </div>
-      <div class="field">
-        <label for="signupPassword">Contraseña</label>
-        <div class="password-wrap">
-          <input type="password" id="signupPassword" name="password" autocomplete="new-password" placeholder="Mínimo 8 caracteres">
-          <button type="button" class="toggle-pass" data-toggle-pass="signupPassword" aria-label="Mostrar contraseña">Ver</button>
-        </div>
-        <div class="strength-meter" id="strengthMeter">
-          <span></span><span></span><span></span><span></span>
-        </div>
-        <span class="field-error" id="signupPasswordError"></span>
-      </div>
-      <div class="field">
-        <label for="signupPasswordConfirm">Confirmar contraseña</label>
-        <input type="password" id="signupPasswordConfirm" name="passwordConfirm" autocomplete="new-password" placeholder="Repite tu contraseña">
-        <span class="field-error" id="signupPasswordConfirmError"></span>
-      </div>
-
-      <div class="form-banner" id="signupFormBanner" hidden></div>
-
-      <button type="submit" class="btn btn-primary btn-block">Crear mi cuenta</button>
-    </form>
-
-    <p class="modal-switch">¿Ya tienes cuenta? <button type="button" class="link-btn" data-open-modal="login">Inicia sesión</button></p>
-  </div>
-
-</div>
-
-<!-- ===== TOASTS ===== -->
-<div class="toast-stack" id="toastStack" aria-live="polite"></div>
 
 <script src="auth.js"></script>
 

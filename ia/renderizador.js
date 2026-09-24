@@ -83,10 +83,9 @@ function obtenerIdUsuario() {
 // CERRAR SESIÓN
 // ==========================================
 function cerrarSesion() {
-    if (!confirm("¿Seguro que quieres cerrar sesión?")) return;
     localStorage.clear();
     sessionStorage.clear();
-    window.location.href = "/login/login.html";
+    window.location.href = "../principal interfaz/index.html";
 }
 
 // ==========================================
@@ -423,6 +422,36 @@ function iniciarNuevoChat() {
         toggleMenu();
     }
 }
+// ==========================================
+// INICIAR NUEVO CHAT (SIN CONFIRMACIÓN)
+// ==========================================
+function iniciarNuevoChat() {
+    const idUsuario = obtenerIdUsuario();
+    localStorage.removeItem(`studnova_chat_historial_${idUsuario}`);
+    localStorage.removeItem(`studnova_chat_mensajes_ui_${idUsuario}`);
+    localStorage.removeItem(`studnova_ultimo_plan_${idUsuario}`);
+    historialConversacion = [];
+    listaMensajesUI = [];
+    window.ultimoPlanGenerado = null;
+
+    if (chatBox) {
+        chatBox.innerHTML = `
+            <div class="mensaje">
+                <div class="avatar">
+                    <img src="/login/image.png" alt="Logo" width="50" height="50" class="logo" style="border-radius:50%; object-fit:cover;">
+                </div>
+                <div class="contenido">
+                    <p>¡Hola! 👋 Soy tu asistente de <strong>StudNova IA</strong>.</p>
+                    <p style="margin-top: 8px;">Cuéntame, ¿qué materia o tema te gustaría aprender hoy?</p>
+                </div>
+            </div>
+        `;
+    }
+    quitarArchivoAdjunto();
+    if (sidebar && sidebar.classList.contains('active')) {
+        toggleMenu();
+    }
+}
 
 // ==========================================
 // RENDERIZADO DE MENSAJES EN EL CHAT (DOM)
@@ -450,7 +479,7 @@ function agregarMensajeCarga() {
     div.className = 'mensaje';
     div.id = id;
     div.innerHTML = `
-        <div class="avatar">🤖</div>
+        <div class="avatar"><img src="avatar.png" alt="Avatar IA" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;"></div>
         <div class="contenido"><p>⏳ <em>StudNova IA está respondiendo...</em></p></div>
     `;
     chatBox.appendChild(div);
@@ -461,7 +490,7 @@ function renderizarDOMMensajeIATexto(texto) {
     const div = document.createElement('div');
     div.className = 'mensaje';
     div.innerHTML = `
-        <div class="avatar">🤖</div>
+        <div class="avatar"><img src="avatar.png" alt="Avatar IA" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;"></div>
         <div class="contenido"><p>${escaparHTML(texto)}</p></div>
     `;
     chatBox.appendChild(div);
@@ -493,7 +522,7 @@ function renderizarDOMMensajeSugerencia(datos) {
     const idCard = `sugerencia-${Date.now()}-${Math.floor(Math.random()*1000)}`;
 
     div.innerHTML = `
-        <div class="avatar">🤖</div>
+        <div class="avatar"><img src="avatar.png" alt="Avatar IA" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;"></div>
         <div class="contenido" style="width: 85%;">
             <div class="tarjeta-sugerencia" id="${idCard}">
                 <div class="sugerencia-badge">💡 Plan similar encontrado en biblioteca</div>
@@ -610,26 +639,33 @@ function renderizarDOMMensajeIAPlan(datos, planObjeto) {
     const div = document.createElement('div');
     div.className = 'mensaje';
 
+    // Guardar el plan en localStorage antes de incrustar el iframe o renderizar
+    if (planObjeto) {
+        localStorage.setItem("plan_estudio_actual", JSON.stringify(planObjeto));
+    }
+
     const mensajeTexto = datos.mensaje || datos.respuesta || "✨ ¡Plan de estudio generado con éxito!";
     const idPlan = datos.id_plan || (planObjeto && planObjeto.id_plan) || "";
     const urlVisor = `/principal/interfaz plan de estudio/visor_plan.html${idPlan ? `?id=${idPlan}` : ''}`;
 
     div.innerHTML = `
-        <div class="avatar">🤖</div>
-        <div class="contenido" style="width: 85%;">
-            <p><strong>${escaparHTML(mensajeTexto)}</strong></p>
-            <p style="margin-top: 5px; font-size: 14px; opacity: 0.9;">
-                He estructurado tu ruta de aprendizaje a tu medida con quizzes y control de fatiga.
-            </p>
-            <div style="margin: 12px 0;">
-                <a href="${urlVisor}" style="display:inline-block; padding: 8px 16px; background:#2563eb; color:white; text-decoration:none; border-radius:8px; font-weight:bold; font-size:14px;">
-                    ↗️ Abrir Plan en Pantalla Completa
-                </a>
-            </div>
-            <div style="border-radius: 10px; overflow: hidden; border: 1px solid #334155; margin-top: 10px;">
-                <iframe src="${urlVisor}" style="width: 100%; height: 500px; border: none; background: #0f172a;"></iframe>
-            </div>
-        </div>
+       <div class="avatar">
+    <img src="avatar.png" alt="Avatar IA" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">
+</div>
+<div class="contenido" style="width: 85%;">
+    <p><strong>${escaparHTML(mensajeTexto)}</strong></p>
+    <p style="margin-top: 5px; font-size: 14px; opacity: 0.9;">
+        He estructurado tu ruta de aprendizaje a tu medida con quizzes y control de fatiga.
+    </p>
+    <div style="margin: 12px 0;">
+        <a href="${urlVisor}" style="display:inline-block; padding: 8px 16px; background:#2563eb; color:white; text-decoration:none; border-radius:8px; font-weight:bold; font-size:14px;">
+            ↗️ Abrir Plan en Pantalla Completa
+        </a>
+    </div>
+    <div style="border-radius: 10px; overflow: hidden; border: 1px solid #334155; margin-top: 10px;">
+        <iframe src="${urlVisor}" style="width: 100%; height: 500px; border: none; background: #0f172a;"></iframe>
+    </div>
+</div>
     `;
 
     // Enviar el plan directamente al iframe vía postMessage cuando termine de cargar
