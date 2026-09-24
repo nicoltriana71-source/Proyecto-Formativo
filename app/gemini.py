@@ -16,7 +16,6 @@ load_dotenv(BASE_DIR / ".env")
 load_dotenv(ROOT_DIR / ".env")
 
 MODELOS_CASCADA = [
-    
     "gemini-flash-lite-latest"
 ]
 
@@ -56,31 +55,38 @@ def obtener_embedding(texto: str) -> list:
     return []
 
 
-# PROMPT DINÁMICO Y NATURAL
+# PROMPT DINÁMICO, PEDAGÓGICO Y MULTIMODULAR
 PROMPT_TUTOR_PROFUNDO = """
 Eres el tutor pedagógico inteligente y cercano de StudNova IA.
-Tu objetivo es conversar de forma natural, empática y dinámica con el estudiante.
+Tu objetivo es conversar de forma natural, empática y dinámica con el estudiante para estructurar su aprendizaje de forma personalizada.
 
-REGLAS DE CONVERSACIÓN (¡MUY IMPORTANTE!):
-1. ¡NUNCA repitas el mismo mensaje de saludo en cada turno! Habla como un humano.
-2. Responde directamente a lo que el estudiante acaba de escribir:
-   - Si saluda o pregunta cómo estás: Responde con amabilidad y pregúntale qué le gustaría aprender hoy.
-   - Si menciona una materia (ej: "robótica", "python", "álgebra"): Muestra entusiasmo por ese tema específico y hazle preguntas naturales (¿qué nivel tiene?, ¿cuántas horas o semanas tiene disponibles?, ¿quiere enfocarse en software o hardware?).
-   - Si el estudiante da respuestas cortas (ej: "robótica", "2 semanas"): Conecta los datos con lo que dijo antes y pídele el último detalle que falte o confirma si quiere el plan.
-3. SI YA TIENES LA MATERIA Y EL TIEMPO O NIVEL (o el estudiante pide el plan explícitamente): Genera el plan de estudio completo y profundo.
+REGLAS DE CONVERSACIÓN (¡OBLIGATORIAS!):
+1. ¡NUNCA repitas el mismo mensaje de saludo en cada turno! Habla como un tutor humano cálido y motivador.
+2. SI EL ESTUDIANTE INDICA UN TEMA O SOLICITA UN NUEVO PLAN (ej: "álgebra", "quiero aprender python", "crear un nuevo plan"):
+   - NO generes el plan de inmediato si aún no tienes el tiempo disponible o la cantidad de módulos.
+   - Responde con "tipo": "conversacion" mostrando entusiasmo por el tema y pregúntale amablemente:
+     a) ¿En cuánto tiempo planea estudiarlo o completarlo? (ej: 2 semanas, 1 mes).
+     b) ¿En cuántos módulos desea dividirlo? (recomiéndale entre 3 y 6 módulos para un progreso estructurado).
+3. CUÁNDO GENERAR EL PLAN ("tipo": "plan_generado"):
+   - ÚNICAMENTE genera el plan cuando el estudiante haya respondido o definido el tiempo estimado O la cantidad de módulos que desea.
+   - O si el estudiante adjuntó un documento temario explícito.
+4. REGLA ESTRICTA DE MÓDULOS:
+   - Un plan de estudio NUNCA debe contener un solo módulo, a menos que el usuario lo pida expresamente.
+   - Si el usuario solicitó N módulos, genera EXACTAMENTE N módulos bien diferenciados.
+   - Si no especificó un número exacto pero ya dio el tiempo, genera por defecto entre 3 y 4 módulos progresivos (Fundamentos -> Profundización -> Aplicación Práctica).
 
 ESTRUCTURA DE RESPUESTA EN JSON PURO:
 
-CASO 1: MIENTRAS ESTÉS CONVERSANDO O PIDIENDO DETALLES:
+CASO 1: MIENTRAS ESTÉS CONVERSANDO O PIDIENDO DETALLES DE TIEMPO / MÓDULOS:
 {
   "tipo": "conversacion",
-  "mensaje": "Escribe aquí una respuesta única, natural y adaptada a lo que el estudiante acaba de decir (NUNCA uses una plantilla fija)."
+  "mensaje": "Escribe aquí tu respuesta empática, preguntando el tiempo y número de módulos que desea el estudiante."
 }
 
-CASO 2: CUANDO YA TENGAS LOS DATOS Y GENERES EL PLAN:
+CASO 2: CUANDO YA TENGAS LOS PARÁMETROS Y GENERES EL PLAN COMPLETO:
 {
   "tipo": "plan_generado",
-  "mensaje": "¡Excelente! He estructurado tu plan de estudio personalizado para [Materia] en [X tiempo]:",
+  "mensaje": "¡Excelente! He estructurado tu plan de estudio personalizado para [Materia] en [X tiempo] distribuido en [N] módulos:",
   "plan": {
     "titulo": "Título atractivo y profesional del plan",
     "descripcion": "Objetivos pedagógicos del plan de estudio.",
@@ -91,7 +97,7 @@ CASO 2: CUANDO YA TENGAS LOS DATOS Y GENERES EL PLAN:
         "id": "mod-1",
         "nivel_tag": "Nivel 1: Fundamentos",
         "nivel_clase": "basico",
-        "titulo": "Nombre del Módulo",
+        "titulo": "Nombre del Módulo 1",
         "teoria_modulo": "Marco teórico del módulo explicando los conceptos fundamentales.",
         "lecciones": [
           {
@@ -116,6 +122,64 @@ CASO 2: CUANDO YA TENGAS LOS DATOS Y GENERES EL PLAN:
             "opciones": ["Opción A", "Opción B", "Opción C", "Opción D"],
             "indice_correcto": 0,
             "explicacion": "Explicación de la respuesta."
+          }
+        ]
+      },
+      {
+        "id": "mod-2",
+        "nivel_tag": "Nivel 2: Profundización y Métodos",
+        "nivel_clase": "intermedio",
+        "titulo": "Nombre del Módulo 2",
+        "teoria_modulo": "Marco teórico intermedio y métodos prácticos.",
+        "lecciones": [
+          {
+            "titulo": "Nombre de la lección intermedia",
+            "duracion_minutos": 50,
+            "concepto_teorico": "Explicación técnica y práctica intermedia.",
+            "puntos_clave": ["Punto clave intermedio 1", "Punto clave intermedio 2"],
+            "ejemplo_codigo_o_formula": "Ejemplo intermedio aplicado.",
+            "ejercicio_practico": {
+              "enunciado": "Ejercicio práctico intermedio.",
+              "solucion_paso_a_paso": "Solución paso a paso."
+            }
+          }
+        ],
+        "mini_quizzes": [
+          {
+            "titulo": "Comprobación de Concepto 2",
+            "pregunta": "¿Pregunta del módulo 2?",
+            "opciones": ["Opción A", "Opción B", "Opción C", "Opción D"],
+            "indice_correcto": 0,
+            "explicacion": "Explicación."
+          }
+        ]
+      },
+      {
+        "id": "mod-3",
+        "nivel_tag": "Nivel 3: Aplicación Avanzada y Proyectos",
+        "nivel_clase": "avanzado",
+        "titulo": "Nombre del Módulo 3",
+        "teoria_modulo": "Integración y aplicaciones reales del conocimiento adquirido.",
+        "lecciones": [
+          {
+            "titulo": "Nombre de la lección avanzada",
+            "duracion_minutos": 60,
+            "concepto_teorico": "Explicación avanzada orientada a soluciones reales.",
+            "puntos_clave": ["Punto avanzado 1", "Punto avanzado 2"],
+            "ejemplo_codigo_o_formula": "Proyecto o caso real integrado.",
+            "ejercicio_practico": {
+              "enunciado": "Reto práctico integrador.",
+              "solucion_paso_a_paso": "Solución detallada."
+            }
+          }
+        ],
+        "mini_quizzes": [
+          {
+            "titulo": "Comprobación de Concepto 3",
+            "pregunta": "¿Pregunta del módulo avanzado?",
+            "opciones": ["Opción A", "Opción B", "Opción C", "Opción D"],
+            "indice_correcto": 0,
+            "explicacion": "Explicación."
           }
         ]
       }
@@ -149,12 +213,15 @@ Debes estructurar el plan de estudio basándote FIELMENTE en los temas, capítul
 
     bloque_restricciones = ""
     if cantidad_modulos and int(cantidad_modulos) > 0:
-        bloque_restricciones += f"\n- REQUISITO DE MÓDULOS: El plan DEBE contener EXACTAMENTE {cantidad_modulos} módulos (ni más ni menos)."
+        bloque_restricciones += f"\n- REQUISITO ESTRICTO DE MÓDULOS: El plan DEBE contener EXACTAMENTE {cantidad_modulos} módulos (ni más ni menos). Cada módulo debe tener lecciones completas y mini quizzes."
+    else:
+        bloque_restricciones += "\n- REQUISITO GENERAL DE MÓDULOS: Si vas a generar el plan, este DEBE tener entre 3 y 5 módulos progresivos y completos (NUNCA generes solo 1 módulo)."
+
     if duracion_personalizada and str(duracion_personalizada).strip():
-        bloque_restricciones += f"\n- REQUISITO DE TIEMPO: El plan debe estructurarse para completarse en {str(duracion_personalizada).strip()}."
+        bloque_restricciones += f"\n- REQUISITO ESTRICTO DE TIEMPO: El plan debe estructurarse para completarse en {str(duracion_personalizada).strip()}."
 
     # -------------------------------------------------------------
-    # 1. INTENTAR CON GEMINI (1ª OPCIÓN: gemini-3.5-flash-lite)
+    # 1. INTENTAR CON GEMINI (1ª OPCIÓN: gemini-flash-lite-latest)
     # -------------------------------------------------------------
     conversacion_texto = ""
     for msg in historial:
@@ -163,11 +230,11 @@ Debes estructurar el plan de estudio basándote FIELMENTE en los temas, capítul
 
     conversacion_texto += f"Estudiante: {prompt_usuario}\n"
 
-    instruccion_accion = (
-        "Dado que el estudiante ha adjuntado un documento o especificado módulos, GENERA DIRECTAMENTE el plan con 'tipo': 'plan_generado'."
-        if (bloque_documento or bloque_restricciones)
-        else "Lee atentamente todo el historial. Si faltan datos, responde conversando con 'tipo': 'conversacion' de forma única y humana. Si ya tienes la materia y el tiempo/nivel, genera el plan con 'tipo': 'plan_generado'."
-    )
+    # Control de acción: solo genera directo si hay documento o si ya se especificaron módulos y tiempo
+    if bloque_documento or (cantidad_modulos and duracion_personalizada):
+        instruccion_accion = "El estudiante ya proporcionó los parámetros necesarios o adjuntó un documento. GENERA DIRECTAMENTE el plan completo con 'tipo': 'plan_generado' cumpliendo la cantidad de módulos solicitada."
+    else:
+        instruccion_accion = "Lee atentamente el historial. Si el estudiante recién menciona el tema o solicitó un nuevo plan pero NO ha indicado la duración o los módulos deseados, RESPONDE CON 'tipo': 'conversacion' y pregúntale ambos datos antes de generar el plan. Si ya indicó ambos datos en los mensajes, genera el plan con 'tipo': 'plan_generado' con al menos 3 módulos."
 
     prompt_completo = f"""
 INSTRUCCIONES DEL TUTOR STUDNOVA:
@@ -178,8 +245,9 @@ INSTRUCCIONES DEL TUTOR STUDNOVA:
 HISTORIAL DE LA CONVERSACIÓN ACUMULADA:
 {conversacion_texto}
 
-INSTRUCCIÓN:
+INSTRUCCIÓN ESPECÍFICA PARA ESTE TURNO:
 {instruccion_accion}
+
 Responde ÚNICAMENTE con JSON válido:
 """
 
@@ -228,16 +296,16 @@ Responde ÚNICAMENTE con JSON válido:
         messages = [
             {
                 "role": "system",
-                "content": f"Eres el tutor pedagógico inteligente de StudNova IA. Debes responder EXCLUSIVAMENTE con un objeto JSON válido siguiendo estas reglas:\n\n{PROMPT_TUTOR_PROFUNDO}"
+                "content": f"Eres el tutor pedagógico inteligente de StudNova IA. Debes responder EXCLUSIVAMENTE con un objeto JSON válido siguiendo estas reglas:\n\n{PROMPT_TUTOR_PROFUNDO}\n\n{bloque_restricciones}"
             }
         ]
         for msg in historial:
             rol = "user" if msg.get("rol") == "usuario" else "assistant"
             messages.append({"role": rol, "content": msg.get("texto") or ""})
             
-        prompt_groq_final = prompt_usuario
-        if bloque_documento or bloque_restricciones:
-            prompt_groq_final = f"{prompt_usuario}\n\n{bloque_documento}\n{bloque_restricciones}\n\nGenera directamente el plan completo en JSON con 'tipo': 'plan_generado'."
+        prompt_groq_final = f"{prompt_usuario}\n\n{instruccion_accion}"
+        if bloque_documento:
+            prompt_groq_final += f"\n\n{bloque_documento}"
         messages.append({"role": "user", "content": prompt_groq_final})
 
         for modelo in groq_models:
@@ -279,7 +347,7 @@ Responde ÚNICAMENTE con JSON válido:
         print("[IA Groq] GROQ_API_KEY no configurada para fallback.")
 
     # -------------------------------------------------------------
-    # 3. MODO CONTINGENCIA SEGURO (Nunca falla, garantiza HTTP 200)
+    # 3. MODO CONTINGENCIA SEGURO (Garantiza múltiples módulos)
     # -------------------------------------------------------------
     print(f"[IA Contingencia] Activando modo contingencia por error en proveedores (Gemini: {ultimo_error_gemini}, Groq: {ultimo_error_groq})")
     return generar_plan_contingencia(prompt_usuario)
@@ -300,7 +368,7 @@ def generar_plan_contingencia(prompt_usuario: str) -> dict:
     if not es_solicitud_plan and len(prompt_usuario.split()) < 4:
         return {
             "tipo": "conversacion",
-            "mensaje": "¡Hola! 👋 Soy tu tutor pedagógico de StudNova IA. Cuéntame, ¿qué materia o tema te gustaría aprender hoy?"
+            "mensaje": f"¡Hola! 👋 Me encanta el tema **{materia}**. Para armar tu plan a medida, ¿en cuántas semanas planeas estudiarlo y en cuántos módulos te gustaría distribuirlo?"
         }
 
     return {
