@@ -173,7 +173,7 @@ function renderizarPlan(plan) {
 
         // D. Tarjeta del Módulo
         const htmlModulo = `
-            <section class="modulo-card">
+            <section class="modulo-card" id="card-${idMod}">
                 <div class="modulo-header" onclick="alternarModulo('${idMod}'); autoIniciarTimer();">
                     <div class="modulo-titulo-area">
                         <span class="nivel-tag ${claseNivel}">${escapar(tagNivel)}</span>
@@ -196,6 +196,7 @@ function renderizarPlan(plan) {
     });
 
     actualizarProgreso();
+    restaurarEstadoProgresoLocal();
 }
 
 function alternarGuia(idLec, boton) {
@@ -206,6 +207,17 @@ function alternarGuia(idLec, boton) {
         guia.style.display = 'block';
         boton.innerText = "✖ Cerrar Lección";
         boton.style.background = "#475569";
+
+        // Marcar AUTOMÁTICAMENTE la lección como completada al abrirla para estudiar
+        const tareaContenedor = boton.closest('.tarea-contenedor');
+        if (tareaContenedor) {
+            const chk = tareaContenedor.querySelector('input[type="checkbox"]');
+            if (chk && !chk.checked) {
+                chk.checked = true;
+                actualizarProgreso(chk);
+                guardarEstadoProgresoLocal();
+            }
+        }
     } else {
         guia.style.display = 'none';
         boton.innerText = "📖 Abrir Lección";
@@ -233,6 +245,17 @@ function actualizarProgreso(checkboxEl) {
     if (elTexto) elTexto.innerText = porcentaje + '%';
     if (elContador) elContador.innerText = `${marcadas} de ${total} lecciones completadas`;
 
+    // Comprobar módulos completados al 100%
+    document.querySelectorAll('.modulo-card').forEach(card => {
+        const totalMod = card.querySelectorAll('input[type="checkbox"]').length;
+        const marcadasMod = card.querySelectorAll('input[type="checkbox"]:checked').length;
+        if (totalMod > 0 && totalMod === marcadasMod) {
+            marcarCardComoCompletada(card);
+        }
+    });
+
+    guardarEstadoProgresoLocal();
+
     // Persistencia en el backend (PostgreSQL)
     if (checkboxEl) {
         const idUsuario = getSesionUsuarioId();
@@ -255,6 +278,83 @@ function actualizarProgreso(checkboxEl) {
                 })
             }).catch(err => console.warn("Aviso: no se pudo guardar progreso en backend:", err));
         }
+    }
+}
+
+function completarModulo(idMod, evento) {
+    if (evento && evento.stopPropagation) evento.stopPropagation();
+    const contenido = document.getElementById(idMod);
+    if (!contenido) return;
+
+    // 1. Marcar automáticamente todas las tareas de este módulo
+    const checks = contenido.querySelectorAll('input[type="checkbox"]');
+    checks.forEach(chk => { chk.checked = true; });
+
+    // 2. Resolver quizzes del módulo si existen
+    const quizzes = contenido.querySelectorAll('.quiz-box');
+    quizzes.forEach(qb => {
+        const opcionesDiv = qb.querySelector('.opciones-quiz');
+        if (opcionesDiv) {
+            const correcta = parseInt(opcionesDiv.getAttribute('data-correcta')) || 0;
+            const botones = opcionesDiv.querySelectorAll('button');
+            botones.forEach(b => b.disabled = true);
+            if (botones[correcta]) botones[correcta].classList.add('correcto');
+        }
+        const fb = qb.querySelector('.feedback-quiz');
+        if (fb) fb.innerHTML = '<span style="color: #34d399;">✅ Módulo y comprobación completados.</span>';
+    });
+
+    // 3. Subir automáticamente la barra de progreso
+    actualizarProgreso();
+
+    // 4. Marcar tarjeta visualmente
+    const moduloCard = contenido.closest('.modulo-card');
+    if (moduloCard) {
+        marcarCardComoCompletada(moduloCard);
+    }
+}
+
+function marcarCardComoCompletada(moduloCard) {
+    if (!moduloCard) return;
+    moduloCard.classList.add('modulo-completado');
+    const tituloArea = moduloCard.querySelector('.modulo-titulo-area');
+    if (tituloArea && !tituloArea.querySelector('.badge-completado')) {
+        const badge = document.createElement('span');
+        badge.className = 'badge-completado';
+        badge.innerText = '✔️ Completado';
+        badge.style.cssText = 'background: #065f46; color: #34d399; font-size: 11px; padding: 2px 8px; border-radius: 6px; font-weight: bold; margin-left: 8px; vertical-align: middle;';
+        tituloArea.appendChild(badge);
+    }
+}
+
+function guardarEstadoProgresoLocal() {
+    try {
+        const idPlan = (planActualGlobal && planActualGlobal.id_plan) || (new URLSearchParams(window.location.search)).get('id') || 'actual';
+        const checkboxes = document.querySelectorAll('.tarea-item input[type="checkbox"]');
+        const estados = [];
+        checkboxes.forEach((chk, idx) => {
+            if (chk.checked) estados.push(idx);
+        });
+        localStorage.setItem(`studnova_progreso_plan_${idPlan}`, JSON.stringify(estados));
+    } catch (e) {
+        console.warn("Aviso al guardar progreso local:", e);
+    }
+}
+
+function restaurarEstadoProgresoLocal() {
+    try {
+        const idPlan = (planActualGlobal && planActualGlobal.id_plan) || (new URLSearchParams(window.location.search)).get('id') || 'actual';
+        const guardado = localStorage.getItem(`studnova_progreso_plan_${idPlan}`);
+        if (guardado) {
+            const indices = JSON.parse(guardado);
+            const checkboxes = document.querySelectorAll('.tarea-item input[type="checkbox"]');
+            indices.forEach(idx => {
+                if (checkboxes[idx]) checkboxes[idx].checked = true;
+            });
+            actualizarProgreso();
+        }
+    } catch (e) {
+        console.warn("Aviso al restaurar progreso local:", e);
     }
 }
 
@@ -282,7 +382,20 @@ function verificarRespuesta(boton, indiceSeleccionado) {
 
     if (indiceSeleccionado === indiceCorrecto) {
         boton.classList.add('correcto');
-        feedback.innerHTML = '<span style="color: #34d399;">✅ ¡Correcto! Has comprendido el concepto.</span>';
+        feedback.innerHTML = '<span style="color: #34d399;">✅ ¡Correcto! Módulo completado automáticamente.</span>';
+
+        // AUTOMÁTICAMENTE completar lecciones de este módulo al superar la comprobación
+        const moduloContenedor = boton.closest('.modulo-contenido');
+        if (moduloContenedor) {
+            const checks = moduloContenedor.querySelectorAll('input[type="checkbox"]');
+            checks.forEach(chk => { chk.checked = true; });
+            actualizarProgreso();
+
+            const moduloCard = moduloContenedor.closest('.modulo-card');
+            if (moduloCard) {
+                marcarCardComoCompletada(moduloCard);
+            }
+        }
     } else {
         boton.classList.add('incorrecto');
         if (botones[indiceCorrecto]) botones[indiceCorrecto].classList.add('correcto');
@@ -384,7 +497,37 @@ window.addEventListener("message", (evento) => {
     }
 });
 
+function volverAlChat(e) {
+    if (e && e.preventDefault) e.preventDefault();
+
+    // 1. Si se abrió en una pestaña secundaria desde el chat, enfocar padre y cerrar
+    if (window.opener && !window.opener.closed) {
+        try {
+            window.opener.focus();
+            window.close();
+            return;
+        } catch (err) {
+            console.warn("No se pudo cerrar la ventana secundaria:", err);
+        }
+    }
+
+    // 2. Si el navegador tiene historial de navegación hacia el chat
+    if (window.history.length > 1) {
+        window.history.back();
+        return;
+    }
+
+    // 3. Fallback: redirigir a la interfaz del chat
+    window.location.href = '/ia/interfaz.html';
+}
+
 document.addEventListener("DOMContentLoaded", async () => {
+    // Si estamos dentro de un iframe (chat embebido), ocultar el botón volver
+    if (window.self !== window.top) {
+        const btnVolver = document.querySelector('.btn-volver');
+        if (btnVolver) btnVolver.style.display = 'none';
+    }
+
     // 1. Si estamos en un iframe, solicitar el plan al padre inmediatamente
     if (window.parent && window.parent !== window) {
         try {

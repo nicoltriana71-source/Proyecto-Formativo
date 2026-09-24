@@ -11,6 +11,7 @@ const overlay = document.getElementById('overlay');
 const historyList = document.getElementById('history-list');
 
 let historialConversacion = [];
+let listaMensajesUI = [];
 window.ultimoPlanGenerado = null;
 
 // ==========================================
@@ -19,6 +20,7 @@ window.ultimoPlanGenerado = null;
 document.addEventListener('DOMContentLoaded', async () => {
     await asegurarUsuarioRegistrado();
     cargarHistorialPlanes();
+    restaurarEstadoChat();
 });
 
 // Sincronizar automáticamente usuarios autenticados por Google
@@ -146,7 +148,7 @@ async function cargarHistorialPlanes() {
 function cargarPlanSeleccionado(plan) {
     if (!plan) return;
     localStorage.setItem("plan_estudio_actual", JSON.stringify(plan));
-    window.open('/principal/interfaz plan de estudio/visor_plan.html', '_blank');
+    window.location.href = '/principal/interfaz plan de estudio/visor_plan.html';
 }
 
 // ==========================================
@@ -231,8 +233,8 @@ async function enviarMensaje(forzarNuevo = false, promptPersonalizado = null) {
         textoAMostrar = `📄 [Adjunto: ${archivoAdjuntoActual.name}${strDetalle}]\n${mensajeBase}`;
     }
 
-    agregarMensajeUsuario(textoAMostrar);
     historialConversacion.push({ rol: "usuario", texto: textoAMostrar });
+    agregarMensajeUsuario(textoAMostrar);
 
     if (input && !promptPersonalizado) input.value = '';
     if (boton) {
@@ -269,7 +271,7 @@ async function enviarMensaje(forzarNuevo = false, promptPersonalizado = null) {
                     'Accept': 'application/json'
                 },
                 body: JSON.stringify({
-                    prompt: texto,
+                    prompt: forzarNuevo ? `Genera directamente el plan de estudio estructurado completo en JSON sobre: ${texto}` : texto,
                     historial: historialConversacion,
                     id_usuario: Number(idUsuario),
                     forzar_nuevo: Boolean(forzarNuevo)
@@ -332,14 +334,100 @@ async function enviarMensaje(forzarNuevo = false, promptPersonalizado = null) {
             boton.style.opacity = '1';
         }
         if (input) input.focus();
+        guardarEstadoChat();
         scrollAlFondo();
     }
 }
 
 // ==========================================
-// RENDERIZADO DE MENSAJES EN EL CHAT
+// PERSISTENCIA DEL ESTADO DEL CHAT
 // ==========================================
-function agregarMensajeUsuario(texto) {
+function guardarEstadoChat() {
+    try {
+        const idUsuario = obtenerIdUsuario();
+        localStorage.setItem(`studnova_chat_historial_${idUsuario}`, JSON.stringify(historialConversacion));
+        localStorage.setItem(`studnova_chat_mensajes_ui_${idUsuario}`, JSON.stringify(listaMensajesUI));
+        if (window.ultimoPlanGenerado) {
+            localStorage.setItem(`studnova_ultimo_plan_${idUsuario}`, JSON.stringify(window.ultimoPlanGenerado));
+        }
+    } catch (e) {
+        console.warn("Aviso al guardar estado del chat:", e);
+    }
+}
+
+function restaurarEstadoChat() {
+    try {
+        const idUsuario = obtenerIdUsuario();
+        const rawHistorial = localStorage.getItem(`studnova_chat_historial_${idUsuario}`);
+        const rawMensajesUI = localStorage.getItem(`studnova_chat_mensajes_ui_${idUsuario}`);
+        const rawUltimoPlan = localStorage.getItem(`studnova_ultimo_plan_${idUsuario}`);
+
+        if (rawHistorial) {
+            historialConversacion = JSON.parse(rawHistorial);
+        }
+        if (rawUltimoPlan) {
+            window.ultimoPlanGenerado = JSON.parse(rawUltimoPlan);
+        }
+
+        if (rawMensajesUI) {
+            listaMensajesUI = JSON.parse(rawMensajesUI);
+            if (Array.isArray(listaMensajesUI) && listaMensajesUI.length > 0) {
+                listaMensajesUI.forEach(item => {
+                    if (item.tipo === 'usuario') {
+                        renderizarDOMMensajeUsuario(item.texto);
+                    } else if (item.tipo === 'ia_texto') {
+                        renderizarDOMMensajeIATexto(item.texto);
+                    } else if (item.tipo === 'ia_plan') {
+                        renderizarDOMMensajeIAPlan(item.datos, item.planObjeto);
+                    } else if (item.tipo === 'ia_sugerencia') {
+                        renderizarDOMMensajeSugerencia(item.datos);
+                    } else if (item.tipo === 'error') {
+                        renderizarDOMMensajeError(item.texto);
+                    }
+                });
+                scrollAlFondo();
+            }
+        }
+    } catch (e) {
+        console.warn("Aviso al restaurar estado del chat:", e);
+    }
+}
+
+function iniciarNuevoChat() {
+    if (listaMensajesUI.length > 0 && !confirm("¿Deseas iniciar una nueva conversación? Se limpiará el chat actual.")) {
+        return;
+    }
+    const idUsuario = obtenerIdUsuario();
+    localStorage.removeItem(`studnova_chat_historial_${idUsuario}`);
+    localStorage.removeItem(`studnova_chat_mensajes_ui_${idUsuario}`);
+    localStorage.removeItem(`studnova_ultimo_plan_${idUsuario}`);
+    historialConversacion = [];
+    listaMensajesUI = [];
+    window.ultimoPlanGenerado = null;
+
+    if (chatBox) {
+        chatBox.innerHTML = `
+            <div class="mensaje">
+                <div class="avatar">
+                    <img src="/login/image.png" alt="Logo" width="50" height="50" class="logo" style="border-radius:50%; object-fit:cover;">
+                </div>
+                <div class="contenido">
+                    <p>¡Hola! 👋 Soy tu asistente de <strong>StudNova IA</strong>.</p>
+                    <p style="margin-top: 8px;">Cuéntame, ¿qué materia o tema te gustaría aprender hoy?</p>
+                </div>
+            </div>
+        `;
+    }
+    quitarArchivoAdjunto();
+    if (sidebar && sidebar.classList.contains('active')) {
+        toggleMenu();
+    }
+}
+
+// ==========================================
+// RENDERIZADO DE MENSAJES EN EL CHAT (DOM)
+// ==========================================
+function renderizarDOMMensajeUsuario(texto) {
     const div = document.createElement('div');
     div.className = 'mensaje';
     div.style.flexDirection = 'row-reverse';
@@ -348,6 +436,12 @@ function agregarMensajeUsuario(texto) {
         <div class="contenido" style="background:#1e293b;"><p>${escaparHTML(texto)}</p></div>
     `;
     chatBox.appendChild(div);
+}
+
+function agregarMensajeUsuario(texto) {
+    renderizarDOMMensajeUsuario(texto);
+    listaMensajesUI.push({ tipo: 'usuario', texto });
+    guardarEstadoChat();
 }
 
 function agregarMensajeCarga() {
@@ -363,7 +457,7 @@ function agregarMensajeCarga() {
     return id;
 }
 
-function agregarMensajeIATexto(texto) {
+function renderizarDOMMensajeIATexto(texto) {
     const div = document.createElement('div');
     div.className = 'mensaje';
     div.innerHTML = `
@@ -373,12 +467,18 @@ function agregarMensajeIATexto(texto) {
     chatBox.appendChild(div);
 }
 
+function agregarMensajeIATexto(texto) {
+    renderizarDOMMensajeIATexto(texto);
+    listaMensajesUI.push({ tipo: 'ia_texto', texto });
+    guardarEstadoChat();
+}
+
 // ==========================================
 // SUGERENCIA INTERACTIVA DE PLAN EXISTENTE
 // ==========================================
 window.planesSugeridos = window.planesSugeridos || {};
 
-function agregarMensajeSugerenciaPlan(datos) {
+function renderizarDOMMensajeSugerencia(datos) {
     const div = document.createElement('div');
     div.className = 'mensaje';
 
@@ -390,7 +490,7 @@ function agregarMensajeSugerenciaPlan(datos) {
     const descripcion = plan.descripcion || "Ruta estructurada de aprendizaje interactivo.";
     const modulosCount = (plan.modulos && Array.isArray(plan.modulos)) ? plan.modulos.length : 3;
     const materia = plan.materia || "Materia Principal";
-    const idCard = `sugerencia-${Date.now()}`;
+    const idCard = `sugerencia-${Date.now()}-${Math.floor(Math.random()*1000)}`;
 
     div.innerHTML = `
         <div class="avatar">🤖</div>
@@ -414,7 +514,7 @@ function agregarMensajeSugerenciaPlan(datos) {
                     <button type="button" class="btn-sugerencia btn-sugerencia-aceptar" onclick="aceptarPlanSugerido(${idPlan}, '${idCard}')">
                         📖 1. Ver este plan existente
                     </button>
-                    <button type="button" class="btn-sugerencia btn-sugerencia-nuevo" onclick="forzarGeneracionNueva('${escaparHTML(datos.prompt_original)}', '${idCard}')">
+                    <button type="button" class="btn-sugerencia btn-sugerencia-nuevo" onclick="forzarGeneracionNueva('${escaparHTML(datos.prompt_original || '')}', '${idCard}')">
                         ✨ 2. Generar un plan nuevo con IA
                     </button>
                 </div>
@@ -423,6 +523,12 @@ function agregarMensajeSugerenciaPlan(datos) {
     `;
 
     chatBox.appendChild(div);
+}
+
+function agregarMensajeSugerenciaPlan(datos) {
+    renderizarDOMMensajeSugerencia(datos);
+    listaMensajesUI.push({ tipo: 'ia_sugerencia', datos });
+    guardarEstadoChat();
     scrollAlFondo();
 }
 
@@ -500,7 +606,7 @@ function forzarGeneracionNueva(promptOriginal, idCard) {
     enviarMensaje(true, promptOriginal);
 }
 
-function agregarMensajeIARespuestaPlan(datos, planObjeto) {
+function renderizarDOMMensajeIAPlan(datos, planObjeto) {
     const div = document.createElement('div');
     div.className = 'mensaje';
 
@@ -516,7 +622,7 @@ function agregarMensajeIARespuestaPlan(datos, planObjeto) {
                 He estructurado tu ruta de aprendizaje a tu medida con quizzes y control de fatiga.
             </p>
             <div style="margin: 12px 0;">
-                <a href="${urlVisor}" target="_blank" style="display:inline-block; padding: 8px 16px; background:#2563eb; color:white; text-decoration:none; border-radius:8px; font-weight:bold; font-size:14px;">
+                <a href="${urlVisor}" style="display:inline-block; padding: 8px 16px; background:#2563eb; color:white; text-decoration:none; border-radius:8px; font-weight:bold; font-size:14px;">
                     ↗️ Abrir Plan en Pantalla Completa
                 </a>
             </div>
@@ -541,7 +647,13 @@ function agregarMensajeIARespuestaPlan(datos, planObjeto) {
     chatBox.appendChild(div);
 }
 
-function agregarMensajeError(mensaje) {
+function agregarMensajeIARespuestaPlan(datos, planObjeto) {
+    renderizarDOMMensajeIAPlan(datos, planObjeto);
+    listaMensajesUI.push({ tipo: 'ia_plan', datos, planObjeto });
+    guardarEstadoChat();
+}
+
+function renderizarDOMMensajeError(mensaje) {
     const div = document.createElement('div');
     div.className = 'mensaje';
     div.innerHTML = `
@@ -549,6 +661,12 @@ function agregarMensajeError(mensaje) {
         <div class="contenido" style="background:#7f1d1d;"><p><strong>Error:</strong> ${escaparHTML(mensaje)}</p></div>
     `;
     chatBox.appendChild(div);
+}
+
+function agregarMensajeError(mensaje) {
+    renderizarDOMMensajeError(mensaje);
+    listaMensajesUI.push({ tipo: 'error', texto: mensaje });
+    guardarEstadoChat();
 }
 
 // Escuchar peticiones de iframes hijos

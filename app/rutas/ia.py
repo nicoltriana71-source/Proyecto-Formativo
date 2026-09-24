@@ -180,12 +180,35 @@ def buscar_plan_en_cache(sesion: Session, texto_consulta: str, usuario_id: Optio
     return None
 
 
+def normalizar_a_dict(obj):
+    if isinstance(obj, dict):
+        return obj
+    if isinstance(obj, str):
+        try:
+            parsed = json.loads(obj)
+            if isinstance(parsed, dict):
+                return parsed
+        except Exception:
+            pass
+        return {"titulo": str(obj), "modulos": []}
+    return {}
+
+
 def guardar_plan_generado_en_bd(sesion: Session, usuario_id: int, prompt_texto: str, resultado: dict) -> dict:
     """Guarda el plan generado, módulos, temas, embedding y registro de PromptIA en la base de datos."""
-    plan_data = resultado["plan"]
+    if not isinstance(resultado, dict):
+        return {"tipo": "error", "mensaje": "Respuesta no válida del generador"}
+
+    plan_raw = resultado.get("plan")
+    if not plan_raw:
+        plan_raw = resultado
+    plan_data = normalizar_a_dict(plan_raw)
 
     # Obtener o crear asignatura
     nombre_materia = plan_data.get("materia") or "General"
+    if not isinstance(nombre_materia, str):
+        nombre_materia = str(nombre_materia)
+
     asignatura_db = sesion.exec(select(Asignatura).where(Asignatura.nombre == nombre_materia)).first()
     if not asignatura_db:
         asignatura_db = Asignatura(
@@ -198,11 +221,19 @@ def guardar_plan_generado_en_bd(sesion: Session, usuario_id: int, prompt_texto: 
         sesion.refresh(asignatura_db)
 
     # Guardar el nuevo Plan de Estudio
+    titulo_plan = plan_data.get("titulo") or "Plan de Estudio Personalizado"
+    if not isinstance(titulo_plan, str):
+        titulo_plan = str(titulo_plan)
+
+    descripcion_plan = plan_data.get("descripcion") or ""
+    if not isinstance(descripcion_plan, str):
+        descripcion_plan = str(descripcion_plan)
+
     nuevo_plan = PlanDeEstudio(
         id_usuario=usuario_id,
         id_asignatura=asignatura_db.id_asignatura,
-        titulo=plan_data.get("titulo") or "Plan de Estudio Personalizado",
-        descripcion=plan_data.get("descripcion") or "",
+        titulo=titulo_plan,
+        descripcion=descripcion_plan,
         estado="activo",
         contenido_json=plan_data
     )
@@ -212,13 +243,24 @@ def guardar_plan_generado_en_bd(sesion: Session, usuario_id: int, prompt_texto: 
 
     # Guardar Módulos y Temas
     plan_data["id_plan"] = nuevo_plan.id_plan
-    for idx_m, mod in enumerate(plan_data.get("modulos", [])):
+    modulos_list = plan_data.get("modulos", [])
+    if not isinstance(modulos_list, list):
+        modulos_list = []
+
+    for idx_m, mod in enumerate(modulos_list):
+        if not isinstance(mod, dict):
+            if isinstance(mod, str):
+                mod = {"titulo": mod, "teoria_modulo": mod, "lecciones": []}
+            else:
+                mod = {"titulo": f"Módulo {idx_m + 1}", "lecciones": []}
+            modulos_list[idx_m] = mod
+
         nuevo_modulo = Modulo(
             id_plan=nuevo_plan.id_plan,
-            nombre=mod.get("titulo") or f"Módulo {idx_m + 1}",
-            descripcion=mod.get("teoria_modulo") or "",
+            nombre=str(mod.get("titulo") or f"Módulo {idx_m + 1}"),
+            descripcion=str(mod.get("teoria_modulo") or ""),
             numero_modulo=idx_m + 1,
-            objetivo=mod.get("nivel_tag") or "Objetivo del módulo",
+            objetivo=str(mod.get("nivel_tag") or "Objetivo del módulo"),
             estado="activo"
         )
         sesion.add(nuevo_modulo)
@@ -226,19 +268,31 @@ def guardar_plan_generado_en_bd(sesion: Session, usuario_id: int, prompt_texto: 
         sesion.refresh(nuevo_modulo)
         mod["id_modulo"] = nuevo_modulo.id_modulo
 
-        for idx_t, lec in enumerate(mod.get("lecciones", [])):
+        lecciones_list = mod.get("lecciones", [])
+        if not isinstance(lecciones_list, list):
+            lecciones_list = []
+
+        for idx_t, lec in enumerate(lecciones_list):
+            if not isinstance(lec, dict):
+                if isinstance(lec, str):
+                    lec = {"titulo": lec, "concepto_teorico": lec}
+                else:
+                    lec = {"titulo": f"Lección {idx_t + 1}"}
+                lecciones_list[idx_t] = lec
+
             nuevo_tema = Tema(
                 id_modulo=nuevo_modulo.id_modulo,
-                nombre=lec.get("titulo") or f"Lección {idx_t + 1}",
-                descripcion=lec.get("concepto_teorico") or "",
+                nombre=str(lec.get("titulo") or f"Lección {idx_t + 1}"),
+                descripcion=str(lec.get("concepto_teorico") or ""),
                 numero_tema=idx_t + 1,
-                duracion_estimada=lec.get("duracion_minutos") or 45
+                duracion_estimada=int(lec.get("duracion_minutos") or 45)
             )
             sesion.add(nuevo_tema)
             sesion.commit()
             sesion.refresh(nuevo_tema)
             lec["id_tema"] = nuevo_tema.id_tema
 
+    plan_data["modulos"] = modulos_list
     nuevo_plan.contenido_json = plan_data
     sesion.add(nuevo_plan)
     sesion.commit()
@@ -261,6 +315,7 @@ def guardar_plan_generado_en_bd(sesion: Session, usuario_id: int, prompt_texto: 
 
     resultado["id_plan"] = nuevo_plan.id_plan
     resultado["id_usuario"] = usuario_id
+    resultado["plan"] = plan_data
     resultado["desde_cache"] = False
     return resultado
 
@@ -291,14 +346,22 @@ def generar_interfaz(solicitud: SolicitudGeneracion, sesion: Session = Depends(o
         # Si el usuario NO forzó la creación de uno nuevo, sugerir el plan existente
         if not getattr(solicitud, "forzar_nuevo", False):
             plan_existente = buscar_plan_en_cache(sesion, solicitud.prompt, usuario_id)
-            if plan_existente and plan_existente.get("plan"):
+            if plan_existente and isinstance(plan_existente, dict) and plan_existente.get("plan"):
                 plan_obj = plan_existente["plan"]
+                if isinstance(plan_obj, str):
+                    try:
+                        plan_obj = json.loads(plan_obj)
+                    except Exception:
+                        plan_obj = {"titulo": plan_obj}
+                if not isinstance(plan_obj, dict):
+                    plan_obj = {"titulo": str(plan_obj)}
+
                 titulo_plan = plan_obj.get("titulo") or "Plan de Estudio"
                 return {
                     "tipo": "sugerencia_plan_existente",
                     "mensaje": f"💡 Ya existe en nuestra biblioteca un plan de estudio sobre **{titulo_plan}**.",
                     "plan_sugerido": plan_obj,
-                    "id_plan": plan_existente["id_plan"],
+                    "id_plan": plan_existente.get("id_plan"),
                     "prompt_original": solicitud.prompt,
                     "similitud": plan_existente.get("similitud", 1.0)
                 }
@@ -311,8 +374,20 @@ def generar_interfaz(solicitud: SolicitudGeneracion, sesion: Session = Depends(o
             historial=historial_dicts,
             nombre_archivo=nombre_vista
         )
-        
-        if resultado.get("tipo") == "plan_generado" and resultado.get("plan"):
+
+        if isinstance(resultado, str):
+            try:
+                resultado = json.loads(resultado)
+            except Exception:
+                resultado = {"tipo": "conversacion", "mensaje": resultado}
+
+        if not isinstance(resultado, dict):
+            resultado = {"tipo": "conversacion", "mensaje": str(resultado)}
+
+        tiene_plan = (resultado.get("tipo") == "plan_generado") or ("plan" in resultado) or ("modulos" in resultado)
+        if tiene_plan and (resultado.get("plan") or resultado.get("modulos")):
+            if "plan" not in resultado:
+                resultado = {"tipo": "plan_generado", "mensaje": "Plan generado con éxito", "plan": resultado}
             resultado = guardar_plan_generado_en_bd(sesion, usuario_id, solicitud.prompt, resultado)
         
         return resultado
@@ -441,14 +516,22 @@ async def generar_con_archivo(
         # Si no hay documento adjunto y no se forzó nuevo, verificar si existe plan similar en la base de datos
         if not texto_extraido and not nombre_doc and not forzar_nuevo:
             plan_existente = buscar_plan_en_cache(sesion, prompt, usuario_id)
-            if plan_existente and plan_existente.get("plan"):
+            if plan_existente and isinstance(plan_existente, dict) and plan_existente.get("plan"):
                 plan_obj = plan_existente["plan"]
+                if isinstance(plan_obj, str):
+                    try:
+                        plan_obj = json.loads(plan_obj)
+                    except Exception:
+                        plan_obj = {"titulo": plan_obj}
+                if not isinstance(plan_obj, dict):
+                    plan_obj = {"titulo": str(plan_obj)}
+
                 titulo_plan = plan_obj.get("titulo") or "Plan de Estudio"
                 return {
                     "tipo": "sugerencia_plan_existente",
                     "mensaje": f"💡 Ya existe en nuestra biblioteca un plan de estudio sobre **{titulo_plan}**.",
                     "plan_sugerido": plan_obj,
-                    "id_plan": plan_existente["id_plan"],
+                    "id_plan": plan_existente.get("id_plan"),
                     "prompt_original": prompt,
                     "similitud": plan_existente.get("similitud", 1.0)
                 }
@@ -474,7 +557,19 @@ async def generar_con_archivo(
             duracion_personalizada=duracion_personalizada
         )
 
-        if resultado.get("tipo") == "plan_generado" and resultado.get("plan"):
+        if isinstance(resultado, str):
+            try:
+                resultado = json.loads(resultado)
+            except Exception:
+                resultado = {"tipo": "conversacion", "mensaje": resultado}
+
+        if not isinstance(resultado, dict):
+            resultado = {"tipo": "conversacion", "mensaje": str(resultado)}
+
+        tiene_plan = (resultado.get("tipo") == "plan_generado") or ("plan" in resultado) or ("modulos" in resultado)
+        if tiene_plan and (resultado.get("plan") or resultado.get("modulos")):
+            if "plan" not in resultado:
+                resultado = {"tipo": "plan_generado", "mensaje": "Plan generado con éxito", "plan": resultado}
             resultado = guardar_plan_generado_en_bd(sesion, usuario_id, prompt_final, resultado)
             if nombre_doc:
                 resultado["archivo_procesado"] = nombre_doc

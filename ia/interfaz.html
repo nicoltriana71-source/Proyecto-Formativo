@@ -18,6 +18,9 @@
             <button class="close-btn" id="closeBtn" onclick="toggleMenu()">&times;</button>
         </div>
         <div class="sidebar-content">
+            <button type="button" class="btn-sidebar-nuevo-chat" onclick="iniciarNuevoChat()">
+                <span>➕</span> Nuevo Chat
+            </button>
             <ul class="history-list" id="history-list">
                 <!-- Los planes guardados se cargarán aquí dinámicamente desde la BD -->
             </ul>
@@ -32,6 +35,7 @@
                 <span></span>
                 <span></span>
             </button>
+            <button type="button" class="btn-nuevo-chat" onclick="iniciarNuevoChat()" title="Iniciar un nuevo chat">➕ Nuevo Chat</button>
             <button type="button" class="cerrar-sesion" onclick="cerrarSesion()">Cerrar Sesion</button>
             <h1>StudNova IA</h1>
             <p>Tu asistente inteligente para generar planes de estudio interactivos</p>

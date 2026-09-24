@@ -225,6 +225,10 @@ body {
     transition: transform 0.3s;
 }
 
+.modulo-card.modulo-completado {
+    border-color: #10b981;
+}
+
 .modulo-contenido {
     padding: 0 20px 20px 20px;
     display: flex;
