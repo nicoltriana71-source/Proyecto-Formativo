@@ -203,7 +203,7 @@ function manejarEnter(e) {
     }
 }
 
-async function enviarMensaje(forzarNuevo = false, promptPersonalizado = null) {
+async function enviarMensaje(forzarNuevo = false, promptPersonalizado = null, cantModulosParam = null, duracionParam = null) {
     const input = document.getElementById('prompt-input') || promptInput;
     const boton = document.getElementById('btn-enviar') || btnEnviar;
     const texto = promptPersonalizado !== null ? promptPersonalizado.trim() : (input ? input.value.trim() : '');
@@ -212,17 +212,22 @@ async function enviarMensaje(forzarNuevo = false, promptPersonalizado = null) {
 
     const idUsuario = obtenerIdUsuario();
 
-    // Solo usar opciones de módulos/duración si hay un archivo temario adjunto actualmente
+    // Obtener parámetros de módulos y duración
     const hayAdjunto = Boolean(archivoAdjuntoActual);
     const selModulos = document.getElementById('select-modulos');
     const selDuracion = document.getElementById('select-duracion');
-    const cantModulos = (hayAdjunto && selModulos && selModulos.value) ? Number(selModulos.value) : null;
-    const duracionDeseada = (hayAdjunto && selDuracion && selDuracion.value) ? selDuracion.value : null;
+
+    const cantModulos = cantModulosParam || ((hayAdjunto && selModulos && selModulos.value) ? Number(selModulos.value) : null);
+    const duracionDeseada = duracionParam || ((hayAdjunto && selDuracion && selDuracion.value) ? selDuracion.value : null);
 
     // Etiqueta visual para el mensaje del usuario en el chat
     let textoAMostrar = texto;
     if (forzarNuevo && promptPersonalizado) {
-        textoAMostrar = `✨ Prefiero generar un plan nuevo desde cero sobre: "${texto}"`;
+        let detalle = [];
+        if (cantModulos) detalle.push(`${cantModulos} módulos`);
+        if (duracionDeseada) detalle.push(`en ${duracionDeseada}`);
+        const strDetalle = detalle.length > 0 ? ` (${detalle.join(', ')})` : '';
+        textoAMostrar = `✨ Prefiero generar un plan nuevo desde cero${strDetalle}: "${texto}"`;
     } else if (hayAdjunto) {
         let detalleExtra = [];
         if (cantModulos) detalleExtra.push(`${cantModulos} módulos`);
@@ -263,7 +268,14 @@ async function enviarMensaje(forzarNuevo = false, promptPersonalizado = null) {
                 body: formData
             });
         } else {
-            // Flujo estándar conversacional JSON con bandera de forzar_nuevo
+            // Flujo estándar conversacional JSON con parámetros específicos
+            let promptFinal = texto;
+            if (forzarNuevo) {
+                promptFinal = `Genera directamente el plan de estudio estructurado completo en JSON sobre: ${texto}.`;
+                if (cantModulos) promptFinal += ` Requisito obligatorio: DEBE contener exactamente ${cantModulos} módulos completos.`;
+                if (duracionDeseada) promptFinal += ` Diseñado para completarse en un tiempo de: ${duracionDeseada}.`;
+            }
+
             respuesta = await fetch(`${API_BASE}/api/ia/generar`, {
                 method: 'POST',
                 headers: { 
@@ -271,10 +283,12 @@ async function enviarMensaje(forzarNuevo = false, promptPersonalizado = null) {
                     'Accept': 'application/json'
                 },
                 body: JSON.stringify({
-                    prompt: forzarNuevo ? `Genera directamente el plan de estudio estructurado completo en JSON sobre: ${texto}` : texto,
+                    prompt: promptFinal,
                     historial: historialConversacion,
                     id_usuario: Number(idUsuario),
-                    forzar_nuevo: Boolean(forzarNuevo)
+                    forzar_nuevo: Boolean(forzarNuevo),
+                    cantidad_modulos: cantModulos ? Number(cantModulos) : null,
+                    duracion_personalizada: duracionDeseada || null
                 })
             });
         }
@@ -294,7 +308,7 @@ async function enviarMensaje(forzarNuevo = false, promptPersonalizado = null) {
 
         removerElemento(idCarga);
 
-        // CASO 1: Sugerencia de plan existente (Ahorro de tokens)
+        // CASO 1: Sugerencia de plan existente
         if (datos.tipo === "sugerencia_plan_existente") {
             const textoIA = datos.mensaje || "He encontrado un plan existente similar a tu solicitud.";
             historialConversacion.push({ rol: "ia", texto: textoIA });
@@ -313,7 +327,7 @@ async function enviarMensaje(forzarNuevo = false, promptPersonalizado = null) {
             const planObjeto = datos.plan || datos;
             window.ultimoPlanGenerado = planObjeto;
 
-            // Guardar plan actual en LocalStorage y refrescar panel de historial de inmediato
+            // Guardar plan actual en LocalStorage y refrescar panel de historial
             localStorage.setItem("plan_estudio_actual", JSON.stringify(planObjeto));
             cargarHistorialPlanes();
 
@@ -451,7 +465,7 @@ function agregarMensajeCarga() {
     div.id = id;
     div.innerHTML = `
         <div class="avatar">🤖</div>
-        <div class="contenido"><p>⏳ <em>StudNova IA está respondiendo...</em></p></div>
+        <div class="contenido"><p>⏳ <em>StudNova IA está estructurando tu plan personalizado...</em></p></div>
     `;
     chatBox.appendChild(div);
     return id;
@@ -491,6 +505,7 @@ function renderizarDOMMensajeSugerencia(datos) {
     const modulosCount = (plan.modulos && Array.isArray(plan.modulos)) ? plan.modulos.length : 3;
     const materia = plan.materia || "Materia Principal";
     const idCard = `sugerencia-${Date.now()}-${Math.floor(Math.random()*1000)}`;
+    const temaOriginal = datos.prompt_original || materia;
 
     div.innerHTML = `
         <div class="avatar">🤖</div>
@@ -510,11 +525,11 @@ function renderizarDOMMensajeSugerencia(datos) {
                     Ya existe este plan estructurado que cubre tu consulta. ¿Qué deseas hacer?
                 </p>
 
-                <div class="sugerencia-acciones">
+                <div class="sugerencia-acciones" id="acciones-${idCard}">
                     <button type="button" class="btn-sugerencia btn-sugerencia-aceptar" onclick="aceptarPlanSugerido(${idPlan}, '${idCard}')">
                         📖 1. Ver este plan existente
                     </button>
-                    <button type="button" class="btn-sugerencia btn-sugerencia-nuevo" onclick="forzarGeneracionNueva('${escaparHTML(datos.prompt_original || '')}', '${idCard}')">
+                    <button type="button" class="btn-sugerencia btn-sugerencia-nuevo" onclick="mostrarPreguntasNuevoPlan('${escaparHTML(temaOriginal)}', '${idCard}')">
                         ✨ 2. Generar un plan nuevo con IA
                     </button>
                 </div>
@@ -589,21 +604,74 @@ async function aceptarPlanSugerido(idPlan, idCard) {
     }
 }
 
-function forzarGeneracionNueva(promptOriginal, idCard) {
+// ==========================================
+// PREGUNTAS INTERACTIVAS PARA NUEVO PLAN
+// ==========================================
+function mostrarPreguntasNuevoPlan(temaOriginal, idCard) {
+    const contenedorAcciones = document.getElementById(`acciones-${idCard}`);
+    if (!contenedorAcciones) return;
+
+    contenedorAcciones.innerHTML = `
+        <div class="formulario-preguntas-nuevo" style="background:#0f172a; padding:12px; border-radius:8px; border:1px solid #334155; margin-top:8px;">
+            <p style="font-size:0.9rem; color:#72AFC1; font-weight:bold; margin-bottom:8px;">
+                🎯 Personaliza tu nuevo plan sobre "${escaparHTML(temaOriginal)}":
+            </p>
+
+            <div style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:10px;">
+                <div style="flex:1; min-width:130px;">
+                    <label style="font-size:0.75rem; color:#94a3b8; display:block; margin-bottom:4px; font-weight:600;">
+                        ⏱️ ¿En cuánto tiempo?
+                    </label>
+                    <select id="tiempo-${idCard}" style="width:100%; padding:6px; background:#1e293b; color:#f8fafc; border:1px solid #475569; border-radius:6px; font-size:0.85rem;">
+                        <option value="1 semana">1 semana (Intensivo)</option>
+                        <option value="2 semanas" selected>2 semanas (Recomendado)</option>
+                        <option value="1 mes">1 mes (Paso a paso)</option>
+                        <option value="2 meses">2 meses (A profundidad)</option>
+                    </select>
+                </div>
+
+                <div style="flex:1; min-width:130px;">
+                    <label style="font-size:0.75rem; color:#94a3b8; display:block; margin-bottom:4px; font-weight:600;">
+                        📚 ¿Cuántos módulos?
+                    </label>
+                    <select id="modulos-${idCard}" style="width:100%; padding:6px; background:#1e293b; color:#f8fafc; border:1px solid #475569; border-radius:6px; font-size:0.85rem;">
+                        <option value="3">3 módulos (Esencial)</option>
+                        <option value="4" selected>4 módulos (Equilibrado)</option>
+                        <option value="5">5 módulos (Completo)</option>
+                    </select>
+                </div>
+            </div>
+
+            <button type="button" class="btn-sugerencia btn-sugerencia-nuevo" onclick="confirmarNuevoPlanPersonalizado('${escaparHTML(temaOriginal)}', '${idCard}')" style="width:100%; justify-content:center; padding:8px;">
+                🚀 ¡Generar mi plan personalizado!
+            </button>
+        </div>
+    `;
+
+    scrollAlFondo();
+}
+
+function confirmarNuevoPlanPersonalizado(temaOriginal, idCard) {
+    const selTiempo = document.getElementById(`tiempo-${idCard}`);
+    const selModulos = document.getElementById(`modulos-${idCard}`);
+
+    const tiempoSeleccionado = selTiempo ? selTiempo.value : "2 semanas";
+    const modulosSeleccionados = selModulos ? Number(selModulos.value) : 4;
+
     const contenedorCard = document.getElementById(idCard);
     if (contenedorCard) {
-        const botones = contenedorCard.querySelectorAll('button');
-        botones.forEach(b => {
-            b.disabled = true;
-            b.style.opacity = '0.5';
-        });
-        const acciones = contenedorCard.querySelector('.sugerencia-acciones');
+        const acciones = document.getElementById(`acciones-${idCard}`);
         if (acciones) {
-            acciones.innerHTML = '<span style="color: #60a5fa; font-size: 0.85rem; font-weight: bold;">⚙️ Generando nueva versión personalizada...</span>';
+            acciones.innerHTML = `<span style="color: #60a5fa; font-size: 0.85rem; font-weight: bold;">⚙️ Generando ruta con ${modulosSeleccionados} módulos para ${tiempoSeleccionado}...</span>`;
         }
     }
 
-    enviarMensaje(true, promptOriginal);
+    enviarMensaje(true, temaOriginal, modulosSeleccionados, tiempoSeleccionado);
+}
+
+// Mantener compatibilidad si se llama la función anterior
+function forzarGeneracionNueva(promptOriginal, idCard) {
+    mostrarPreguntasNuevoPlan(promptOriginal, idCard);
 }
 
 function renderizarDOMMensajeIAPlan(datos, planObjeto) {
