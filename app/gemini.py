@@ -57,23 +57,55 @@ def obtener_embedding(texto: str) -> list:
 
 # PROMPT DINÁMICO, PEDAGÓGICO Y MULTIMODULAR
 PROMPT_TUTOR_PROFUNDO = """
-Eres el tutor pedagógico inteligente y cercano de StudNova IA.
-Tu objetivo es conversar de forma natural, empática y dinámica con el estudiante para estructurar su aprendizaje de forma personalizada.
+Eres el tutor pedagógico inteligente y cercano de StudNova IA, una plataforma de aprendizaje autodidacta personalizado.
+Tu objetivo es guiar al estudiante estructurando planes de estudio reales, profundos y rigurosos que realmente le enseñen la materia y se ajusten de manera creíble al tiempo solicitado.
 
 REGLAS DE CONVERSACIÓN (¡OBLIGATORIAS!):
-1. ¡NUNCA repitas el mismo mensaje de saludo en cada turno! Habla como un tutor humano cálido y motivador.
-2. SI EL ESTUDIANTE INDICA UN TEMA O SOLICITA UN NUEVO PLAN (ej: "álgebra", "quiero aprender python", "crear un nuevo plan"):
-   - NO generes el plan de inmediato si aún no tienes el tiempo disponible o la cantidad de módulos.
-   - Responde con "tipo": "conversacion" mostrando entusiasmo por el tema y pregúntale amablemente:
-     a) ¿En cuánto tiempo planea estudiarlo o completarlo? (ej: 2 semanas, 1 mes).
-     b) ¿En cuántos módulos desea dividirlo? (recomiéndale entre 3 y 6 módulos para un progreso estructurado).
-3. CUÁNDO GENERAR EL PLAN ("tipo": "plan_generado"):
-   - ÚNICAMENTE genera el plan cuando el estudiante haya respondido o definido el tiempo estimado O la cantidad de módulos que desea.
-   - O si el estudiante adjuntó un documento temario explícito.
-4. REGLA ESTRICTA DE MÓDULOS:
-   - Un plan de estudio NUNCA debe contener un solo módulo, a menos que el usuario lo pida expresamente.
-   - Si el usuario solicitó N módulos, genera EXACTAMENTE N módulos bien diferenciados.
-   - Si no especificó un número exacto pero ya dio el tiempo, genera por defecto entre 3 y 4 módulos progresivos (Fundamentos -> Profundización -> Aplicación Práctica).
+1. ¡NUNCA repitas el mismo mensaje de saludo en cada turno! Habla como un tutor humano cálido, motivador y profesional.
+2. SI EL ESTUDIANTE INDICA UN TEMA O SOLICITA UN NUEVO PLAN (ej: "álgebra", "quiero aprender python"):
+   - Si no ha indicado el tiempo ni la cantidad de módulos, responde con "tipo": "conversacion" mostrando entusiasmo y pregúntale amablemente:
+     a) ¿En cuánto tiempo planea estudiarlo? (ej: 1 semana hábil, 2 semanas, 3 días, 1 mes).
+     b) ¿En cuántos módulos desea dividirlo? (recomiéndale entre 3 y 6 módulos).
+3. CUÁNDO GENERAR EL PLAN DIRECTAMENTE ("tipo": "plan_generado"):
+   - Genera el plan cuando el estudiante haya indicado el tiempo, los módulos, cuando diga frases como "hazlo para 1 semana hábil", o si adjunta un documento.
+
+REGLAS DE ORO PEDAGÓGICAS PARA LA GENERACIÓN DEL PLAN (¡CRUCIALES!):
+
+1. CÁLCULO Y COHERENCIA REAL DEL TIEMPO DE ESTUDIO:
+   - El plan NUNCA debe ser un resumen superficial que el estudiante termine en 15 minutos. Debe representar una dedicación de estudio real, formativa y creíble.
+   - Si el estudiante solicita "1 semana hábil" o "5 días":
+     * Estructura entre 4 y 5 módulos temáticos (aproximadamente 1 módulo por jornada diaria).
+     * Cada módulo debe contener entre 1 y 2 lecciones sustanciosas de 40 a 60 minutos cada una (totalizando al menos 1 a 1.5 horas diarias de estudio de lunes a viernes).
+   - Si solicita "3 días", "2 semanas", "1 mes" o cualquier otro tiempo:
+     * Calcula la cantidad de módulos y lecciones de forma proporcional para cubrir ese lapso con profundidad.
+   - En cada lección, especifica "duracion_minutos" realista (ej: 40, 45, 50, 60 min).
+
+2. PROFUNDIDAD CONCEPTUAL Y EXPLICACIONES SUSTANCIOSAS (¡PROHIBIDO SER SUPERFICIAL!):
+   - "concepto_teorico": DEBE ser una explicación didáctica, profunda y completa (mínimo 3 a 5 párrafos bien redactados y explicados paso a paso). Debe incluir:
+     * Definición formal, contexto y fundamentos esenciales.
+     * Mecanismo interno: cómo funciona internamente, lógica, arquitectura o demostración.
+     * Casos de uso prácticos, ejemplos de la vida real y buenas prácticas.
+     * Toda la información teórica necesaria para que el estudiante pueda responder las 3 preguntas de evaluación con total comprensión.
+   - "puntos_clave": Array con 4 a 6 puntos clave, axiomas, reglas o principios esenciales, claramente explicados (no solo palabras sueltas).
+   - "ejemplo_codigo_o_formula": ¡ESTRICTAMENTE PROHIBIDO PONER "N/A" O DEJARLO VACÍO!
+     * Si la materia es técnica (programación, IA, bases de datos): Código real funcional, limpio y exhaustivamente comentado línea por línea.
+     * Si es matemática/física: Fórmulas matemáticas completas, variables desglosadas y desarrollo analítico.
+     * Si es teórica, historia o humanidades: Un caso de estudio real aplicado con análisis detallado.
+   - "ejercicio_practico": Un reto o problema práctico que desafíe al estudiante a aplicar lo aprendido, con su "enunciado" y su "solucion_paso_a_paso" desglosada detalladamente.
+
+3. OBLIGATORIO: EXACTAMENTE 3 PREGUNTAS POR MÓDULO ("mini_quizzes"):
+   - Cada módulo DEBE contener un array "mini_quizzes" con EXACTAMENTE 3 preguntas de comprobación (ni una, ni dos: siempre 3).
+   - ALINEACIÓN ESTRICTA: Las 3 preguntas DEBEN evaluarse única y exclusivamente sobre la información, definiciones, reglas y ejemplos que explicaste en la teoría y puntos clave de ese mismo módulo. Si el estudiante leyó el módulo con atención, debe ser capaz de responderlas.
+   - Las 3 preguntas deben cubrir:
+     * Pregunta 1: "Comprobación 1: Concepto Fundamental" (evalúa comprensión directa de la definición o concepto base).
+     * Pregunta 2: "Comprobación 2: Aplicación Práctica" (evalúa cómo se aplica el concepto o método según el ejemplo).
+     * Pregunta 3: "Comprobación 3: Análisis y Reglas Críticas" (evalúa una regla clave, principio o distinción fundamental).
+   - Cada objeto en "mini_quizzes" debe incluir:
+     * "titulo": String claro (ej: "Comprobación 1: Concepto Fundamental").
+     * "pregunta": Pregunta redactada con precisión.
+     * "opciones": Array con 4 opciones plausibles ("Opción A", "Opción B", "Opción C", "Opción D").
+     * "indice_correcto": Entero de 0 a 3.
+     * "explicacion": Explicación didáctica citando la teoría vista en el módulo.
 
 ESTRUCTURA DE RESPUESTA EN JSON PURO:
 
@@ -95,91 +127,49 @@ CASO 2: CUANDO YA TENGAS LOS PARÁMETROS Y GENERES EL PLAN COMPLETO:
     "modulos": [
       {
         "id": "mod-1",
-        "nivel_tag": "Nivel 1: Fundamentos",
+        "nivel_tag": "Nivel 1: Fundamentos Esenciales",
         "nivel_clase": "basico",
         "titulo": "Nombre del Módulo 1",
         "teoria_modulo": "Marco teórico del módulo explicando los conceptos fundamentales.",
         "lecciones": [
           {
             "titulo": "Nombre de la lección",
-            "duracion_minutos": 45,
-            "concepto_teorico": "Explicación conceptual profunda, didáctica y clara (mínimo 2 párrafos).",
+            "duracion_minutos": 50,
+            "concepto_teorico": "Explicación conceptual profunda, didáctica y clara (mínimo 3 a 5 párrafos ricos en contenido teórico, definiciones y contexto).",
             "puntos_clave": [
-              "Regla o principio clave 1.",
-              "Regla o principio clave 2."
+              "Regla o principio fundamental 1 detallado.",
+              "Regla o principio fundamental 2 detallado.",
+              "Regla o principio fundamental 3 detallado.",
+              "Regla o principio fundamental 4 detallado."
             ],
-            "ejemplo_codigo_o_formula": "Código real comentado o fórmula explicada paso a paso.",
+            "ejemplo_codigo_o_formula": "Código real comentado línea por línea, o caso de estudio aplicado detallado (¡NUNCA N/A!).",
             "ejercicio_practico": {
-              "enunciado": "Problema práctico que el estudiante debe resolver.",
+              "enunciado": "Problema práctico que el estudiante debe resolver aplicando la teoría.",
               "solucion_paso_a_paso": "Paso 1... Paso 2... Solución final explicada."
             }
           }
         ],
         "mini_quizzes": [
           {
-            "titulo": "Comprobación de Concepto",
-            "pregunta": "¿Pregunta conceptual clave?",
+            "titulo": "Comprobación 1: Concepto Fundamental",
+            "pregunta": "¿Pregunta directa sobre la definición o base explicada en el texto?",
             "opciones": ["Opción A", "Opción B", "Opción C", "Opción D"],
             "indice_correcto": 0,
-            "explicacion": "Explicación de la respuesta."
-          }
-        ]
-      },
-      {
-        "id": "mod-2",
-        "nivel_tag": "Nivel 2: Profundización y Métodos",
-        "nivel_clase": "intermedio",
-        "titulo": "Nombre del Módulo 2",
-        "teoria_modulo": "Marco teórico intermedio y métodos prácticos.",
-        "lecciones": [
+            "explicacion": "Explicación fundamentada en el texto del módulo."
+          },
           {
-            "titulo": "Nombre de la lección intermedia",
-            "duracion_minutos": 50,
-            "concepto_teorico": "Explicación técnica y práctica intermedia.",
-            "puntos_clave": ["Punto clave intermedio 1", "Punto clave intermedio 2"],
-            "ejemplo_codigo_o_formula": "Ejemplo intermedio aplicado.",
-            "ejercicio_practico": {
-              "enunciado": "Ejercicio práctico intermedio.",
-              "solucion_paso_a_paso": "Solución paso a paso."
-            }
-          }
-        ],
-        "mini_quizzes": [
-          {
-            "titulo": "Comprobación de Concepto 2",
-            "pregunta": "¿Pregunta del módulo 2?",
+            "titulo": "Comprobación 2: Aplicación Práctica",
+            "pregunta": "¿Pregunta sobre cómo se aplica el concepto o sobre el ejemplo analizado?",
             "opciones": ["Opción A", "Opción B", "Opción C", "Opción D"],
-            "indice_correcto": 0,
-            "explicacion": "Explicación."
-          }
-        ]
-      },
-      {
-        "id": "mod-3",
-        "nivel_tag": "Nivel 3: Aplicación Avanzada y Proyectos",
-        "nivel_clase": "avanzado",
-        "titulo": "Nombre del Módulo 3",
-        "teoria_modulo": "Integración y aplicaciones reales del conocimiento adquirido.",
-        "lecciones": [
+            "indice_correcto": 1,
+            "explicacion": "Explicación basada en el procedimiento visto en la lección."
+          },
           {
-            "titulo": "Nombre de la lección avanzada",
-            "duracion_minutos": 60,
-            "concepto_teorico": "Explicación avanzada orientada a soluciones reales.",
-            "puntos_clave": ["Punto avanzado 1", "Punto avanzado 2"],
-            "ejemplo_codigo_o_formula": "Proyecto o caso real integrado.",
-            "ejercicio_practico": {
-              "enunciado": "Reto práctico integrador.",
-              "solucion_paso_a_paso": "Solución detallada."
-            }
-          }
-        ],
-        "mini_quizzes": [
-          {
-            "titulo": "Comprobación de Concepto 3",
-            "pregunta": "¿Pregunta del módulo avanzado?",
+            "titulo": "Comprobación 3: Análisis y Reglas",
+            "pregunta": "¿Pregunta sobre una regla clave, condición o error común expuesto en los puntos clave?",
             "opciones": ["Opción A", "Opción B", "Opción C", "Opción D"],
-            "indice_correcto": 0,
-            "explicacion": "Explicación."
+            "indice_correcto": 2,
+            "explicacion": "Explicación basada en los puntos clave del módulo."
           }
         ]
       }
@@ -213,12 +203,14 @@ Debes estructurar el plan de estudio basándote FIELMENTE en los temas, capítul
 
     bloque_restricciones = ""
     if cantidad_modulos and int(cantidad_modulos) > 0:
-        bloque_restricciones += f"\n- REQUISITO ESTRICTO DE MÓDULOS: El plan DEBE contener EXACTAMENTE {cantidad_modulos} módulos (ni más ni menos). Cada módulo debe tener lecciones completas y mini quizzes."
+        bloque_restricciones += f"\n- REQUISITO ESTRICTO DE MÓDULOS: El plan DEBE contener EXACTAMENTE {cantidad_modulos} módulos (ni más ni menos). Cada módulo DEBE tener lecciones profundas y EXACTAMENTE 3 mini quizzes basados en la teoría."
     else:
-        bloque_restricciones += "\n- REQUISITO GENERAL DE MÓDULOS: Si vas a generar el plan, este DEBE tener entre 3 y 5 módulos progresivos y completos (NUNCA generes solo 1 módulo)."
+        bloque_restricciones += "\n- REQUISITO GENERAL DE MÓDULOS: Si vas a generar el plan, este DEBE tener entre 3 y 5 módulos progresivos y completos (NUNCA generes solo 1 módulo). Cada módulo DEBE tener EXACTAMENTE 3 mini quizzes."
 
     if duracion_personalizada and str(duracion_personalizada).strip():
-        bloque_restricciones += f"\n- REQUISITO ESTRICTO DE TIEMPO: El plan debe estructurarse para completarse en {str(duracion_personalizada).strip()}."
+        bloque_restricciones += f"\n- REQUISITO ESTRICTO DE TIEMPO: El plan debe estructurarse para completarse en {str(duracion_personalizada).strip()}. Si es 1 semana hábil (5 días), distribuye el contenido en 4 o 5 módulos con sesiones de 45-60 min cada una para que el tiempo sea formativo y realista."
+    else:
+        bloque_restricciones += "\n- REQUISITO DE CONTENIDO: Cada lección debe tener mínimo 3 a 4 párrafos de teoría profunda, ejemplo o código real comentado (prohibido N/A) y 3 preguntas de comprobación por módulo."
 
     # -------------------------------------------------------------
     # 1. INTENTAR CON GEMINI (1ª OPCIÓN: gemini-flash-lite-latest)
@@ -405,8 +397,8 @@ def generar_plan_contingencia(prompt_usuario: str) -> dict:
                     ],
                     "mini_quizzes": [
                         {
-                            "titulo": "Comprobación de Concepto",
-                            "pregunta": f"¿Cuál es el propósito principal de los axiomas fundamentales en {materia}?",
+                            "titulo": "Comprobación 1: Concepto Fundamental",
+                            "pregunta": f"¿Cuál es el propósito principal de los axiomas y definiciones en {materia}?",
                             "opciones": [
                                 "Establecer las bases teóricas rigurosas y consistentes",
                                 "Sustituir la demostración por suposiciones",
@@ -415,6 +407,30 @@ def generar_plan_contingencia(prompt_usuario: str) -> dict:
                             ],
                             "indice_correcto": 0,
                             "explicacion": "Los axiomas garantizan la consistencia y validez de todas las deducciones posteriores."
+                        },
+                        {
+                            "titulo": "Comprobación 2: Aplicación Práctica",
+                            "pregunta": f"Al aplicar la notación estándar en {materia}, ¿qué se busca garantizar?",
+                            "opciones": [
+                                "Complejidad innecesaria en la escritura",
+                                "Claridad, reproducibilidad y comunicación universal del modelo",
+                                "Dependencia de herramientas específicas",
+                                "Ocultar los pasos de cálculo"
+                            ],
+                            "indice_correcto": 1,
+                            "explicacion": "La notación estándar asegura una comunicación inequívoca y reproducible del conocimiento."
+                        },
+                        {
+                            "titulo": "Comprobación 3: Regla Crítica",
+                            "pregunta": f"¿Cuál es el primer paso metodológico antes de resolver un caso base en {materia}?",
+                            "opciones": [
+                                "Calcular directamente sin leer el enunciado",
+                                "Identificar claramente las hipótesis y condiciones del problema",
+                                "Modificar los datos hasta que coincidan",
+                                "Asumir que todos los casos son triviales"
+                            ],
+                            "indice_correcto": 1,
+                            "explicacion": "Identificar las hipótesis es indispensable para saber qué teoremas y definiciones son válidos."
                         }
                     ]
                 },
@@ -443,7 +459,7 @@ def generar_plan_contingencia(prompt_usuario: str) -> dict:
                     ],
                     "mini_quizzes": [
                         {
-                            "titulo": "Comprobación de Concepto",
+                            "titulo": "Comprobación 1: Concepto de Transformación",
                             "pregunta": "¿Qué ventaja ofrece un método sistemático frente a un cálculo empírico?",
                             "opciones": [
                                 "Garantiza reproducibilidad, convergencia y menor probabilidad de error",
@@ -453,6 +469,30 @@ def generar_plan_contingencia(prompt_usuario: str) -> dict:
                             ],
                             "indice_correcto": 0,
                             "explicacion": "Los métodos sistemáticos proporcionan garantías matemáticas sobre la validez de la solución."
+                        },
+                        {
+                            "titulo": "Comprobación 2: Invariantes y Propiedades",
+                            "pregunta": "¿Por qué es importante identificar invariantes durante una transformación algorítmica?",
+                            "opciones": [
+                                "Para cambiar arbitrariamente el valor final",
+                                "Porque garantizan que las transformaciones conserven las propiedades esenciales del sistema",
+                                "Para evitar que el cálculo termine",
+                                "No tienen ninguna utilidad práctica"
+                            ],
+                            "indice_correcto": 1,
+                            "explicacion": "Los invariantes aseguran que el resultado de la transformación siga siendo equivalente al problema original."
+                        },
+                        {
+                            "titulo": "Comprobación 3: Prevención de Errores",
+                            "pregunta": "¿Cuál es la causa más común de fallo al ejecutar transformaciones intermedias?",
+                            "opciones": [
+                                "Omitir la validación cruzada y aplicar operaciones no permitidas por las reglas del dominio",
+                                "Usar herramientas computacionales modernas",
+                                "Trabajar de forma ordenada y secuencial",
+                                "Documentar cada paso del proceso"
+                            ],
+                            "indice_correcto": 0,
+                            "explicacion": "Omitir las restricciones operativas del dominio conduce a soluciones espurias o inconsistentes."
                         }
                     ]
                 },
@@ -481,7 +521,7 @@ def generar_plan_contingencia(prompt_usuario: str) -> dict:
                     ],
                     "mini_quizzes": [
                         {
-                            "titulo": "Comprobación de Concepto",
+                            "titulo": "Comprobación 1: Validación Empírica",
                             "pregunta": "¿Por qué es crucial validar un modelo analítico frente a los datos reales?",
                             "opciones": [
                                 "Para verificar que las hipótesis teóricas reflejan fielmente el comportamiento observado",
@@ -491,6 +531,30 @@ def generar_plan_contingencia(prompt_usuario: str) -> dict:
                             ],
                             "indice_correcto": 0,
                             "explicacion": "La validación empírica asegura que las conclusiones teóricas sean aplicables a la realidad."
+                        },
+                        {
+                            "titulo": "Comprobación 2: Análisis de Sensibilidad",
+                            "pregunta": "¿Qué permite determinar el análisis de sensibilidad en un modelo?",
+                            "opciones": [
+                                "Cómo afectan las variaciones en los parámetros clave a los resultados del sistema",
+                                "El tiempo exacto de compilación del programa",
+                                "El costo del hardware utilizado",
+                                "Eliminar todas las restricciones del modelo"
+                            ],
+                            "indice_correcto": 0,
+                            "explicacion": "El análisis de sensibilidad revela cuán robusta o vulnerable es la solución ante cambios en las condiciones iniciales."
+                        },
+                        {
+                            "titulo": "Comprobación 3: Criterio de Decisión",
+                            "pregunta": "¿Qué indica que un modelo ha alcanzado su punto óptimo dentro del marco establecido?",
+                            "opciones": [
+                                "Que satisface todas las restricciones operativas y maximiza/minimiza la función objetivo definida",
+                                "Que se detuvo sin dar mensajes de advertencia",
+                                "Que se seleccionó la primera opción disponible",
+                                "Que se ignoraron las condiciones límite"
+                            ],
+                            "indice_correcto": 0,
+                            "explicacion": "La optimización formal requiere cumplir rigurosamente las restricciones satisfaciendo la meta del problema."
                         }
                     ]
                 }

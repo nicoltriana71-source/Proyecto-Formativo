@@ -29,6 +29,8 @@ class SolicitudGeneracion(BaseModel):
     id_usuario: Optional[int] = None
     historial: Optional[List[MensajeHistorial]] = []
     forzar_nuevo: Optional[bool] = False
+    cantidad_modulos: Optional[int] = None
+    duracion_personalizada: Optional[str] = None
 
 class SolicitudAceptarPlan(BaseModel):
     id_plan: int
@@ -366,13 +368,38 @@ def generar_interfaz(solicitud: SolicitudGeneracion, sesion: Session = Depends(o
                     "similitud": plan_existente.get("similitud", 1.0)
                 }
 
+        # Detección inteligente de duración solicitada si no viene explícita
+        duracion_final = solicitud.duracion_personalizada
+        if not duracion_final:
+            prompt_lower = solicitud.prompt.lower()
+            if "semana habil" in prompt_lower or "semana hábil" in prompt_lower:
+                duracion_final = "1 semana hábil (5 días de estudio de lunes a viernes)"
+            elif "semanas" in prompt_lower or "semana" in prompt_lower:
+                m_sem = re.search(r"(\d+)\s*semanas?", prompt_lower)
+                if m_sem:
+                    duracion_final = f"{m_sem.group(1)} semanas"
+                elif "una semana" in prompt_lower:
+                    duracion_final = "1 semana"
+            elif "dias" in prompt_lower or "días" in prompt_lower:
+                m_dias = re.search(r"(\d+)\s*d[ií]as?", prompt_lower)
+                if m_dias:
+                    duracion_final = f"{m_dias.group(1)} días"
+            elif "meses" in prompt_lower or "mes" in prompt_lower:
+                m_mes = re.search(r"(\d+)\s*mes(es)?", prompt_lower)
+                if m_mes:
+                    duracion_final = f"{m_mes.group(1)} meses"
+                elif "un mes" in prompt_lower:
+                    duracion_final = "1 mes"
+
         nombre_vista = f"vista_{uuid.uuid4().hex[:8]}"
         historial_dicts = [m.model_dump() for m in solicitud.historial]
         
         resultado = generar_codigo_ia(
             prompt_usuario=solicitud.prompt,
             historial=historial_dicts,
-            nombre_archivo=nombre_vista
+            nombre_archivo=nombre_vista,
+            cantidad_modulos=solicitud.cantidad_modulos,
+            duracion_personalizada=duracion_final
         )
 
         if isinstance(resultado, str):
