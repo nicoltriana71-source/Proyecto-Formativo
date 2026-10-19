@@ -487,19 +487,21 @@ function agregarMensajeUsuario(texto) {
     guardarEstadoChat();
 }
 
-function agregarMensajeCarga() {
+function agregarMensajeCarga(texto = "StudNova IA está respondiendo...") {
     const id = 'carga-' + Date.now();
     const div = document.createElement('div');
-    div.className = 'mensaje';
+    div.className = 'mensaje mensaje-carga';
     div.id = id;
     div.innerHTML = `
-<<<<<<< HEAD
         <div class="avatar"><img src="avatar.png" alt="Avatar IA" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;"></div>
-        <div class="contenido"><p>⏳ <em>StudNova IA está respondiendo...</em></p></div>
-=======
-        <div class="avatar">🤖</div>
-        <div class="contenido"><p>⏳ <em>StudNova IA está estructurando tu plan personalizado...</em></p></div>
->>>>>>> b6f7aedd54a65a08a30c18ec235c5774291a64b5
+        <div class="contenido contenido-carga">
+            <div class="indicador-escritura">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <p class="texto-carga">${texto}</p>
+        </div>
     `;
     chatBox.appendChild(div);
     return id;
@@ -591,7 +593,7 @@ async function aceptarPlanSugerido(idPlan, idCard) {
         });
     }
 
-    const idCarga = agregarMensajeCarga();
+    const idCarga = agregarMensajeCarga("StudNova IA está estructurando tu plan personalizado...");
     scrollAlFondo();
 
     try {

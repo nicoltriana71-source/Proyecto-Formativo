@@ -623,3 +623,66 @@ button:hover {
   cursor: not-allowed;
   transform: none;
 }
+
+/* ==========================================
+   INDICADOR ESTÉTICO DE CARGA Y RESPUESTA IA
+   ========================================== */
+.mensaje-carga .contenido-carga {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: #1e293b;
+  border: 1px solid rgba(56, 189, 248, 0.25);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25);
+  padding: 12px 18px;
+  border-radius: 16px 16px 16px 4px;
+}
+
+.indicador-escritura {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  height: 18px;
+}
+
+.indicador-escritura span {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  background: #38bdf8;
+  border-radius: 50%;
+  animation: pulsoPuntos 1.4s infinite ease-in-out both;
+}
+
+.indicador-escritura span:nth-child(1) {
+  animation-delay: -0.32s;
+}
+
+.indicador-escritura span:nth-child(2) {
+  animation-delay: -0.16s;
+}
+
+.indicador-escritura span:nth-child(3) {
+  animation-delay: 0s;
+}
+
+@keyframes pulsoPuntos {
+  0%, 80%, 100% {
+    transform: scale(0.6);
+    opacity: 0.35;
+  }
+  40% {
+    transform: scale(1.15);
+    opacity: 1;
+    background: #60a5fa;
+  }
+}
+
+.texto-carga {
+  margin: 0;
+  font-size: 14px;
+  color: #cbd5e1;
+  font-style: italic;
+  font-weight: 500;
+  letter-spacing: 0.2px;
+}
