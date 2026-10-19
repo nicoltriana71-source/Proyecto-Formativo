@@ -11,4 +11,3 @@ class GenerarPlanSolicitud(BaseModel):
     duracion: Optional[int] = 7  # Duración en días
     id_asignatura: int
     id_ruta: int
-
