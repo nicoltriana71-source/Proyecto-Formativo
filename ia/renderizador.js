@@ -407,9 +407,6 @@ function restaurarEstadoChat() {
 }
 
 function iniciarNuevoChat() {
-    if (listaMensajesUI.length > 0 && !confirm("¿Deseas iniciar una nueva conversación? Se limpiará el chat actual.")) {
-        return;
-    }
     const idUsuario = obtenerIdUsuario();
     localStorage.removeItem(`studnova_chat_historial_${idUsuario}`);
     localStorage.removeItem(`studnova_chat_mensajes_ui_${idUsuario}`);
@@ -422,37 +419,7 @@ function iniciarNuevoChat() {
         chatBox.innerHTML = `
             <div class="mensaje">
                 <div class="avatar">
-                    <img src="/login/image.png" alt="Logo" width="50" height="50" class="logo" style="border-radius:50%; object-fit:cover;">
-                </div>
-                <div class="contenido">
-                    <p>¡Hola! 👋 Soy tu asistente de <strong>StudNova IA</strong>.</p>
-                    <p style="margin-top: 8px;">Cuéntame, ¿qué materia o tema te gustaría aprender hoy?</p>
-                </div>
-            </div>
-        `;
-    }
-    quitarArchivoAdjunto();
-    if (sidebar && sidebar.classList.contains('active')) {
-        toggleMenu();
-    }
-}
-// ==========================================
-// INICIAR NUEVO CHAT (SIN CONFIRMACIÓN)
-// ==========================================
-function iniciarNuevoChat() {
-    const idUsuario = obtenerIdUsuario();
-    localStorage.removeItem(`studnova_chat_historial_${idUsuario}`);
-    localStorage.removeItem(`studnova_chat_mensajes_ui_${idUsuario}`);
-    localStorage.removeItem(`studnova_ultimo_plan_${idUsuario}`);
-    historialConversacion = [];
-    listaMensajesUI = [];
-    window.ultimoPlanGenerado = null;
-
-    if (chatBox) {
-        chatBox.innerHTML = `
-            <div class="mensaje">
-                <div class="avatar">
-                    <img src="/login/image.png" alt="Logo" width="50" height="50" class="logo" style="border-radius:50%; object-fit:cover;">
+                    <img src="avatar.png" alt="Logo" width="50" height="50" class="logo" style="border-radius:50%; object-fit:cover;">
                 </div>
                 <div class="contenido">
                     <p>¡Hola! 👋 Soy tu asistente de <strong>StudNova IA</strong>.</p>
@@ -493,13 +460,8 @@ function agregarMensajeCarga() {
     div.className = 'mensaje';
     div.id = id;
     div.innerHTML = `
-<<<<<<< HEAD
         <div class="avatar"><img src="avatar.png" alt="Avatar IA" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;"></div>
         <div class="contenido"><p>⏳ <em>StudNova IA está respondiendo...</em></p></div>
-=======
-        <div class="avatar">🤖</div>
-        <div class="contenido"><p>⏳ <em>StudNova IA está estructurando tu plan personalizado...</em></p></div>
->>>>>>> b6f7aedd54a65a08a30c18ec235c5774291a64b5
     `;
     chatBox.appendChild(div);
     return id;

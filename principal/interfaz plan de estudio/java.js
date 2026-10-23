@@ -119,14 +119,16 @@ function renderizarPlan(plan) {
             htmlLecciones += `
                 <div class="tarea-contenedor" style="margin-bottom: 12px;">
                     <div class="tarea-item" style="display: flex; justify-content: space-between; align-items: center;">
-                        <label style="display: flex; align-items: center; gap: 12px; cursor: pointer; flex: 1;">
-                            <input type="checkbox" data-modulo="${idModDB}" data-tema="${idTemaDB}" onchange="actualizarProgreso(this); autoIniciarTimer();">
-                            <span class="check-custom"></span>
-                            <div class="tarea-texto">
+                        <div style="display: flex; align-items: center; gap: 12px; flex: 1;">
+                            <label class="check-box-wrapper" style="display: flex; align-items: center; cursor: pointer; padding: 4px;" title="Marcar lección como realizada">
+                                <input type="checkbox" id="chk-${idLec}" data-modulo="${idModDB}" data-tema="${idTemaDB}" onchange="actualizarProgreso(this); sincronizarBotonLeccion('${idLec}', this.checked); autoIniciarTimer();">
+                                <span class="check-custom"></span>
+                            </label>
+                            <div class="tarea-texto" style="cursor: pointer; flex: 1;" onclick="alternarGuia('${idLec}', this.closest('.tarea-item').querySelector('.btn-ver-guia')); autoIniciarTimer();" title="Clic para abrir o cerrar el contenido de la lección">
                                 <strong>${escapar(tituloLec)}</strong>
                                 <small>⏱️ ${duracion} min • Contenido y práctica</small>
                             </div>
-                        </label>
+                        </div>
                         <button type="button" class="btn-ver-guia" onclick="alternarGuia('${idLec}', this); autoIniciarTimer();">📖 Abrir Lección</button>
                     </div>
 
@@ -134,10 +136,20 @@ function renderizarPlan(plan) {
                     <div class="guia-aprendizaje-drawer" id="${idLec}" style="display: none; background: #0f172a; border: 1.5px solid #3b82f6; border-radius: 12px; padding: 18px; margin-top: 6px;">
                         <div style="font-size: 13.5px; line-height: 1.6; color: #f1f5f9;">
                             <strong style="color: #60a5fa; font-size: 14px; display: block; margin-bottom: 6px;">📚 Concepto y Explicación:</strong>
-                            <p style="white-space: pre-line; color: #cbd5e1;">${escapar(teoria)}</p>
+                            <p style="white-space: pre-line; color: #cbd5e1; font-size: 13.5px; line-height: 1.7;">${escapar(teoria)}</p>
                             ${puntosHTML}
                             ${codigoHTML}
                             ${ejercicioHTML}
+                            
+                            <!-- Acción explícita para marcar como terminada tras leer -->
+                            <div style="margin-top: 18px; padding-top: 14px; border-top: 1px solid #334155; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+                                <span style="font-size: 12.5px; color: #94a3b8;">
+                                    💡 Lee la lección y resuelve el ejercicio práctico antes de marcarla como completada.
+                                </span>
+                                <button type="button" class="btn-marcar-hecha" id="btn-completar-${idLec}" onclick="alternarCompletadoDesdeGuia('${idLec}'); autoIniciarTimer();" style="background: #10b981; color: white; border: none; padding: 8px 16px; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer; transition: all 0.2s;">
+                                    ✔️ Marcar como completada
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -151,19 +163,35 @@ function renderizarPlan(plan) {
         quizzes.forEach((quizObj, qIdx) => {
             const tituloQ = quizObj.titulo || `Comprobación ${qIdx + 1}`;
             const pregunta = quizObj.pregunta || "¿Pregunta de evaluación?";
-            const opciones = quizObj.opciones || [];
-            const correcta = quizObj.indice_correcto ?? 0;
+            let opciones = quizObj.opciones || [];
+            let correcta = typeof quizObj.indice_correcto === 'number' ? quizObj.indice_correcto : 0;
+
+            // Barajar aleatoriamente las opciones para que la respuesta correcta nunca sea fija (ej. siempre la A)
+            const letras = ['A', 'B', 'C', 'D', 'E', 'F'];
+            let opcionesMapeadas = opciones.map((opc, idx) => ({
+                texto: opc,
+                esCorrecta: idx === correcta
+            }));
+
+            // Barajar con algoritmo Fisher-Yates
+            for (let i = opcionesMapeadas.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [opcionesMapeadas[i], opcionesMapeadas[j]] = [opcionesMapeadas[j], opcionesMapeadas[i]];
+            }
+
+            const nuevoIndiceCorrecto = opcionesMapeadas.findIndex(item => item.esCorrecta);
 
             let botones = '';
-            opciones.forEach((opc, opcIdx) => {
-                botones += `<button onclick="verificarRespuesta(this, ${opcIdx}); autoIniciarTimer();">${escapar(opc)}</button>`;
+            opcionesMapeadas.forEach((item, opcIdx) => {
+                const letraPrefijo = letras[opcIdx] ? `<strong>${letras[opcIdx]})</strong> ` : '';
+                botones += `<button type="button" onclick="verificarRespuesta(this, ${opcIdx}); autoIniciarTimer();">${letraPrefijo}${escapar(item.texto)}</button>`;
             });
 
             htmlQuizzes += `
                 <div class="quiz-box" style="margin-top: 16px;">
                     <h4>🧪 ${escapar(tituloQ)}</h4>
                     <p>${escapar(pregunta)}</p>
-                    <div class="opciones-quiz" data-correcta="${correcta}">
+                    <div class="opciones-quiz" data-correcta="${nuevoIndiceCorrecto}">
                         ${botones}
                     </div>
                     <div class="feedback-quiz"></div>
@@ -203,25 +231,43 @@ function alternarGuia(idLec, boton) {
     const guia = document.getElementById(idLec);
     if (!guia) return;
 
-    if (guia.style.display === 'none') {
+    if (guia.style.display === 'none' || !guia.style.display) {
         guia.style.display = 'block';
-        boton.innerText = "✖ Cerrar Lección";
-        boton.style.background = "#475569";
-
-        // Marcar AUTOMÁTICAMENTE la lección como completada al abrirla para estudiar
-        const tareaContenedor = boton.closest('.tarea-contenedor');
-        if (tareaContenedor) {
-            const chk = tareaContenedor.querySelector('input[type="checkbox"]');
-            if (chk && !chk.checked) {
-                chk.checked = true;
-                actualizarProgreso(chk);
-                guardarEstadoProgresoLocal();
-            }
+        if (boton) {
+            boton.innerText = "✖ Cerrar Lección";
+            boton.style.background = "#475569";
         }
     } else {
         guia.style.display = 'none';
-        boton.innerText = "📖 Abrir Lección";
-        boton.style.background = "#2563eb";
+        if (boton) {
+            boton.innerText = "📖 Abrir Lección";
+            boton.style.background = "#2563eb";
+        }
+    }
+}
+
+function alternarCompletadoDesdeGuia(idLec) {
+    const chk = document.getElementById(`chk-${idLec}`);
+    if (chk) {
+        chk.checked = !chk.checked;
+        actualizarProgreso(chk);
+        sincronizarBotonLeccion(idLec, chk.checked);
+        guardarEstadoProgresoLocal();
+    }
+}
+
+function sincronizarBotonLeccion(idLec, estaCompletada) {
+    const btn = document.getElementById(`btn-completar-${idLec}`);
+    if (btn) {
+        if (estaCompletada) {
+            btn.innerText = "↩️ Desmarcar lección";
+            btn.style.background = "#334155";
+            btn.style.color = "#94a3b8";
+        } else {
+            btn.innerText = "✔️ Marcar como completada";
+            btn.style.background = "#10b981";
+            btn.style.color = "white";
+        }
     }
 }
 
@@ -349,7 +395,13 @@ function restaurarEstadoProgresoLocal() {
             const indices = JSON.parse(guardado);
             const checkboxes = document.querySelectorAll('.tarea-item input[type="checkbox"]');
             indices.forEach(idx => {
-                if (checkboxes[idx]) checkboxes[idx].checked = true;
+                if (checkboxes[idx]) {
+                    checkboxes[idx].checked = true;
+                    if (checkboxes[idx].id) {
+                        const idLec = checkboxes[idx].id.replace('chk-', '');
+                        sincronizarBotonLeccion(idLec, true);
+                    }
+                }
             });
             actualizarProgreso();
         }

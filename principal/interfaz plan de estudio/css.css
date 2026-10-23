@@ -257,7 +257,6 @@ body {
     padding: 14px 16px;
     border-radius: 10px;
     border: 1px solid #334155;
-    cursor: pointer;
     transition: border-color 0.2s;
 }
 
@@ -265,21 +264,41 @@ body {
     border-color: #2563eb;
 }
 
+.check-box-wrapper {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 6px;
+    transition: background 0.2s;
+}
+
+.check-box-wrapper:hover {
+    background: rgba(16, 185, 129, 0.15);
+}
+
 .tarea-item input[type="checkbox"] {
-    width: 18px;
-    height: 18px;
+    width: 20px;
+    height: 20px;
     cursor: pointer;
     accent-color: #10b981;
 }
 
 .tarea-texto {
     flex: 1;
+    cursor: pointer;
+    transition: opacity 0.2s;
+}
+
+.tarea-texto:hover strong {
+    color: #60a5fa;
 }
 
 .tarea-texto strong {
     display: block;
     font-size: 14px;
     color: #f8fafc;
+    transition: color 0.2s;
 }
 
 .tarea-texto small {
@@ -297,11 +316,17 @@ body {
     font-size: 12px;
     font-weight: bold;
     cursor: pointer;
-    transition: background 0.2s;
+    transition: background 0.2s, transform 0.1s;
 }
 
 .btn-ver-guia:hover {
     background: #1d4ed8;
+    transform: translateY(-1px);
+}
+
+.btn-marcar-hecha:hover {
+    filter: brightness(1.1);
+    transform: translateY(-1px);
 }
 
 /* Guías de Estudio Desplegables */
