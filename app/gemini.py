@@ -58,41 +58,56 @@ def obtener_embedding(texto: str) -> list:
 
 # PROMPT DINÁMICO, PEDAGÓGICO Y MULTIMODULAR
 PROMPT_TUTOR_PROFUNDO = """
-Eres el tutor pedagógico inteligente y cercano de StudNova IA.
-Tu objetivo es conversar de forma natural, empática y dinámica con el estudiante para estructurar su aprendizaje de forma personalizada con alta calidad académica.
+Eres el tutor pedagógico inteligente y cercano de StudNova IA, una plataforma de aprendizaje autodidacta personalizado.
+Tu objetivo es guiar al estudiante estructurando planes de estudio reales, profundos y rigurosos que realmente le enseñen la materia y se ajusten de manera creíble al tiempo solicitado.
 
 REGLAS DE CONVERSACIÓN (¡OBLIGATORIAS!):
-1. ¡NUNCA repitas el mismo mensaje de saludo en cada turno! Habla como un tutor humano cálido y motivador.
-2. SI EL ESTUDIANTE INDICA UN TEMA O SOLICITA UN NUEVO PLAN (ej: "álgebra", "quiero aprender python", "crear un nuevo plan"):
-   - NO generes el plan de inmediato si aún no tienes el tiempo disponible o la cantidad de módulos.
-   - Responde con "tipo": "conversacion" mostrando entusiasmo por el tema y pregúntale amablemente:
-     a) ¿En cuánto tiempo planea estudiarlo o completarlo? (ej: 2 semanas, 1 mes).
-     b) ¿En cuántos módulos desea dividirlo? (recomiéndale entre 3 y 6 módulos para un progreso estructurado).
-3. CUÁNDO GENERAR EL PLAN ("tipo": "plan_generado"):
-   - ÚNICAMENTE genera el plan cuando el estudiante haya respondido o definido el tiempo estimado O la cantidad de módulos que desea.
-   - O si el estudiante adjuntó un documento temario explícito.
-4. REGLA ESTRICTA DE MÓDULOS:
-   - Un plan de estudio NUNCA debe contener un solo módulo, a menos que el usuario lo pida expresamente.
-   - Si el usuario solicitó N módulos, genera EXACTAMENTE N módulos bien diferenciados.
-   - Si no especificó un número exacto pero ya dio el tiempo, genera por defecto entre 3 y 4 módulos progresivos (Fundamentos -> Profundización -> Aplicación Práctica).
-5. REGLA ESTRICTA DE LECCIONES Y PROFUNDIDAD DE CONTENIDO (¡ALTA CALIDAD FORMATIVA!):
-   - Cada módulo DEBE contener ENTRE 2 Y 3 LECCIONES COMPLETAS (NUNCA solo una lección simple o básica).
-   - Las lecciones NO deben ser superficiales ni telegráficas. Cada lección debe contener:
-     * "concepto_teorico": Explicación conceptual profunda, didáctica y completa (mínimo 3 a 5 párrafos ricos y claros). Debe detallar:
-       - Definición formal y fundamentos conceptuales.
-       - Cómo funciona internamente (mecanismos, lógica o bases teóricas).
-       - Analogías didácticas y aplicaciones prácticas reales.
-       - Errores comunes a evitar y buenas prácticas.
-     * "puntos_clave": Lista de 3 a 5 principios, reglas clave, propiedades o fórmulas esenciales explicadas.
-     * "ejemplo_codigo_o_formula": Código completo y funcional altamente comentado línea por línea, O formulación matemática analítica desarrollada paso a paso con su interpretación.
-     * "ejercicio_practico":
-       - "enunciado": Problema o caso práctico desafiante del mundo real para aplicar lo aprendido.
-       - "solucion_paso_a_paso": Explicación desglosada paso a paso de cómo resolverlo analítica o computacionalmente.
-6. REGLA ESTRICTA DE MINI QUIZZES (ALEATORIEDAD DE RESPUESTAS):
-   - En cada módulo debe haber un mini quiz para comprobar la comprensión.
-   - "indice_correcto": DEBE VARIAR ALEATORIAMENTE entre 0, 1, 2 y 3 (A, B, C o D). ¡PROHIBIDO poner siempre 0 (Opción A)! Distribuye las respuestas correctas de forma variada entre los módulos.
-   - "opciones": 4 opciones de respuesta realistas y bien formuladas.
-   - "explicacion": Justificación detallada de por qué la opción correcta es la acertada y por qué las demás son erróneas.
+1. ¡NUNCA repitas el mismo mensaje de saludo en cada turno! Habla como un tutor humano cálido, motivador y profesional.
+2. SI EL ESTUDIANTE INDICA UN TEMA O SOLICITA UN NUEVO PLAN (ej: "álgebra", "quiero aprender python"):
+   - Si no ha indicado el tiempo ni la cantidad de módulos, responde con "tipo": "conversacion" mostrando entusiasmo y pregúntale amablemente:
+     a) ¿En cuánto tiempo planea estudiarlo? (ej: 1 semana hábil, 2 semanas, 3 días, 1 mes).
+     b) ¿En cuántos módulos desea dividirlo? (recomiéndale entre 3 y 6 módulos).
+3. CUÁNDO GENERAR EL PLAN DIRECTAMENTE ("tipo": "plan_generado"):
+   - Genera el plan cuando el estudiante haya indicado el tiempo, los módulos, cuando diga frases como "hazlo para 1 semana hábil", o si adjunta un documento.
+
+REGLAS DE ORO PEDAGÓGICAS PARA LA GENERACIÓN DEL PLAN (¡CRUCIALES!):
+
+1. CÁLCULO Y COHERENCIA REAL DEL TIEMPO DE ESTUDIO:
+   - El plan NUNCA debe ser un resumen superficial que el estudiante termine en 15 minutos. Debe representar una dedicación de estudio real, formativa y creíble.
+   - Si el estudiante solicita "1 semana hábil" o "5 días":
+     * Estructura entre 4 y 5 módulos temáticos (aproximadamente 1 módulo por jornada diaria).
+     * Cada módulo debe contener entre 1 y 2 lecciones sustanciosas de 40 a 60 minutos cada una (totalizando al menos 1 a 1.5 horas diarias de estudio de lunes a viernes).
+   - Si solicita "3 días", "2 semanas", "1 mes" o cualquier otro tiempo:
+     * Calcula la cantidad de módulos y lecciones de forma proporcional para cubrir ese lapso con profundidad.
+   - En cada lección, especifica "duracion_minutos" realista (ej: 40, 45, 50, 60 min).
+
+2. PROFUNDIDAD CONCEPTUAL Y EXPLICACIONES SUSTANCIOSAS (¡PROHIBIDO SER SUPERFICIAL!):
+   - "concepto_teorico": DEBE ser una explicación didáctica, profunda y completa (mínimo 3 a 5 párrafos bien redactados y explicados paso a paso). Debe incluir:
+     * Definición formal, contexto y fundamentos esenciales.
+     * Mecanismo interno: cómo funciona internamente, lógica, arquitectura o demostración.
+     * Casos de uso prácticos, ejemplos de la vida real y buenas prácticas.
+     * Toda la información teórica necesaria para que el estudiante pueda responder las 3 preguntas de evaluación con total comprensión.
+   - "puntos_clave": Array con 4 a 6 puntos clave, axiomas, reglas o principios esenciales, claramente explicados (no solo palabras sueltas).
+   - "ejemplo_codigo_o_formula": ¡ESTRICTAMENTE PROHIBIDO PONER "N/A" O DEJARLO VACÍO!
+     * Si la materia es técnica (programación, IA, bases de datos): Código real funcional, limpio y exhaustivamente comentado línea por línea.
+     * Si es matemática/física: Fórmulas matemáticas completas, variables desglosadas y desarrollo analítico.
+     * Si es teórica, historia o humanidades: Un caso de estudio real aplicado con análisis detallado.
+   - "ejercicio_practico": Un reto o problema práctico que desafíe al estudiante a aplicar lo aprendido, con su "enunciado" y su "solucion_paso_a_paso" desglosada detalladamente.
+
+3. OBLIGATORIO: EXACTAMENTE 3 PREGUNTAS POR MÓDULO ("mini_quizzes"):
+   - Cada módulo DEBE contener un array "mini_quizzes" con EXACTAMENTE 3 preguntas de comprobación (ni una, ni dos: siempre 3).
+   - ALINEACIÓN ESTRICTA: Las 3 preguntas DEBEN evaluarse única y exclusivamente sobre la información, definiciones, reglas y ejemplos que explicaste en la teoría y puntos clave de ese mismo módulo. Si el estudiante leyó el módulo con atención, debe ser capaz de responderlas.
+   - Las 3 preguntas deben cubrir:
+     * Pregunta 1: "Comprobación 1: Concepto Fundamental" (evalúa comprensión directa de la definición o concepto base).
+     * Pregunta 2: "Comprobación 2: Aplicación Práctica" (evalúa cómo se aplica el concepto o método según el ejemplo).
+     * Pregunta 3: "Comprobación 3: Análisis y Reglas Críticas" (evalúa una regla clave, principio o distinción fundamental).
+   - "indice_correcto": DEBE variar aleatoriamente (0, 1, 2 o 3, es decir, A, B, C o D). ¡PROHIBIDO poner siempre 0 (la opción A)! Distribuye las respuestas correctas de forma variada entre las preguntas.
+   - Cada objeto en "mini_quizzes" debe incluir:
+     * "titulo": String claro (ej: "Comprobación 1: Concepto Fundamental").
+     * "pregunta": Pregunta redactada con precisión.
+     * "opciones": Array con 4 opciones plausibles ("Opción A", "Opción B", "Opción C", "Opción D").
+     * "indice_correcto": Entero de 0 a 3.
+     * "explicacion": Explicación didáctica citando la teoría vista en el módulo.
 
 ESTRUCTURA DE RESPUESTA EN JSON PURO:
 
@@ -105,169 +120,58 @@ CASO 1: MIENTRAS ESTÉS CONVERSANDO O PIDIENDO DETALLES DE TIEMPO / MÓDULOS:
 CASO 2: CUANDO YA TENGAS LOS PARÁMETROS Y GENERES EL PLAN COMPLETO:
 {
   "tipo": "plan_generado",
-  "mensaje": "¡Excelente! He estructurado tu plan de estudio personalizado para [Materia] en [X tiempo] distribuido en [N] módulos con lecciones profundas y prácticas:",
+  "mensaje": "¡Excelente! He estructurado tu plan de estudio personalizado para [Materia] en [X tiempo] distribuido en [N] módulos:",
   "plan": {
     "titulo": "Título atractivo y profesional del plan",
-    "descripcion": "Objetivos pedagógicos profundos y competencias a desarrollar.",
+    "descripcion": "Objetivos pedagógicos del plan de estudio.",
     "materia": "Materia o tecnología",
     "recomendacion_fatiga": "Estudia 25 min y descansa 5 min para consolidar la memoria.",
     "modulos": [
       {
         "id": "mod-1",
-        "nivel_tag": "Nivel 1: Fundamentos y Arquitectura",
+        "nivel_tag": "Nivel 1: Fundamentos Esenciales",
         "nivel_clase": "basico",
         "titulo": "Nombre del Módulo 1",
-        "teoria_modulo": "Marco teórico global del módulo explicando los conceptos fundamentales y el alcance.",
+        "teoria_modulo": "Marco teórico del módulo explicando los conceptos fundamentales.",
         "lecciones": [
           {
-            "titulo": "1.1 Introducción formal y conceptos pilares",
-            "duracion_minutos": 45,
-            "concepto_teorico": "Explicación conceptual profunda, didáctica y clara (mínimo 3 a 5 párrafos ricos). Explica la teoría formal, por qué existe, su importancia histórica o técnica, y cómo se relaciona con el panorama general.",
-            "puntos_clave": [
-              "Principio fundamental 1 con su impacto directo.",
-              "Regla técnica 2 y consideraciones prácticas.",
-              "Mecanismo clave 3 y cómo interactúa con el sistema."
-            ],
-            "ejemplo_codigo_o_formula": "Código o fórmula analítica extensamente comentada línea por línea.",
-            "ejercicio_practico": {
-              "enunciado": "Problema práctico contextualizado que el estudiante debe resolver.",
-              "solucion_paso_a_paso": "Paso 1: Planteamiento analítico... Paso 2: Ejecución del procedimiento... Paso 3: Conclusión y verificación."
-            }
-          },
-          {
-            "titulo": "1.2 Métodos operativos y casos prácticos esenciales",
+            "titulo": "Nombre de la lección",
             "duracion_minutos": 50,
-            "concepto_teorico": "Desarrollo técnico profundo de las herramientas y operaciones del módulo (mínimo 3 a 5 párrafos). Explicación minuciosa de los procedimientos estándar, buenas prácticas y advertencia de errores comunes.",
+            "concepto_teorico": "Explicación conceptual profunda, didáctica y clara (mínimo 3 a 5 párrafos ricos en contenido teórico, definiciones y contexto).",
             "puntos_clave": [
-              "Operación clave 1 y criterios de selección.",
-              "Optimización de recursos y rendimiento.",
-              "Patrones de uso recomendados en la industria."
+              "Regla o principio fundamental 1 detallado.",
+              "Regla o principio fundamental 2 detallado.",
+              "Regla o principio fundamental 3 detallado.",
+              "Regla o principio fundamental 4 detallado."
             ],
-            "ejemplo_codigo_o_formula": "Implementación técnica guiada y validación de resultados.",
+            "ejemplo_codigo_o_formula": "Código real comentado línea por línea, o caso de estudio aplicado detallado (¡NUNCA N/A!).",
             "ejercicio_practico": {
-              "enunciado": "Caso aplicado donde se deben combinar los métodos estudiados.",
-              "solucion_paso_a_paso": "Paso 1: Identificación de variables... Paso 2: Aplicación del método... Paso 3: Validación del resultado."
+              "enunciado": "Problema práctico que el estudiante debe resolver aplicando la teoría.",
+              "solucion_paso_a_paso": "Paso 1... Paso 2... Solución final explicada."
             }
           }
         ],
         "mini_quizzes": [
           {
-            "titulo": "Comprobación de Concepto Módulo 1",
-            "pregunta": "¿Cuál es el principio fundamental subyacente que rige este módulo?",
-            "opciones": [
-              "Distractor creíble 1",
-              "Distractor creíble 2",
-              "Respuesta correcta precisa y fundamentada",
-              "Distractor creíble 3"
-            ],
+            "titulo": "Comprobación 1: Concepto Fundamental",
+            "pregunta": "¿Pregunta directa sobre la definición o base explicada en el texto?",
+            "opciones": ["Opción A", "Opción B", "Opción C", "Opción D"],
             "indice_correcto": 2,
-            "explicacion": "Explicación detallada de por qué esta afirmación es la científicamente o técnicamente correcta."
-          }
-        ]
-      },
-      {
-        "id": "mod-2",
-        "nivel_tag": "Nivel 2: Profundización y Métodos",
-        "nivel_clase": "intermedio",
-        "titulo": "Nombre del Módulo 2",
-        "teoria_modulo": "Marco teórico intermedio y métodos prácticos avanzados.",
-        "lecciones": [
-          {
-            "titulo": "2.1 Técnicas intermedias y análisis estructural",
-            "duracion_minutos": 50,
-            "concepto_teorico": "Explicación técnica y práctica intermedia profunda (mínimo 3 a 5 párrafos). Análisis de complejidades, casos límite y algoritmos de resolución.",
-            "puntos_clave": [
-              "Regla de análisis estructural.",
-              "Control de errores y validación.",
-              "Integración con módulos previos."
-            ],
-            "ejemplo_codigo_o_formula": "Ejemplo intermedio completo con manejo de casos borde.",
-            "ejercicio_practico": {
-              "enunciado": "Problema analítico intermedio.",
-              "solucion_paso_a_paso": "Paso 1: Formulación... Paso 2: Desarrollo sistemático... Paso 3: Solución."
-            }
+            "explicacion": "Explicación fundamentada en el texto del módulo."
           },
           {
-            "titulo": "2.2 Algoritmos de resolución y optimización",
-            "duracion_minutos": 55,
-            "concepto_teorico": "Explicación detallada de la optimización y algoritmos de resolución (mínimo 3 a 5 párrafos). Criterios de eficiencia y robustez.",
-            "puntos_clave": [
-              "Criterios de convergencia y eficiencia.",
-              "Trade-offs entre exactitud y costo computacional.",
-              "Métricas de evaluación del resultado."
-            ],
-            "ejemplo_codigo_o_formula": "Demostración de optimización aplicada con comentarios paso a paso.",
-            "ejercicio_practico": {
-              "enunciado": "Reto de optimización práctica.",
-              "solucion_paso_a_paso": "Paso 1... Paso 2... Paso 3."
-            }
-          }
-        ],
-        "mini_quizzes": [
+            "titulo": "Comprobación 2: Aplicación Práctica",
+            "pregunta": "¿Pregunta sobre cómo se aplica el concepto o sobre el ejemplo analizado?",
+            "opciones": ["Opción A", "Opción B", "Opción C", "Opción D"],
+            "indice_correcto": 0,
+            "explicacion": "Explicación basada en el procedimiento visto en la lección."
+          },
           {
-            "titulo": "Comprobación de Concepto Módulo 2",
-            "pregunta": "¿Qué ventaja crucial ofrece la optimización explicada en este módulo?",
-            "opciones": [
-              "Distractor creíble 1",
-              "Respuesta correcta que describe la ventaja analítica",
-              "Distractor creíble 2",
-              "Distractor creíble 3"
-            ],
+            "titulo": "Comprobación 3: Análisis y Reglas",
+            "pregunta": "¿Pregunta sobre una regla clave, condición o error común expuesto en los puntos clave?",
+            "opciones": ["Opción A", "Opción B", "Opción C", "Opción D"],
             "indice_correcto": 1,
-            "explicacion": "Explicación rigurosa de los beneficios técnicos y teóricos."
-          }
-        ]
-      },
-      {
-        "id": "mod-3",
-        "nivel_tag": "Nivel 3: Aplicación Avanzada y Proyectos",
-        "nivel_clase": "avanzado",
-        "titulo": "Nombre del Módulo 3",
-        "teoria_modulo": "Integración global y aplicaciones en escenarios reales de alta complejidad.",
-        "lecciones": [
-          {
-            "titulo": "3.1 Modelado de sistemas y soluciones integradas",
-            "duracion_minutos": 60,
-            "concepto_teorico": "Explicación avanzada orientada a resolver problemas del mundo real (mínimo 3 a 5 párrafos). Arquitectura integral y diseño de soluciones.",
-            "puntos_clave": [
-              "Patrones de arquitectura avanzada.",
-              "Tolerancia a fallos y resiliencia.",
-              "Mantenibilidad y escalabilidad."
-            ],
-            "ejemplo_codigo_o_formula": "Caso práctico integrado completo con arquitectura modular.",
-            "ejercicio_practico": {
-              "enunciado": "Reto integrador que combina todos los conocimientos previos.",
-              "solucion_paso_a_paso": "Paso 1: Diseño... Paso 2: Implementación... Paso 3: Validación integral."
-            }
-          },
-          {
-            "titulo": "3.2 Diagnóstico, pruebas y despliegue profesional",
-            "duracion_minutos": 60,
-            "concepto_teorico": "Estrategias profesionales de validación, auditoría y puesta en producción (mínimo 3 a 5 párrafos). Criterios de calidad profesional.",
-            "puntos_clave": [
-              "Metodologías de testing y verificación.",
-              "Monitoreo de métricas clave.",
-              "Evolución y mantenimiento continuo."
-            ],
-            "ejemplo_codigo_o_formula": "Suite de pruebas o protocolo de validación documentado.",
-            "ejercicio_practico": {
-              "enunciado": "Auditoría y corrección de un caso real con anomalías.",
-              "solucion_paso_a_paso": "Paso 1: Diagnóstico... Paso 2: Corrección... Paso 3: Informe."
-            }
-          }
-        ],
-        "mini_quizzes": [
-          {
-            "titulo": "Comprobación de Concepto Módulo 3",
-            "pregunta": "¿Por qué es imprescindible validar las hipótesis antes de la implementación final?",
-            "opciones": [
-              "Distractor creíble 1",
-              "Distractor creíble 2",
-              "Distractor creíble 3",
-              "Garantiza consistencia empírica y minimiza riesgos operativos"
-            ],
-            "indice_correcto": 3,
-            "explicacion": "La validación temprana previene fallos estructurales costosos en entornos reales."
+            "explicacion": "Explicación basada en los puntos clave del módulo."
           }
         ]
       }
@@ -348,12 +252,14 @@ Debes estructurar el plan de estudio basándote FIELMENTE en los temas, capítul
 
     bloque_restricciones = ""
     if cantidad_modulos and int(cantidad_modulos) > 0:
-        bloque_restricciones += f"\n- REQUISITO ESTRICTO DE MÓDULOS: El plan DEBE contener EXACTAMENTE {cantidad_modulos} módulos (ni más ni menos). Cada módulo DEBE tener al menos 2 lecciones profundas y mini quizzes."
+        bloque_restricciones += f"\n- REQUISITO ESTRICTO DE MÓDULOS: El plan DEBE contener EXACTAMENTE {cantidad_modulos} módulos (ni más ni menos). Cada módulo DEBE tener lecciones profundas y EXACTAMENTE 3 mini quizzes basados en la teoría."
     else:
-        bloque_restricciones += "\n- REQUISITO GENERAL DE MÓDULOS: Si vas a generar el plan, este DEBE tener entre 3 y 5 módulos progresivos y completos (NUNCA generes solo 1 módulo). Cada módulo DEBE tener entre 2 y 3 lecciones completas."
+        bloque_restricciones += "\n- REQUISITO GENERAL DE MÓDULOS: Si vas a generar el plan, este DEBE tener entre 3 y 5 módulos progresivos y completos (NUNCA generes solo 1 módulo). Cada módulo DEBE tener EXACTAMENTE 3 mini quizzes."
 
     if duracion_personalizada and str(duracion_personalizada).strip():
-        bloque_restricciones += f"\n- REQUISITO ESTRICTO DE TIEMPO: El plan debe estructurarse para completarse en {str(duracion_personalizada).strip()}."
+        bloque_restricciones += f"\n- REQUISITO ESTRICTO DE TIEMPO: El plan debe estructurarse para completarse en {str(duracion_personalizada).strip()}. Si es 1 semana hábil (5 días), distribuye el contenido en 4 o 5 módulos con sesiones de 45-60 min cada una para que el tiempo sea formativo y realista."
+    else:
+        bloque_restricciones += "\n- REQUISITO DE CONTENIDO: Cada lección debe tener mínimo 3 a 4 párrafos de teoría profunda, ejemplo o código real comentado (prohibido N/A) y 3 preguntas de comprobación por módulo."
 
     # -------------------------------------------------------------
     # 1. INTENTAR CON GEMINI (1ª OPCIÓN: gemini-flash-lite-latest)
@@ -367,9 +273,9 @@ Debes estructurar el plan de estudio basándote FIELMENTE en los temas, capítul
 
     # Control de acción: solo genera directo si hay documento o si ya se especificaron módulos y tiempo
     if bloque_documento or (cantidad_modulos and duracion_personalizada):
-        instruccion_accion = "El estudiante ya proporcionó los parámetros necesarios o adjuntó un documento. GENERA DIRECTAMENTE el plan completo con 'tipo': 'plan_generado' cumpliendo la cantidad de módulos solicitada con al menos 2 lecciones ricas por módulo."
+        instruccion_accion = "El estudiante ya proporcionó los parámetros necesarios o adjuntó un documento. GENERA DIRECTAMENTE el plan completo con 'tipo': 'plan_generado' cumpliendo la cantidad de módulos solicitada."
     else:
-        instruccion_accion = "Lee atentamente el historial. Si el estudiante recién menciona el tema o solicitó un nuevo plan pero NO ha indicado la duración o los módulos deseados, RESPONDE CON 'tipo': 'conversacion' y pregúntale ambos datos antes de generar el plan. Si ya indicó ambos datos en los mensajes, genera el plan con 'tipo': 'plan_generado' con al menos 3 módulos y 2 lecciones profundas por módulo."
+        instruccion_accion = "Lee atentamente el historial. Si el estudiante recién menciona el tema o solicitó un nuevo plan pero NO ha indicado la duración o los módulos deseados, RESPONDE CON 'tipo': 'conversacion' y pregúntale ambos datos antes de generar el plan. Si ya indicó ambos datos en los mensajes, genera el plan con 'tipo': 'plan_generado' con al menos 3 módulos."
 
     prompt_completo = f"""
 INSTRUCCIONES DEL TUTOR STUDNOVA:
@@ -503,69 +409,93 @@ def generar_plan_contingencia(prompt_usuario: str) -> dict:
     if not es_solicitud_plan and len(prompt_usuario.split()) < 4:
         return {
             "tipo": "conversacion",
-            "mensaje": f"¡Hola! 👋 Me encanta el tema **{materia}**. Para armar tu plan a medida con lecciones profundas y detalladas, ¿en cuántas semanas planeas estudiarlo y en cuántos módulos te gustaría distribuirlo?"
+            "mensaje": f"¡Hola! 👋 Me encanta el tema **{materia}**. Para armar tu plan a medida, ¿en cuántas semanas planeas estudiarlo y en cuántos módulos te gustaría distribuirlo?"
         }
 
     return {
         "tipo": "plan_generado",
-        "mensaje": f"✨ He generado tu plan de estudio avanzado sobre {materia} con módulos estructurados y lecciones profundas:",
+        "mensaje": f"✨ He generado tu plan de estudio sobre {materia}:",
         "plan": {
-            "titulo": f"Dominio Integral y Práctico de {materia}",
-            "descripcion": f"Ruta pedagógica profunda y estructurada en módulos progresivos con múltiples lecciones, fundamentos conceptuales rigurosos, ejemplos paso a paso y comprobaciones de conceptos para {materia}.",
+            "titulo": f"Dominio Integral de {materia}",
+            "descripcion": f"Ruta pedagógica estructurada en módulos con lecciones profundas, ejemplos paso a paso y comprobación de conceptos para {materia}.",
             "materia": materia,
-            "recomendacion_fatiga": "Estudia 25 minutos seguidos con enfoque pleno y realiza 5 minutos de pausa activa para consolidar la memoria.",
+            "recomendacion_fatiga": "Estudia 25 minutos seguidos y realiza 5 minutos de pausa activa para consolidar la memoria.",
             "modulos": [
                 {
                     "id": "mod-1",
-                    "nivel_tag": "Nivel 1: Fundamentos y Arquitectura",
+                    "nivel_tag": "Nivel 1: Fundamentos Esenciales",
                     "nivel_clase": "basico",
-                    "titulo": f"Fundamentos Teóricos y Principios Clave de {materia}",
-                    "teoria_modulo": f"Marco conceptual fundamental para comprender la naturaleza, el alcance y las leyes esenciales que gobiernan {materia}.",
+                    "titulo": f"Fundamentos y Principios de {materia}",
+                    "teoria_modulo": f"Marco teórico inicial que abarca las definiciones formales, axiomas y pilares conceptuales necesarios para abordar {materia}.",
                     "lecciones": [
                         {
-                            "titulo": f"1.1 Definición formal, motivación y pilares de {materia}",
+                            "titulo": f"Introducción a los Conceptos Clave de {materia}",
                             "duracion_minutos": 45,
-                            "concepto_teorico": f"Para abordar con éxito {materia}, es indispensable comprender las raíces conceptuales y la motivación teórica detrás de cada postulado.\n\nEn este nivel inicial, se exploran las definiciones rigurosas que diferencian este campo de disciplinas afines, permitiendo al estudiante construir un modelo mental coherente y sólido.\n\nComprender los axiomas fundamentales no solo facilita la deducción lógica, sino que previene los errores intuitivos más habituales al analizar problemas más complejos.",
+                            "concepto_teorico": f"El dominio de {materia} inicia comprendiendo sus definiciones fundamentales y su campo de acción. A través de este módulo se sientan las bases sólidas para avanzar hacia conceptos complejos con rigor y claridad.\n\nComprender los axiomas no solo facilita la deducción lógica, sino que previene errores sistemáticos en etapas avanzadas.",
                             "puntos_clave": [
-                                f"Axiomas y definiciones formales constitutivas en {materia}.",
-                                "Notación matemática y simbología estándar empleada internacionalmente.",
+                                f"Definición y propiedades estructurales en {materia}.",
+                                "Notación matemática y simbólica estándar.",
                                 "Estructuras algebraicas y leyes de composición interna.",
-                                "Casos representativos y contraejemplos analíticos."
+                                "Casos representativos de aplicación directa."
                             ],
-                            "ejemplo_codigo_o_formula": "Demostración guiada del axioma fundamental y comprobación de sus propiedades de clausura y asociatividad.",
+                            "ejemplo_codigo_o_formula": "Demostración guiada del axioma principal y su interpretación geométrica o analítica paso a paso.",
                             "ejercicio_practico": {
-                                "enunciado": f"Verifica formalmente si el conjunto de elementos dados cumple con los axiomas estructurales de {materia}.",
-                                "solucion_paso_a_paso": "Paso 1: Identificar las hipótesis del enunciado y el dominio de trabajo.\nPaso 2: Comprobar la propiedad de cerradura bajo las operaciones definidas.\nPaso 3: Validar la existencia de elemento neutro y elemento inverso.\nPaso 4: Concluir formalmente sobre la validez del sistema."
+                                "enunciado": f"Aplica los conceptos iniciales de {materia} para resolver el caso base propuesto.",
+                                "solucion_paso_a_paso": "Paso 1: Identificar las hipótesis del enunciado.\nPaso 2: Aplicar la definición formal.\nPaso 3: Verificar la validez del resultado."
                             }
                         },
                         {
-                            "titulo": f"1.2 Interpretación analítica y primeros métodos operativos",
+                            "titulo": f"Interpretación y Métodos Operativos Iniciales",
                             "duracion_minutos": 50,
-                            "concepto_teorico": f"Una vez asimiladas las definiciones teóricas, el siguiente paso pedagógico consiste en traducir estos principios en procedimientos sistemáticos y manipulables.\n\nAprenderás cómo representar formalmente sistemas dinámicos o algebraicos mediante modelos simplificados pero matemáticamente exactos.\n\nSe analizan las condiciones de consistencia y los criterios de validez antes de proceder a cualquier cálculo o implementación.",
+                            "concepto_teorico": f"Una vez asimiladas las definiciones de {materia}, el siguiente paso pedagógico consiste en traducir estos principios en procedimientos sistemáticos y manipulables.\n\nAprenderás cómo representar formalmente sistemas dinámicos o algebraicos mediante modelos simplificados pero matemáticamente exactos.",
                             "puntos_clave": [
-                                "Representación sistemática de entidades en coordenadas o variables de estado.",
+                                "Representación sistemática de entidades en variables de estado.",
                                 "Operaciones elementales que preservan las propiedades del sistema.",
                                 "Identificación temprana de indeterminaciones y singularidades."
                             ],
                             "ejemplo_codigo_o_formula": "Algoritmo paso a paso para la reducción y verificación de consistencia del sistema base.",
                             "ejercicio_practico": {
-                                "enunciado": f"Aplica las operaciones elementales para simplificar la estructura presentada e interpreta el resultado obtenido.",
-                                "solucion_paso_a_paso": "Paso 1: Representar la estructura en su forma canónica.\nPaso 2: Aplicar transformaciones lineales o algebraicas equivalentes.\nPaso 3: Interpretar el resultado en el contexto original del problema."
+                                "enunciado": "Aplica las operaciones elementales para simplificar la estructura presentada e interpreta el resultado.",
+                                "solucion_paso_a_paso": "Paso 1: Representar la estructura formalmente.\nPaso 2: Aplicar transformaciones algebraicas equivalentes.\nPaso 3: Interpretar el resultado en el contexto original."
                             }
                         }
                     ],
                     "mini_quizzes": [
                         {
-                            "titulo": "Comprobación de Concepto Módulo 1",
-                            "pregunta": f"¿Por qué es imprescindible verificar los axiomas estructurales antes de aplicar fórmulas avanzadas en {materia}?",
+                            "titulo": "Comprobación 1: Concepto Fundamental",
+                            "pregunta": f"¿Cuál es el propósito principal de los axiomas y definiciones en {materia}?",
                             "opciones": [
-                                "Porque las fórmulas avanzadas son válidas en cualquier sistema sin importar sus propiedades",
-                                "Para evitar tener que justificar formalmente los resultados analíticos",
-                                "Garantiza que el sistema cumple las condiciones de consistencia bajo las cuales los teoremas fueron demostrados",
-                                "Simplemente para cumplir un requisito de presentación sin impacto en la exactitud"
+                                "Sustituir la demostración por suposiciones arbitrarias",
+                                "Evitar el análisis formal en favor de conjeturas",
+                                "Establecer las bases teóricas rigurosas, consistentes y universalmente reproducibles",
+                                "Reducir la precisión de los cálculos para simplificar el proceso"
                             ],
                             "indice_correcto": 2,
-                            "explicacion": "La aplicación de teoremas avanzados requiere estrictamente que se satisfagan las hipótesis y axiomas que los sustentan."
+                            "explicacion": "Los axiomas garantizan la consistencia y validez de todas las deducciones posteriores."
+                        },
+                        {
+                            "titulo": "Comprobación 2: Aplicación Práctica",
+                            "pregunta": f"Al aplicar la notación estándar en {materia}, ¿qué se busca garantizar?",
+                            "opciones": [
+                                "Complejidad innecesaria en la escritura",
+                                "Claridad, reproducibilidad y comunicación universal del modelo",
+                                "Dependencia de herramientas específicas",
+                                "Ocultar los pasos de cálculo"
+                            ],
+                            "indice_correcto": 1,
+                            "explicacion": "La notación estándar asegura una comunicación inequívoca y reproducible del conocimiento."
+                        },
+                        {
+                            "titulo": "Comprobación 3: Regla Crítica",
+                            "pregunta": f"¿Cuál es el primer paso metodológico antes de resolver un caso base en {materia}?",
+                            "opciones": [
+                                "Identificar claramente las hipótesis y condiciones del problema",
+                                "Calcular directamente sin leer el enunciado",
+                                "Modificar los datos hasta que coincidan",
+                                "Asumir que todos los casos son triviales"
+                            ],
+                            "indice_correcto": 0,
+                            "explicacion": "Identificar las hipótesis es indispensable para saber qué teoremas y definiciones son válidos."
                         }
                     ]
                 },
@@ -573,105 +503,153 @@ def generar_plan_contingencia(prompt_usuario: str) -> dict:
                     "id": "mod-2",
                     "nivel_tag": "Nivel 2: Operaciones y Transformaciones",
                     "nivel_clase": "intermedio",
-                    "titulo": f"Métodos Operativos, Algoritmos y Transformaciones en {materia}",
-                    "teoria_modulo": f"Profundización en técnicas avanzadas de manipulación estructurada, algoritmos de resolución y análisis de convergencia en {materia}.",
+                    "titulo": f"Operaciones y Métodos en {materia}",
+                    "teoria_modulo": f"Profundización en las operaciones estructuradas, técnicas de manipulación algebraica y métodos computacionales de {materia}.",
                     "lecciones": [
                         {
-                            "titulo": "2.1 Descomposición sistemática y algoritmos canónicos",
+                            "titulo": "Técnicas de Transformación y Algoritmos Canónicos",
                             "duracion_minutos": 50,
-                            "concepto_teorico": f"La resolución eficiente de problemas intermedios en {materia} exige métodos sistemáticos en lugar de enfoques heurísticos ad-hoc.\n\nEn esta lección se estudian los algoritmos canónicos que permiten descomponer sistemas de alta dimensión en componentes desacoplados o triangulares más fáciles de manipular.\n\nComprender el costo analítico y computacional de cada técnica permite seleccionar el método idóneo según la escala del problema.",
+                            "concepto_teorico": f"Aprenderás los procedimientos sistemáticos para descomponer sistemas y operar de manera óptima bajo diferentes condiciones en {materia}.\n\nEn esta lección se estudian los algoritmos que permiten desacoplar variables complejas en componentes independientes más sencillos de analizar.",
                             "puntos_clave": [
-                                "Métodos de factorización y descomposición canónica.",
-                                "Invariantes bajo transformaciones canónicas.",
-                                "Criterios de estabilidad numérica y prevención de pérdidas de precisión."
+                                "Algoritmos estándar de resolución y descomposición.",
+                                "Invariantes y propiedades bajo transformación.",
+                                "Criterios de estabilidad y control de errores numéricos."
                             ],
-                            "ejemplo_codigo_o_formula": "Implementación comentada de la factorización paso a paso con validación de invariantes.",
+                            "ejemplo_codigo_o_formula": "Algoritmo de resolución paso a paso con validación cruzada y verificación de invariantes.",
                             "ejercicio_practico": {
-                                "enunciado": "Aplica la técnica de descomposición al sistema propuesto y evalúa la estabilidad del resultado.",
-                                "solucion_paso_a_paso": "Paso 1: Descomponer la matriz o sistema en sus factores elementales.\nPaso 2: Resolver los subsistemas triangulares mediante sustitución sucesiva.\nPaso 3: Comprobar la exactitud multiplicando los factores resultantes."
+                                "enunciado": "Calcula la solución analítica del sistema propuesto mediante transformación sistemática.",
+                                "solucion_paso_a_paso": "Paso 1: Construir la representación formal.\nPaso 2: Ejecutar las transformaciones elementales.\nPaso 3: Interpretar la solución resultante."
                             }
                         },
                         {
-                            "titulo": "2.2 Optimización de procesos y análisis de sensibilidad",
+                            "titulo": "Optimización de Métodos y Control de Errores",
                             "duracion_minutos": 55,
-                            "concepto_teorico": f"En el mundo profesional, los problemas rara vez se presentan en condiciones ideales; los datos contienen ruido e incertidumbre.\n\nEl análisis de sensibilidad permite evaluar cómo pequeñas perturbaciones en las entradas impactan la solución final, identificando posibles puntos de inestabilidad.\n\nSe profundiza en métricas formales de condicionamiento y en estrategias para regularizar problemas mal condicionados.",
+                            "concepto_teorico": "En el desarrollo profesional, es crucial conocer la sensibilidad de los métodos frente a pequeñas variaciones o ruido en las entradas.\n\nSe analizan las condiciones que determinan si un algoritmo converge de forma estable o genera pérdidas de precisión acumulativas.",
                             "puntos_clave": [
-                                "Número de condición y su impacto en la propagación de errores.",
-                                "Técnicas de regularización para mitigar el sobreajuste o la inestabilidad.",
-                                "Monitoreo de residuos y convergencia de aproximaciones sucesivas."
+                                "Concepto de condicionamiento y estabilidad algorítmica.",
+                                "Prevención de pérdidas de dígitos significativos.",
+                                "Criterios de parada en métodos aproximados."
                             ],
-                            "ejemplo_codigo_o_formula": "Cálculo del índice de condicionamiento y simulación de perturbaciones controladas.",
+                            "ejemplo_codigo_o_formula": "Protocolo de estimación de error y evaluación de estabilidad paso a paso.",
                             "ejercicio_practico": {
-                                "enunciado": "Determina si el sistema planteado está bien condicionado y propón una modificación para mejorar su estabilidad.",
-                                "solucion_paso_a_paso": "Paso 1: Calcular la norma del operador y su inversa.\nPaso 2: Obtener el número de condición del sistema.\nPaso 3: Identificar la fila o columna crítica que introduce inestabilidad.\nPaso 4: Aplicar la técnica de preacondicionamiento adecuada."
+                                "enunciado": "Evalúa la estabilidad del procedimiento propuesto y sugiere una mejora para reducir la propagación del error.",
+                                "solucion_paso_a_paso": "Paso 1: Analizar la sensibilidad de cada paso.\nPaso 2: Detectar la operación crítica.\nPaso 3: Proponer el preacondicionamiento adecuado."
                             }
                         }
                     ],
                     "mini_quizzes": [
                         {
-                            "titulo": "Comprobación de Concepto Módulo 2",
-                            "pregunta": "¿Qué ventaja clave aporta descomponer un sistema complejo en factores triangulares o canónicos?",
+                            "titulo": "Comprobación 1: Concepto de Transformación",
+                            "pregunta": "¿Qué ventaja ofrece un método sistemático frente a un cálculo empírico?",
                             "opciones": [
-                                "Aumenta la dimensión del problema sin alterar el tiempo de cómputo",
-                                "Reduce la complejidad computacional y facilita la resolución por sustitución hacia adelante o atrás",
-                                "Elimina la necesidad de conocer las variables iniciales del modelo",
-                                "Garantiza que cualquier sistema singular tenga solución única"
+                                "Aumenta la complejidad sin ningún beneficio",
+                                "Garantiza reproducibilidad, convergencia y menor probabilidad de error",
+                                "Elimina la necesidad de interpretar el resultado",
+                                "Sólo funciona para un número finito de casos triviales"
                             ],
                             "indice_correcto": 1,
-                            "explicacion": "Los sistemas triangulares o canónicos se resuelven en orden cuadrático en lugar de cúbico, maximizando la eficiencia analítica."
+                            "explicacion": "Los métodos sistemáticos proporcionan garantías matemáticas sobre la validez de la solución."
+                        },
+                        {
+                            "titulo": "Comprobación 2: Invariantes y Propiedades",
+                            "pregunta": "¿Por qué es importante identificar invariantes durante una transformación algorítmica?",
+                            "opciones": [
+                                "Para cambiar arbitrariamente el valor final",
+                                "Para evitar que el cálculo termine",
+                                "Porque garantizan que las transformaciones conserven las propiedades esenciales del sistema",
+                                "No tienen ninguna utilidad práctica"
+                            ],
+                            "indice_correcto": 2,
+                            "explicacion": "Los invariantes aseguran que el resultado de la transformación siga siendo equivalente al problema original."
+                        },
+                        {
+                            "titulo": "Comprobación 3: Prevención de Errores",
+                            "pregunta": "¿Cuál es la causa más común de fallo al ejecutar transformaciones intermedias?",
+                            "opciones": [
+                                "Omitir la validación cruzada y aplicar operaciones no permitidas por las reglas del dominio",
+                                "Usar herramientas computacionales modernas",
+                                "Trabajar de forma ordenada y secuencial",
+                                "Documentar cada paso del proceso"
+                            ],
+                            "indice_correcto": 0,
+                            "explicacion": "Omitir las restricciones operativas del dominio conduce a soluciones espurias o inconsistentes."
                         }
                     ]
                 },
                 {
                     "id": "mod-3",
-                    "nivel_tag": "Nivel 3: Aplicación Avanzada y Proyectos",
+                    "nivel_tag": "Nivel 3: Aplicaciones Prácticas y Modelado",
                     "nivel_clase": "avanzado",
-                    "titulo": f"Modelado Real, Integración y Proyectos con {materia}",
-                    "teoria_modulo": f"Integración integral del conocimiento adquirido para formular, validar y optimizar soluciones a problemas reales de alta complejidad.",
+                    "titulo": f"Aplicaciones Prácticas y Modelado con {materia}",
+                    "teoria_modulo": f"Aplicación del conocimiento adquirido para modelar problemas del mundo real en ciencias, ingeniería y computación.",
                     "lecciones": [
                         {
-                            "titulo": "3.1 Modelado de sistemas y traducción de fenómenos reales",
+                            "titulo": "Modelado y Solución de Problemas del Mundo Real",
                             "duracion_minutos": 60,
-                            "concepto_teorico": f"El valor supremo de dominar {materia} radica en la capacidad de modelar escenarios reales provenientes de la física, la computación, la ingeniería o la economía.\n\nEsta lección te guía a través del ciclo completo de modelado: desde la abstracción de variables físicas hasta la formulación matemática y su resolución estructurada.\n\nSe analizan las compensaciones (trade-offs) entre la fidelidad del modelo y su viabilidad analítica o computacional.",
+                            "concepto_teorico": f"Se integran todos los conceptos para abordar escenarios prácticos donde {materia} es indispensable.\n\nEsta lección cubre la formulación matemática de problemas complejos y la interpretación de resultados en contextos reales.",
                             "puntos_clave": [
-                                "Identificación de grados de libertad, restricciones y variables de decisión.",
-                                "Formulación matemática rigurosa orientada a objetivos específicos.",
-                                "Validación de coherencia dimensional y comportamiento asintótico."
+                                "Traducción de un problema real a un modelo formal.",
+                                "Optimización y análisis de sensibilidad.",
+                                "Validación de conclusiones y toma de decisiones."
                             ],
-                            "ejemplo_codigo_o_formula": "Caso práctico integral: formulación, resolución numérica y visualización de la solución óptima.",
+                            "ejemplo_codigo_o_formula": "Caso práctico resuelto con aplicación integral de los módulos anteriores.",
                             "ejercicio_practico": {
-                                "enunciado": "Formula el modelo matemático correspondiente al escenario industrial descrito y calcula los parámetros óptimos de operación.",
-                                "solucion_paso_a_paso": "Paso 1: Definir formalmente las variables y los límites de operación.\nPaso 2: Establecer la función objetivo y las restricciones del problema.\nPaso 3: Resolver analítica o computacionalmente el modelo formulado.\nPaso 4: Redactar la interpretación técnica de los resultados para la toma de decisiones."
+                                "enunciado": "Modela el fenómeno descrito y determina la configuración óptima.",
+                                "solucion_paso_a_paso": "Paso 1: Definir variables y restricciones.\nPaso 2: Resolver el modelo con las herramientas estudiadas.\nPaso 3: Presentar el informe de resultados."
                             }
                         },
                         {
-                            "titulo": "3.2 Diagnóstico, validación empírica y buenas prácticas profesionales",
+                            "titulo": "Validación Empírica y Diagnóstico de Modelos",
                             "duracion_minutos": 60,
-                            "concepto_teorico": f"Ningún modelo está completo sin una fase rigurosa de validación frente a datos empíricos u observaciones independientes.\n\nAprenderás los protocolos estándar de validación cruzada, análisis de residuales y pruebas de estrés para certificar la fiabilidad de tu solución.\n\nSe concluye con las mejores prácticas profesionales para documentar y presentar planes de estudio y proyectos técnicos con el máximo estándar de calidad.",
+                            "concepto_teorico": "Aprenderás a auditar las predicciones de tu modelo frente a datos experimentales reales.\n\nSe exploran técnicas para detectar sobreajustes, desviaciones y condiciones límite que requieran refinamientos.",
                             "puntos_clave": [
-                                "Protocolos de validación cruzada y pruebas de bondad de ajuste.",
-                                "Detección de anomalías y sesgos en las soluciones proyectadas.",
-                                "Estrategias de documentación técnica clara y reproducible."
+                                "Protocolos de validación cruzada y análisis de residuales.",
+                                "Detección de anomalías en el comportamiento asintótico.",
+                                "Criterios para la actualización periódica del modelo."
                             ],
-                            "ejemplo_codigo_o_formula": "Suite de verificación de calidad del modelo con gráficos de residuales e intervalos de confianza.",
+                            "ejemplo_codigo_o_formula": "Suite de pruebas analíticas y métricas de bondad de ajuste documentadas.",
                             "ejercicio_practico": {
-                                "enunciado": "Realiza la auditoría del modelo propuesto, identifica anomalías en los residuales y presenta el informe de corrección.",
-                                "solucion_paso_a_paso": "Paso 1: Evaluar los errores residuales entre el modelo y los datos de prueba.\nPaso 2: Comprobar la normalidad y homocedasticidad de los errores.\nPaso 3: Proponer el ajuste correctivo sobre los parámetros sensibles.\nPaso 4: Concluir con la certificación técnica de validez del modelo."
+                                "enunciado": "Realiza la auditoría de ajuste del modelo ante nuevos datos observados.",
+                                "solucion_paso_a_paso": "Paso 1: Calcular residuales.\nPaso 2: Identificar desvíos sistemáticos.\nPaso 3: Ajustar parámetros sensibles."
                             }
                         }
                     ],
                     "mini_quizzes": [
                         {
-                            "titulo": "Comprobación de Concepto Módulo 3",
-                            "pregunta": "¿Cuál es la consecuencia más grave de omitir la validación de residuales en un modelo aplicado?",
+                            "titulo": "Comprobación 1: Validación Empírica",
+                            "pregunta": "¿Por qué es crucial validar un modelo analítico frente a los datos reales?",
                             "opciones": [
-                                "El modelo tardará unos segundos más en compilar",
-                                "Los nombres de las variables pueden desordenarse en el reporte final",
-                                "No se podrán imprimir los gráficos en formato vectorial",
-                                "El modelo puede estar sobreajustado o sesgado, generando predicciones erróneas y fallos críticos en la práctica"
+                                "Porque los modelos teóricos nunca fallan",
+                                "Para descartar las observaciones experimentales",
+                                "Para simplificar artificialmente el problema",
+                                "Para verificar que las hipótesis teóricas reflejan fielmente el comportamiento observado en la realidad"
                             ],
                             "indice_correcto": 3,
-                            "explicacion": "La validación empírica de residuales es la única garantía de que el modelo generaliza correctamente hacia situaciones reales no vistas previamente."
+                            "explicacion": "La validación empírica asegura que las conclusiones teóricas sean aplicables a la realidad."
+                        },
+                        {
+                            "titulo": "Comprobación 2: Análisis de Sensibilidad",
+                            "pregunta": "¿Qué permite determinar el análisis de sensibilidad en un modelo?",
+                            "opciones": [
+                                "El tiempo exacto de compilación del programa",
+                                "Cómo afectan las variaciones en los parámetros clave a los resultados del sistema",
+                                "El costo del hardware utilizado",
+                                "Eliminar todas las restricciones del modelo"
+                            ],
+                            "indice_correcto": 1,
+                            "explicacion": "El análisis de sensibilidad revela cuán robusta o vulnerable es la solución ante cambios en las condiciones iniciales."
+                        },
+                        {
+                            "titulo": "Comprobación 3: Criterio de Decisión",
+                            "pregunta": "¿Qué indica que un modelo ha alcanzado su punto óptimo dentro del marco establecido?",
+                            "opciones": [
+                                "Que se detuvo sin dar mensajes de advertencia",
+                                "Que se seleccionó la primera opción disponible",
+                                "Que satisface todas las restricciones operativas y maximiza/minimiza la función objetivo definida",
+                                "Que se ignoraron las condiciones límite"
+                            ],
+                            "indice_correcto": 2,
+                            "explicacion": "La optimización formal requiere cumplir rigurosamente las restricciones satisfaciendo la meta del problema."
                         }
                     ]
                 }
