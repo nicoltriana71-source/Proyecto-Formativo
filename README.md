@@ -27,6 +27,29 @@ GROQ_API_KEY=poner_la_api_key
 2. LEVANTAR EL DOCKER COMPOSE. con el siguiente codigo 
 docker compose -f dockerizar/docker-compose.yml up --build
 
+---
+
+## 🌿 Estrategia de Ramificación y Control de Versiones
+
+El proyecto utiliza la metodología **Git Flow** para mantener el código organizado y estructurado:
+
+* **`master`**: Rama principal que contiene el código estable y listo para producción.
+* **`develop`**: Rama base de integración donde se consolidan las nuevas funciones antes de ser enviadas a producción.
+* **`feature/<nombre-tarea>`**: Ramas temporales de trabajo creadas a partir de `develop` para implementar funciones específicas (por ejemplo: `feature/ia-gemini`). 
+
+> **📌 Nota importante sobre las ramas `feature/`:** Estas ramas **no son permanentes y se eliminan en GitHub** una vez que la funcionalidad ha sido revisada e integrada exitosamente en `develop`. 
+> 
+> Se eliminan por dos razones clave:
+> 1. **Mantener el repositorio limpio:** Evita acumular decenas de ramas obsoletas o abandonadas con el paso del tiempo.
+> 2. **Evitar desfases de código:** Al terminar una tarea, esa rama pierde validez; las nuevas funcionalidades deben crearse siempre a partir de la versión más reciente de `develop`.
+
+### Flujo de trabajo para el equipo
+1. Crear una rama de funcionalidad partiendo de `develop`:
+   ```bash
+   git checkout develop
+   git pull origin develop
+   git checkout -b feature/nombre-tarea
+
 ## Equipo de Desarrollo 
 Breiner Stanly Muñoz Martínez **FullStack**
 Maira Daniela Ramirez Anzola **FullStack**
