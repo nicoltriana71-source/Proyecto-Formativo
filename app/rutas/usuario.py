@@ -19,7 +19,7 @@ from app.esquemas.usuario import (
 router = APIRouter(prefix="/usuario", tags=["Usuarios"])
 
 
-@router.post("/registro", response_model=UsuarioRespuesta, status_code=status.HTTP_201_CREATED)
+@router.post("/registro", response_model=UsuarioRespuesta, status_code=status.HTTP_201_CREATED) # UNICAMENTE RUTA
 def registrar_usuario(datos: UsuarioCrear, sesion: Session = Depends(obtener_sesion)):
     existente = obtener_usuario_por_correo(sesion, datos.correo)
     if existente:
