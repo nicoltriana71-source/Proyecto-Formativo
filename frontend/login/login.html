@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StudNova — Iniciar sesión</title>
+    <link rel="stylesheet" href="login.css">
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+</head>
+<body>
+    <div class="container">
+        <div class="form-container active" id="login">
+            <img src="image.png" alt="Logo StudNova" width="50" height="50" class="logo">
+            <br>
+            <h2>StudNova</h2>
+            <p id="loginMensaje" class="form-mensaje"></p>
+            <form id="formLogin">
+                <input type="email" id="loginCorreo" placeholder="Correo electrónico" required>
+                <input type="password" id="loginPassword" placeholder="Contraseña" required>
+                <button type="submit">Entrar</button>
+
+                <!-- NUEVO: solo se pide para crear cuenta con Google (se oculta si ya la aceptó antes) -->
+                <label class="aceptar" id="googleAceptaWrap">
+                    <input type="checkbox" id="googleAcepto">
+                    <span>Para continuar con Google acepto los
+                        <a href="/legal/terminos.html" target="_blank" rel="noopener">Términos</a> y la
+                        <a href="/legal/privacidad.html" target="_blank" rel="noopener">Política de tratamiento de datos</a>.
+                        Si soy menor de 18 años, tengo autorización de mi representante legal.</span>
+                </label>
+
+                <button type="button" id="btnGoogle" class="google-btn">
+                    <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" width="20">
+                    Continuar con Google
+                </button>
+            </form>
+            <div class="links">
+                <a href="#" data-mostrar="register">Registrarme</a>
+            </div>
+            <p class="login-legal">
+                <a href="/legal/terminos.html" target="_blank" rel="noopener">Términos</a> ·
+                <a href="/legal/privacidad.html" target="_blank" rel="noopener">Privacidad</a>
+            </p>
+        </div>
+
+        <div class="form-container" id="register">
+            <h2>Registrarme</h2>
+            <p id="registerMensaje" class="form-mensaje error" hidden></p>
+            <form id="formRegister">
+                <input type="text" id="registerNombre" placeholder="Nombre completo" required>
+                <input type="email" id="registerCorreo" placeholder="Correo electrónico" required>
+                <input type="password" id="registerPassword" placeholder="Contraseña" required>
+
+                <!-- NUEVO: consentimiento expreso (no viene marcada de antemano) -->
+                <label class="aceptar" id="registerAceptaWrap">
+                    <input type="checkbox" id="registerAcepto" required>
+                    <span>Acepto los
+                        <a href="/legal/terminos.html" target="_blank" rel="noopener">Términos</a> y la
+                        <a href="/legal/privacidad.html" target="_blank" rel="noopener">Política de tratamiento de datos</a>.
+                        Si soy menor de 18 años, tengo autorización de mi representante legal.</span>
+                </label>
+
+                <button type="submit">Crear cuenta</button>
+            </form>
+            <div class="links">
+                <a href="#" data-mostrar="login">Ya tengo cuenta</a>
+            </div>
+            <p class="login-legal">
+                <a href="/legal/terminos.html" target="_blank" rel="noopener">Términos</a> ·
+                <a href="/legal/privacidad.html" target="_blank" rel="noopener">Privacidad</a>
+            </p>
+        </div>
+    </div>
+    <script type="module" src="login.js"></script>
+    <script type="module" src="google.js"></script>
+    <script src="/legal/aviso-almacenamiento.js" defer></script>
+</body>
+</html>
