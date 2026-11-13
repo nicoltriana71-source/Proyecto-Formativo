@@ -20,7 +20,7 @@ document.getElementById("formLogin")?.addEventListener("submit", async (e) => {
         });
         saveSession(data);
         setMensaje("loginMensaje", `¡Bienvenido, ${data.nombre}!`, "success");
-        setTimeout(() => window.location.href = "/chat/interfaz.html", 600);
+        setTimeout(() => window.location.href = "/ia/interfaz.html", 600);
     } catch (error) {
         setMensaje("loginMensaje", error.message, "error");
     }

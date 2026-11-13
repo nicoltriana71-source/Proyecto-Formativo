@@ -1,5 +1,6 @@
 from fastapi import HTTPException
 from sqlmodel import Session
+
 from backend.app.repositories import tema as repositorio
 
 

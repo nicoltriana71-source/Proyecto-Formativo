@@ -25,7 +25,9 @@ DATABASE_URL=postgresql://postgres:LA_CLAVE@localhost:5432/studnova
 GROQ_API_KEY=poner_la_api_key
 
 2. LEVANTAR EL DOCKER COMPOSE. con el siguiente codigo 
-docker compose -f dockerizar/docker-compose.yml up --build
+docker compose up --build
+
+PostgreSQL 16 se levanta automáticamente y queda disponible en el puerto 5433 del host.
 
 ## Equipo de Desarrollo 
 Breiner Stanly Muñoz Martínez **FullStack**

@@ -6,6 +6,7 @@ import { apiRequest } from '../shared/api.js';
 // exponer funciones al window para los onclick inline
 window.verificarRespuesta = verificarRespuesta;
 window.autoIniciarTimer = autoIniciarTimer;
+window.alternarTimer = alternarTimer;
 
 // inicializar timer
 document.getElementById('btn-timer')?.addEventListener('click', alternarTimer);
@@ -20,9 +21,10 @@ export function volverAlChat(e) {
         window.history.back();
         return;
     }
-    window.location.href = '/chat/interfaz.html';
+    window.location.href = '/ia/interfaz.html';
 }
 
+window.volverAlChat = volverAlChat;
 document.getElementById('btn-volver')?.addEventListener('click', volverAlChat);
 
 document.addEventListener("DOMContentLoaded", async () => {

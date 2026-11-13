@@ -26,7 +26,7 @@ async function handleUser(user) {
         localStorage.setItem("userPhoto", user.picture || "");
         localStorage.setItem("loginMethod", "google");
         setMensaje("loginMensaje", `¡Bienvenido, ${data.nombre}!`, "success");
-        setTimeout(() => window.location.href = "/chat/interfaz.html", 600);
+        setTimeout(() => window.location.href = "/ia/interfaz.html", 600);
     } catch (err) {
         setMensaje("loginMensaje", `Error: ${err.message}`, "error");
     }

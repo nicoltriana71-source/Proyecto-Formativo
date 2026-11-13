@@ -19,7 +19,7 @@ def obtener_sesion():
         yield sesion
 
 def crear_tablas():
-    import app.modelos
+    import backend.app.modelos
     SQLModel.metadata.create_all(engine)
     
     # Auto-migración: Asegurar columnas nuevas en la BD

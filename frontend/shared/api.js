@@ -1,12 +1,10 @@
 import { API_BASE } from './config.js';
-import { getSession } from './session.js';
 
 export async function apiRequest(endpoint, options = {}) {
-    const session = getSession();
-    const headers = {
-        "Content-Type": "application/json",
-        ...(options.headers || {})
-    };
+    const isFormData = options.body instanceof FormData;
+    const headers = isFormData
+        ? { ...(options.headers || {}) }
+        : { "Content-Type": "application/json", ...(options.headers || {}) };
 
     try {
         const response = await fetch(`${API_BASE}${endpoint}`, {

@@ -2,6 +2,8 @@ import { apiRequest } from '../shared/api.js';
 import { saveSession, clearSession, getSession } from '../shared/session.js';
 import { showToast } from '../shared/dom.js';
 
+window.StudNovaSession = { get: getSession };
+
 function refreshAuthUI() {
     const session = getSession();
     const navLoggedOut = document.getElementById("navCtaLoggedOut");
@@ -69,7 +71,7 @@ document.getElementById("openChatBtn")?.addEventListener("click", () => {
         showToast("Debes iniciar sesión primero.", "error");
         return;
     }
-    window.location.href = "/chat/interfaz.html";
+    window.location.href = "/ia/interfaz.html";
 });
 
 // Init

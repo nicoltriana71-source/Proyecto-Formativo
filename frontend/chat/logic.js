@@ -1,7 +1,15 @@
-import { API_BASE } from '../shared/config.js';
 import { getUserId } from '../shared/session.js';
 import { apiRequest } from '../shared/api.js';
+import { escapeHTML } from '../shared/dom.js';
 import { chatState, saveChatState } from './state.js';
+
+function parseContenido(contenido) {
+    if (!contenido) return null;
+    if (typeof contenido === 'string') {
+        try { return JSON.parse(contenido); } catch { return null; }
+    }
+    return contenido;
+}
 
 export async function loadHistory() {
     const id = getUserId();
@@ -13,14 +21,19 @@ export async function loadHistory() {
         historyList.innerHTML = planes?.length ? '' : '<li class="sin-planes">No hay planes aún.</li>';
 
         planes?.forEach(plan => {
+            const contenido = parseContenido(plan.contenido_json);
+            const planParaVisor = contenido
+                ? { ...contenido, id_plan: plan.id_plan, titulo: plan.titulo || contenido.titulo }
+                : plan;
+
             const li = document.createElement('li');
             li.className = 'history-item';
             li.innerHTML = `
-                <span class="plan-title">${plan.titulo || plan.nombre || "Plan"}</span>
+                <span class="plan-title">${escapeHTML(plan.titulo || plan.nombre || "Plan")}</span>
                 <span class="plan-date">${plan.fecha_creacion ? new Date(plan.fecha_creacion).toLocaleDateString() : 'Reciente'}</span>`;
             li.onclick = () => {
-                localStorage.setItem("plan_estudio_actual", JSON.stringify(plan));
-                window.location.href = '/plan/visor_plan.html';
+                localStorage.setItem("plan_estudio_actual", JSON.stringify(planParaVisor));
+                window.location.href = `/plan/visor_plan.html${plan.id_plan ? `?id=${plan.id_plan}` : ''}`;
             };
             historyList.appendChild(li);
         });
@@ -33,7 +46,6 @@ export async function sendChatMessage(text, forzarNuevo = false, modulos = null,
     const idUsuario = getUserId();
     const hayAdjunto = Boolean(chatState.attachedFile);
 
-    let payload = {};
     let endpoint = "/api/ia/generar";
     let options = { method: "POST" };
 
@@ -47,7 +59,6 @@ export async function sendChatMessage(text, forzarNuevo = false, modulos = null,
         formData.append('historial_json', JSON.stringify(chatState.history.slice(0, -1)));
         formData.append('archivo', chatState.attachedFile);
         options.body = formData;
-        delete options.headers; // Fetch pone Content-Type multipart automáticamente
     } else {
         let promptFinal = text;
         if (forzarNuevo) {
@@ -55,7 +66,7 @@ export async function sendChatMessage(text, forzarNuevo = false, modulos = null,
             if (modulos) promptFinal += ` Requisito: exactamente ${modulos} módulos.`;
             if (duracion) promptFinal += ` Tiempo: ${duracion}.`;
         }
-        options.headers = { 'Content-Type': 'application/json', 'Accept': 'application/json' };
+        options.headers = { 'Accept': 'application/json' };
         options.body = JSON.stringify({
             prompt: promptFinal,
             historial: chatState.history,
@@ -66,21 +77,26 @@ export async function sendChatMessage(text, forzarNuevo = false, modulos = null,
         });
     }
 
-    try {
-        const datos = await apiRequest(endpoint, options);
+    const datos = await apiRequest(endpoint, options);
 
-        if (datos.tipo === "sugerencia_plan_existente") {
-            // Manejar sugerencia (simplificado para el ejemplo)
-            console.log("Sugerencia:", datos);
-            return datos;
-        }
+    if (datos.tipo === "sugerencia_plan_existente") {
+        return datos;
+    }
 
-        const planObjeto = datos.plan || datos;
+    const planObjeto = extraerPlan(datos);
+    if (planObjeto) {
         chatState.currentPlan = planObjeto;
         localStorage.setItem("plan_estudio_actual", JSON.stringify(planObjeto));
         saveChatState();
-        return datos;
-    } catch (error) {
-        throw error;
     }
+
+    return datos;
+}
+
+export function extraerPlan(datos) {
+    const planObjeto = datos.plan || datos;
+    const tienePlan = datos.tipo === "plan_generado"
+        || Boolean(planObjeto?.modulos?.length)
+        || Boolean(datos.modulos?.length);
+    return tienePlan ? planObjeto : null;
 }

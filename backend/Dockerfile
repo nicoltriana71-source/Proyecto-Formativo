@@ -13,7 +13,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
 # Instalar dependencias de Python
-COPY requirements.txt .
+COPY backend/requirements.txt .
 RUN pip install --no-cache-dir --upgrade pip && \
     pip install --no-cache-dir -r requirements.txt
 
@@ -25,4 +25,4 @@ EXPOSE 8000
 
 # Iniciar la aplicacin
 # Iniciar la aplicación
-CMD ["sh", "-c", "echo '========================================' && echo '🚀 Proyecto iniciado correctamente' && echo '🌐 http://localhost:8000/principal/interfaz/index.html' && echo '📚 API: http://localhost:8000/docs' && echo '========================================' && exec uvicorn principal:app --host 0.0.0.0 --port 8000 --reload"]
+CMD ["sh", "-c", "echo '========================================' && echo '🚀 Proyecto iniciado correctamente' && echo '🌐 http://localhost:8000/landing/index.html' && echo '📚 API: http://localhost:8000/docs' && echo '========================================' && exec uvicorn principal:app --host 0.0.0.0 --port 8000 --reload"]
