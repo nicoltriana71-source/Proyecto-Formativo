@@ -1,11 +1,8 @@
 from pathlib import Path
-from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse, RedirectResponse
-
-from base_datos import crear_tablas
 
 # Importación de los 9 módulos del sistema
 from backend.app.rutas import (
@@ -25,20 +22,10 @@ from backend.app.rutas.ia import router as ia_gemini_router
 BASE_DIR = Path(__file__).resolve().parent
 FRONTEND_DIR = BASE_DIR / "frontend"
 
-@asynccontextmanager
-async def lifespan(app: FastAPI):
-    # Crear tablas automáticamente si no existen
-    try:
-        crear_tablas()
-    except Exception as e:
-        print(f"⚠️ Advertencia al conectar con la base de datos: {e}")
-    yield
-
 app = FastAPI(
     title="StudNova API",
     description="API de plataforma de aprendizaje personalizado con IA",
     version="1.0.0",
-    lifespan=lifespan
 )
 
 # Configuración de CORS para conexión con Frontend

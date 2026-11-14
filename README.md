@@ -6,7 +6,7 @@
 | Capa | Tecnologías |
 | :--- | :--- |
 | **Backend** | Python 3.11, FastAPI, SQLModel / SQLAlchemy, Pydantic, Uvicorn |
-| **Base de Datos** | PostgreSQL 16 (Auto-migraciones y soporte relacional) |
+| **Base de Datos** | PostgreSQL 16 + Alembic (migraciones versionadas) |
 | **Inteligencia Artificial** | Google GenAI SDK (Gemini Flash-Lite, Embeddings vectoriales) |
 | **Frontend** | HTML5, CSS3 moderno (Dark mode, componentes interactivos), JavaScript ES6+ |
 | **DevOps / Despliegue** | Docker, Docker Compose |
@@ -27,7 +27,22 @@ GROQ_API_KEY=poner_la_api_key
 2. LEVANTAR EL DOCKER COMPOSE. con el siguiente codigo 
 docker compose up --build
 
-PostgreSQL 16 se levanta automáticamente y queda disponible en el puerto 5433 del host.
+PostgreSQL 16 se levanta automáticamente y queda disponible en el puerto 5433 del host. El contenedor de la aplicación aplica las migraciones de Alembic antes de iniciar Uvicorn.
+
+## Migraciones de base de datos
+
+Alembic se encarga del esquema. La configuración está en `backend/alembic.ini` y las migraciones en `backend/migrations/versions/`.
+
+- Aplicar migraciones manualmente:
+  ```bash
+  alembic -c backend/alembic.ini upgrade head
+  ```
+- Crear una nueva migración después de cambiar los modelos:
+  ```bash
+  alembic -c backend/alembic.ini revision --autogenerate -m "descripcion_del_cambio"
+  ```
+- Revisar siempre el archivo generado antes de aplicarlo.
+- Si ya tienes una base creada con el esquema anterior y sin historial de Alembic, el script `backend/scripts/migrate.py` la marca automáticamente como baseline al arrancar el contenedor.
 
 ## Equipo de Desarrollo 
 Breiner Stanly Muñoz Martínez **FullStack**

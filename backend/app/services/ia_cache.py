@@ -2,7 +2,8 @@ import json
 from typing import Optional
 from sqlmodel import Session
 
-from backend.app.gemini import obtener_embedding, calcular_similitud_coseno
+from backend.app.services.gemini import obtener_embedding
+from backend.app.utilidades.vectores import calcular_similitud_coseno
 from backend.app.repositories import ia as repositorio
 from backend.app.utilidades.normalizacion import normalizar_texto, extraer_palabras_clave
 

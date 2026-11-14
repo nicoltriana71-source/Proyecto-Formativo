@@ -20,7 +20,10 @@ class Usuario(SQLModel, table=True):
     
     contraseña: str = Field(sa_column=Column("contrase\u00f1a", sa.String(255), nullable=False))
 
-    acepto_terminos: bool = Field(default=False)
+    acepto_terminos: bool = Field(
+        default=False,
+        sa_column=Column(sa.Boolean, nullable=False, server_default=sa.text("false")),
+    )
     version_politica: Optional[str] = Field(default=None, max_length=20)
     fecha_aceptacion: Optional[datetime] = Field(default=None)
 

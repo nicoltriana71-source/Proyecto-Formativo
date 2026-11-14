@@ -1,6 +1,7 @@
 from typing import Optional, TYPE_CHECKING
 from datetime import datetime
-from sqlmodel import SQLModel, Field, Relationship
+from sqlmodel import SQLModel, Field, Relationship, Column
+import sqlalchemy as sa
 
 if TYPE_CHECKING:
     from backend.app.modelos.plan_estudio import PlanDeEstudio
@@ -14,7 +15,7 @@ class PromptIA(SQLModel, table=True):
     prompt_usuario: Optional[str] = None
     prompt_sistema: Optional[str] = None
     modelo_ia: Optional[str] = Field(default="gemini-2.5-flash", max_length=100)
-    embedding: Optional[str] = Field(default=None)
+    embedding: Optional[str] = Field(default=None, sa_column=Column(sa.Text))
     fecha_generacion: datetime = Field(default_factory=datetime.now)
     estado: Optional[str] = Field(default="completado", max_length=50)
 

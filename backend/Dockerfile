@@ -25,4 +25,4 @@ EXPOSE 8000
 
 # Iniciar la aplicacin
 # Iniciar la aplicación
-CMD ["sh", "-c", "echo '========================================' && echo '🚀 Proyecto iniciado correctamente' && echo '🌐 http://localhost:8000/landing/index.html' && echo '📚 API: http://localhost:8000/docs' && echo '========================================' && exec uvicorn principal:app --host 0.0.0.0 --port 8000 --reload"]
+CMD ["sh", "-c", "python backend/scripts/migrate.py && echo '========================================' && echo '🚀 Proyecto iniciado correctamente' && echo '🌐 http://localhost:8000/landing/index.html' && echo '📚 API: http://localhost:8000/docs' && echo '========================================' && exec uvicorn principal:app --host 0.0.0.0 --port 8000 --reload"]

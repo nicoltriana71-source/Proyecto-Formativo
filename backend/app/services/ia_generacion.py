@@ -3,7 +3,7 @@ import re
 import uuid
 from typing import Optional, List, Dict, Any
 
-from backend.app.gemini import generar_codigo_ia
+from backend.app.services.gemini import generar_codigo_ia
 
 
 def detectar_duracion(prompt: str, duracion_personalizada: Optional[str] = None) -> Optional[str]:

@@ -1,7 +1,7 @@
 import os
 from pathlib import Path
 from dotenv import load_dotenv
-from sqlmodel import SQLModel, Session, create_engine, text
+from sqlmodel import Session, create_engine
 
 BASE_DIR = Path(__file__).resolve().parent
 load_dotenv(BASE_DIR / ".env")
@@ -12,30 +12,11 @@ DATABASE_URL = os.getenv(
     "postgresql://postgres:admin@localhost:5432/studnova"
 )
 
-engine = create_engine(DATABASE_URL, echo=True)
+engine = create_engine(
+    DATABASE_URL,
+    echo=os.getenv("SQL_ECHO", "false").lower() == "true",
+)
 
 def obtener_sesion():
     with Session(engine) as sesion:
         yield sesion
-
-def crear_tablas():
-    import backend.app.modelos
-    SQLModel.metadata.create_all(engine)
-    
-    # Auto-migración: Asegurar columnas nuevas en la BD
-    try:
-        with engine.connect() as conn:
-            # 1. Columnas de consentimiento legal en usuario
-            conn.execute(text("""
-                ALTER TABLE usuario ADD COLUMN IF NOT EXISTS acepto_terminos BOOLEAN DEFAULT FALSE NOT NULL;
-                ALTER TABLE usuario ADD COLUMN IF NOT EXISTS version_politica VARCHAR(20);
-                ALTER TABLE usuario ADD COLUMN IF NOT EXISTS fecha_aceptacion TIMESTAMP;
-            """))
-            # 3. Columnas en prompt_ia y plan_de_estudio
-            conn.execute(text("ALTER TABLE prompt_ia ADD COLUMN IF NOT EXISTS embedding TEXT;"))
-            conn.execute(text("ALTER TABLE prompt_ia ADD COLUMN IF NOT EXISTS id_usuario INTEGER REFERENCES usuario(id_usuario);"))
-            conn.execute(text("ALTER TABLE prompt_ia ALTER COLUMN id_plan DROP NOT NULL;"))
-            conn.execute(text("ALTER TABLE plan_de_estudio ADD COLUMN IF NOT EXISTS id_ruta INTEGER;"))
-            conn.commit()
-    except Exception as e:
-        print(f"⚠️ Info sobre migración de base de datos: {e}")

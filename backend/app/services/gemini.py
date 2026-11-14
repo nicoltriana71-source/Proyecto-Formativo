@@ -14,11 +14,14 @@ from backend.app.services.ia_prompts import PROMPT_TUTOR_PROFUNDO
 
 BASE_DIR = Path(__file__).resolve().parent
 ROOT_DIR = BASE_DIR.parent
+PROJECT_ROOT = BASE_DIR.parent.parent.parent
 load_dotenv(BASE_DIR / ".env")
 load_dotenv(ROOT_DIR / ".env")
+load_dotenv(PROJECT_ROOT / ".env")
 
 MODELOS_CASCADA = [
-    "gemini-flash-lite-latest"
+    "gemini-3.5-flash-lite",
+    "gemini-3.1-flash-lite",
 ]
 
 
