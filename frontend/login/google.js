@@ -3,7 +3,7 @@ import { saveSession } from '../shared/session.js';
 import { saveConsent, requireConsent } from '../shared/consent.js';
 import { setMensaje } from './ui.js';
 
-const CLIENT_ID = "625376533141-3vug0hb9n3u6kqqk7gmi7g7cf1nfo6ql.apps.googleusercontent.com";
+const CLIENT_ID = "744134271082-iqmfp01bfcdovu6hmbvp4al0a98hd573.apps.googleusercontent.com";
 let tokenClient;
 
 const ERRORES_GOOGLE = {
