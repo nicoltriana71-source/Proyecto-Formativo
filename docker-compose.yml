@@ -1,0 +1,45 @@
+services:
+  # Base de datos PostgreSQL 16
+  db:
+    image: postgres:16
+    container_name: studnova_db
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: "1234"
+      POSTGRES_DB: studnova
+    ports:
+      - "5433:5432"
+    volumes:
+      - studnova_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d studnova"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  # Aplicación FastAPI + StudNova IA
+  web:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    container_name: studnova_app
+    restart: always
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=postgresql://postgres:1234@db:5432/studnova
+    env_file:
+      - path: .env
+        required: false
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - ./backend:/app/backend
+      - ./frontend:/app/frontend
+      - ./base_datos.py:/app/base_datos.py
+      - ./principal.py:/app/principal.py
+
+volumes:
+  studnova_pgdata:

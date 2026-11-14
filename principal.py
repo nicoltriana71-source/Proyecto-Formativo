@@ -1,14 +1,11 @@
 from pathlib import Path
-from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse, RedirectResponse
 
-from base_datos import crear_tablas
-
 # Importación de los 9 módulos del sistema
-from app.rutas import (
+from backend.app.rutas import (
     usuario,
     asignatura,
     plan_estudio,
@@ -19,25 +16,16 @@ from app.rutas import (
     progreso,
     sesion_estudio,
 )
-from app.rutas.ia import router as ia_gemini_router
+from backend.app.rutas.ia import router as ia_gemini_router
 
 # Directorio raíz del proyecto
 BASE_DIR = Path(__file__).resolve().parent
-
-@asynccontextmanager
-async def lifespan(app: FastAPI):
-    # Crear tablas automáticamente si no existen
-    try:
-        crear_tablas()
-    except Exception as e:
-        print(f"⚠️ Advertencia al conectar con la base de datos: {e}")
-    yield
+FRONTEND_DIR = BASE_DIR / "frontend"
 
 app = FastAPI(
     title="StudNova API",
     description="API de plataforma de aprendizaje personalizado con IA",
     version="1.0.0",
-    lifespan=lifespan
 )
 
 # Configuración de CORS para conexión con Frontend
@@ -61,25 +49,29 @@ app.include_router(progreso.router)
 app.include_router(sesion_estudio.router)
 app.include_router(ia_gemini_router)
 
-# Servir interfaces estáticas (HTML, CSS, JS) si existen las carpetas
-if (BASE_DIR / "ia").exists():
-    app.mount("/ia", StaticFiles(directory=str(BASE_DIR / "ia"), html=True), name="ia")
-if (BASE_DIR / "principal").exists():
-    app.mount("/principal", StaticFiles(directory=str(BASE_DIR / "principal"), html=True), name="principal")
-if (BASE_DIR / "login").exists():
-    app.mount("/login", StaticFiles(directory=str(BASE_DIR / "login"), html=True), name="login")
-if (BASE_DIR / "principal interfaz").exists():
-    app.mount("/landing", StaticFiles(directory=str(BASE_DIR / "principal interfaz"), html=True), name="landing")
-
+# Vistas que se sirven directamente antes de los montajes estáticos
 @app.get("/login", tags=["Vistas"])
-@app.get("/login/", tags=["Vistas"])
 def vista_login():
-    return FileResponse(BASE_DIR / "login" / "login.html")
+    return FileResponse(FRONTEND_DIR / "login" / "login.html")
+
+# Servir interfaces estáticas (HTML, CSS, JS) si existen las carpetas
+if (FRONTEND_DIR / "shared").exists():
+    app.mount("/shared", StaticFiles(directory=str(FRONTEND_DIR / "shared")), name="shared")
+if (FRONTEND_DIR / "chat").exists():
+    app.mount("/ia", StaticFiles(directory=str(FRONTEND_DIR / "chat"), html=True), name="ia")
+if (FRONTEND_DIR / "plan").exists():
+    app.mount("/plan", StaticFiles(directory=str(FRONTEND_DIR / "plan"), html=True), name="plan")
+if (FRONTEND_DIR / "login").exists():
+    app.mount("/login", StaticFiles(directory=str(FRONTEND_DIR / "login"), html=True), name="login")
+if (FRONTEND_DIR / "legal").exists():
+    app.mount("/legal", StaticFiles(directory=str(FRONTEND_DIR / "legal"), html=True), name="legal")
+if (FRONTEND_DIR / "landing").exists():
+    app.mount("/landing", StaticFiles(directory=str(FRONTEND_DIR / "landing"), html=True), name="landing")
 
 @app.get("/register", tags=["Vistas"])
 @app.get("/registro", tags=["Vistas"])
 def vista_registro():
-    return FileResponse(BASE_DIR / "login" / "login.html")
+    return FileResponse(FRONTEND_DIR / "login" / "login.html")
 
 @app.get("/", tags=["General"])
 def inicio():
@@ -87,6 +79,5 @@ def inicio():
         "mensaje": "StudNova API funcionando correctamente",
         "docs": "/docs",
         "login": "/login",
-        "interfaz_ia": "/ia/interfaz.html",
-        "landing": "/landing/index.html"
+        "interfaz_ia": "/ia/interfaz.html"
     }
