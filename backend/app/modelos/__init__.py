@@ -7,6 +7,7 @@ from backend.app.modelos.progreso import Progreso
 from backend.app.modelos.control_fatiga import ControlFatiga
 from backend.app.modelos.sesion_estudio import SesionEstudio
 from backend.app.modelos.prompt_ia import PromptIA
+from backend.app.modelos.token_refresco import TokenRefresco
 
 __all__ = [
     "Usuario",
@@ -19,4 +20,5 @@ __all__ = [
     "ControlFatiga",
     "SesionEstudio",
     "PromptIA",
+    "TokenRefresco",
 ]

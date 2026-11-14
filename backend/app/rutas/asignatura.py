@@ -3,6 +3,7 @@ from sqlmodel import Session
 
 from base_datos import obtener_sesion
 
+from backend.app.dependencias.auth import obtener_usuario_actual
 from backend.app.esquemas.asignatura import (
     AsignaturaCrear,
     AsignaturaActualizar,
@@ -18,7 +19,11 @@ from backend.app.services.asignatura import (
 )
 
 
-router = APIRouter(prefix="/asignatura", tags=["Asignaturas"])
+router = APIRouter(
+    prefix="/asignatura",
+    tags=["Asignaturas"],
+    dependencies=[Depends(obtener_usuario_actual)],
+)
 
 
 @router.get("/", response_model=list[AsignaturaRespuesta])

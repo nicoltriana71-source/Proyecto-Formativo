@@ -1,8 +1,11 @@
 from pathlib import Path
+import os
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse, RedirectResponse
+from dotenv import load_dotenv
 
 # Importación de los 9 módulos del sistema
 from backend.app.rutas import (
@@ -21,6 +24,7 @@ from backend.app.rutas.ia import router as ia_gemini_router
 # Directorio raíz del proyecto
 BASE_DIR = Path(__file__).resolve().parent
 FRONTEND_DIR = BASE_DIR / "frontend"
+load_dotenv(BASE_DIR / ".env")
 
 app = FastAPI(
     title="StudNova API",
@@ -29,9 +33,19 @@ app = FastAPI(
 )
 
 # Configuración de CORS para conexión con Frontend
+# Nunca usar "*" junto con allow_credentials=True.
+ORIGENES_PERMITIDOS = [
+    origen.strip()
+    for origen in os.getenv(
+        "CORS_ORIGINS",
+        "http://localhost:8000,http://127.0.0.1:8000",
+    ).split(",")
+    if origen.strip()
+]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=ORIGENES_PERMITIDOS,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

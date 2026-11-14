@@ -1,5 +1,5 @@
-import { apiRequest } from '../shared/api.js';
-import { saveSession, clearSession, getSession } from '../shared/session.js';
+import { apiRequest, cerrarSesionBackend } from '../shared/api.js';
+import { saveSession, getSession } from '../shared/session.js';
 import { showToast } from '../shared/dom.js';
 
 window.StudNovaSession = { get: getSession };
@@ -60,8 +60,8 @@ document.getElementById("loginForm")?.addEventListener("submit", async (e) => {
     }
 });
 
-document.getElementById("logoutBtn")?.addEventListener("click", () => {
-    clearSession();
+document.getElementById("logoutBtn")?.addEventListener("click", async () => {
+    await cerrarSesionBackend();
     refreshAuthUI();
     showToast("Sesión cerrada.", "success");
 });

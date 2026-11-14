@@ -131,10 +131,10 @@
         </thead>
         <tbody>
           <tr>
-            <td><code>studnova:session</code>, <code>user</code>, <code>id_usuario</code>, <code>userEmail</code>, <code>userName</code>, <code>isLoggedIn</code></td>
+            <td><code>studnova:session</code>, <code>studnova:access_token</code>, <code>studnova:refresh_token</code>, <code>user</code>, <code>id_usuario</code>, <code>userEmail</code>, <code>userName</code>, <code>isLoggedIn</code></td>
             <td>Esencial</td>
-            <td>Mantener tu sesión iniciada.</td>
-            <td>Hasta que cierres sesión.</td>
+            <td>Mantener tu sesión iniciada. Los tokens permiten autenticarte de forma segura y se renuevan automáticamente.</td>
+            <td>El token de acceso dura 30 minutos; la sesión, hasta que cierres sesión o venza el token de renovación.</td>
           </tr>
           <tr>
             <td><code>studnova:theme</code></td>

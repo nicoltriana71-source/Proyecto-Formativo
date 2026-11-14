@@ -1,5 +1,5 @@
-import { getUserId, clearSession } from '../shared/session.js';
-import { apiRequest } from '../shared/api.js';
+import { getUserId } from '../shared/session.js';
+import { apiRequest, cerrarSesionBackend, requireSession } from '../shared/api.js';
 import { escapeHTML } from '../shared/dom.js';
 import { chatState, saveChatState, loadChatState, clearChatState } from './state.js';
 import {
@@ -23,7 +23,8 @@ const overlay = document.getElementById('overlay');
 window.ultimoPlanGenerado = null;
 
 document.addEventListener('DOMContentLoaded', async () => {
-    await syncGoogleUser();
+    if (!requireSession()) return;
+
     loadChatState();
     window.ultimoPlanGenerado = chatState.currentPlan;
     renderStoredChat();
@@ -42,25 +43,6 @@ function renderStoredChat() {
 function guardarMensajeUI(item) {
     chatState.uiMessages.push(item);
     saveChatState();
-}
-
-async function syncGoogleUser() {
-    const idActual = localStorage.getItem("id_usuario");
-    const email = localStorage.getItem("userEmail");
-    const nombre = localStorage.getItem("userName");
-
-    if (email && (!idActual || idActual === "13" || isNaN(parseInt(idActual)))) {
-        try {
-            const u = await apiRequest("/usuario/google", {
-                method: "POST",
-                body: JSON.stringify({ nombre: nombre || "Estudiante", correo: email })
-            });
-            localStorage.setItem("id_usuario", u.id_usuario);
-            localStorage.setItem("user", JSON.stringify(u));
-        } catch (e) {
-            console.warn("Sync Google error:", e);
-        }
-    }
 }
 
 function construirTextoAMostrar(texto, forzarNuevo, cantModulos, duracionDeseada) {
@@ -86,8 +68,8 @@ function construirTextoAMostrar(texto, forzarNuevo, cantModulos, duracionDeseada
     return texto;
 }
 
-window.cerrarSesion = () => {
-    clearSession();
+window.cerrarSesion = async () => {
+    await cerrarSesionBackend();
     window.location.href = "/landing/index.html";
 };
 

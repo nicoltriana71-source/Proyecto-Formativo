@@ -1,30 +1,21 @@
 import { apiRequest } from '../shared/api.js';
 import { saveSession } from '../shared/session.js';
-import { CONSENT_VERSION } from '../shared/config.js';
 import { saveConsent, requireConsent } from '../shared/consent.js';
 import { setMensaje } from './ui.js';
 
 const CLIENT_ID = "625376533141-3vug0hb9n3u6kqqk7gmi7g7cf1nfo6ql.apps.googleusercontent.com";
 let tokenClient;
 
-async function handleUser(user) {
+async function handleToken(accessToken) {
     setMensaje("loginMensaje", "Sincronizando cuenta...");
     try {
+        // El backend verifica el token contra Google; el frontend no envía datos de perfil.
         const data = await apiRequest("/usuario/google", {
             method: "POST",
-            body: JSON.stringify({
-                nombre: user.name,
-                correo: user.email,
-                google_id: user.sub,
-                foto: user.picture,
-                acepto_terminos: true,
-                version_politica: CONSENT_VERSION
-            })
+            body: JSON.stringify({ access_token: accessToken })
         });
         saveSession(data);
         saveConsent();
-        localStorage.setItem("userPhoto", user.picture || "");
-        localStorage.setItem("loginMethod", "google");
         setMensaje("loginMensaje", `¡Bienvenido, ${data.nombre}!`, "success");
         setTimeout(() => window.location.href = "/ia/interfaz.html", 600);
     } catch (err) {
@@ -37,22 +28,20 @@ function abrirGoogle() {
         setMensaje("loginMensaje", "Debes aceptar los Términos para continuar con Google.", "error");
         return;
     }
-    if (!google?.accounts?.oauth2) {
+    if (!window.google?.accounts?.oauth2) {
         alert("Google aún se está cargando. Espera unos segundos.");
         return;
     }
     if (!tokenClient) {
-        tokenClient = google.accounts.oauth2.initTokenClient({
+        tokenClient = window.google.accounts.oauth2.initTokenClient({
             client_id: CLIENT_ID,
             scope: "email profile openid",
-            callback: async (resp) => {
-                if (resp.error) return;
-                try {
-                    const r = await fetch("https://www.googleapis.com/oauth2/v3/userinfo", {
-                        headers: { Authorization: `Bearer ${resp.access_token}` }
-                    });
-                    handleUser(await r.json());
-                } catch (e) { console.error(e); }
+            callback: (resp) => {
+                if (resp.error) {
+                    setMensaje("loginMensaje", "No se pudo iniciar sesión con Google.", "error");
+                    return;
+                }
+                handleToken(resp.access_token);
             }
         });
     }

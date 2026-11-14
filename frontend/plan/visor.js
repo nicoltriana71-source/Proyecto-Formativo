@@ -1,7 +1,7 @@
 import { renderizarPlan } from './render.js';
 import { verificarRespuesta } from './quizzes.js';
 import { autoIniciarTimer, alternarTimer, actualizarDisplayTimer } from './temporizador.js';
-import { apiRequest } from '../shared/api.js';
+import { apiRequest, requireSession } from '../shared/api.js';
 
 // exponer funciones al window para los onclick inline
 window.verificarRespuesta = verificarRespuesta;
@@ -28,6 +28,8 @@ window.volverAlChat = volverAlChat;
 document.getElementById('btn-volver')?.addEventListener('click', volverAlChat);
 
 document.addEventListener("DOMContentLoaded", async () => {
+    if (!requireSession()) return;
+
     if (window.self !== window.top) {
         const btnVolver = document.querySelector('.btn-volver');
         if (btnVolver) btnVolver.style.display = 'none';

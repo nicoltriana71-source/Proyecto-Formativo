@@ -3,6 +3,7 @@ from sqlmodel import Session
 
 from base_datos import obtener_sesion
 
+from backend.app.dependencias.auth import obtener_usuario_actual
 from backend.app.esquemas.modulo import (
     ModuloCrear,
     ModuloActualizar,
@@ -19,7 +20,11 @@ from backend.app.services.modulo import (
 )
 
 
-router = APIRouter(prefix="/modulo", tags=["Módulos"])
+router = APIRouter(
+    prefix="/modulo",
+    tags=["Módulos"],
+    dependencies=[Depends(obtener_usuario_actual)],
+)
 
 
 @router.get("/", response_model=list[ModuloRespuesta])

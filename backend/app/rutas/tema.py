@@ -2,13 +2,15 @@ from fastapi import APIRouter, Depends
 from sqlmodel import Session
 from base_datos import obtener_sesion
 
+from backend.app.dependencias.auth import obtener_usuario_actual
 from backend.app.esquemas.tema import TemaRespuesta
 from backend.app.services import tema as servicio
 
 
 router = APIRouter(
     prefix="/tema",
-    tags=["Temas"]
+    tags=["Temas"],
+    dependencies=[Depends(obtener_usuario_actual)],
 )
 
 

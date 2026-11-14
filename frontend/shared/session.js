@@ -1,15 +1,32 @@
-import { SESSION_KEY } from './config.js';
+import {
+    ACCESS_TOKEN_KEY,
+    CONSENT_KEY,
+    REFRESH_TOKEN_KEY,
+    SESSION_KEY
+} from './config.js';
 
 export function saveSession(usuario) {
+    if (usuario.access_token) {
+        localStorage.setItem(ACCESS_TOKEN_KEY, usuario.access_token);
+    }
+    if (usuario.refresh_token) {
+        localStorage.setItem(REFRESH_TOKEN_KEY, usuario.refresh_token);
+    }
+
     const session = {
         id_usuario: usuario.id_usuario,
         nombre: usuario.nombre,
         correo: usuario.correo,
-        rol: usuario.rol,
+        rol: usuario.rol || "ESTUDIANTE",
         since: Date.now()
     };
     localStorage.setItem(SESSION_KEY, JSON.stringify(session));
-    localStorage.setItem("user", JSON.stringify(usuario));
+    localStorage.setItem("user", JSON.stringify({
+        id_usuario: usuario.id_usuario,
+        nombre: usuario.nombre,
+        correo: usuario.correo,
+        rol: session.rol
+    }));
     localStorage.setItem("id_usuario", usuario.id_usuario);
     localStorage.setItem("userEmail", usuario.correo);
     localStorage.setItem("userName", usuario.nombre);
@@ -25,9 +42,27 @@ export function getSession() {
     }
 }
 
+export function getAccessToken() {
+    return localStorage.getItem(ACCESS_TOKEN_KEY);
+}
+
+export function getRefreshToken() {
+    return localStorage.getItem(REFRESH_TOKEN_KEY);
+}
+
+export function setTokens(accessToken, refreshToken) {
+    if (accessToken) localStorage.setItem(ACCESS_TOKEN_KEY, accessToken);
+    if (refreshToken) localStorage.setItem(REFRESH_TOKEN_KEY, refreshToken);
+}
+
 export function clearSession() {
+    // Se conserva el consentimiento (registro legal) al cerrar sesión.
+    const consentimiento = localStorage.getItem(CONSENT_KEY);
     localStorage.clear();
     sessionStorage.clear();
+    if (consentimiento) {
+        localStorage.setItem(CONSENT_KEY, consentimiento);
+    }
 }
 
 export function getUserId() {
@@ -36,7 +71,11 @@ export function getUserId() {
 
     try {
         const userStr = localStorage.getItem("user");
-        if (userStr) return JSON.parse(userStr).id_usuario || 1;
+        if (userStr) {
+            const id = JSON.parse(userStr).id_usuario;
+            return id ? parseInt(id) : null;
+        }
     } catch {}
-    return 1;
+
+    return null;
 }
