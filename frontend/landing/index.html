@@ -14,7 +14,7 @@
 <header>
   <nav class="wrap">
     <div class="logo">
-      <img src="/login/image.png" alt="logo StudNova" class="logo-img">
+      <img src="/frontend/login/image.png" alt="logo StudNova" class="logo-img">
       <span>StudNova</span>
     </div>
     <button type="button" class="hamburger" id="hamburgerBtn" aria-label="Abrir menú" aria-expanded="false" aria-controls="navCollapsible">
@@ -29,7 +29,7 @@
       </div>
       <div class="nav-cta" id="navCtaLoggedOut">
         <button type="button" class="theme-toggle" id="themeToggle" title="Cambiar modo">🌙</button>
-        <a href="/login/login.html" class="btn btn-primary">Iniciar sesión</a>
+        <a href="/frontend/login/login.html" class="btn btn-primary">Iniciar sesión</a>
       </div>
       <div class="nav-cta" id="navCtaLoggedIn" hidden>
         <button type="button" class="theme-toggle" title="Cambiar modo">🌙</button>
@@ -317,20 +317,28 @@
 <footer>
   <nav class="wrap">
     <div class="logo">
-      <img src="/login/image.png" alt="logo StudNova" class="logo-img">
+      <img src="/frontend/login/image.png" alt="logo StudNova" class="logo-img">
       <span>StudNova</span>
     </div>
-    <div class="footer-links">
-      <a href="#problema">El problema</a>
-      <a href="#como-funciona">Cómo funciona</a>
-      <a href="#modulos">Módulos</a>
-      <a href="#equipo">Equipo</a>
+    <div class="footer-legal">
+      <span class="legal-item">Copyright © 2026</span>
+      <span class="legal-item">Todos los derechos reservados</span>
+      <span class="legal-item sena-box">
+        <svg class="sena-logo" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Logo SENA">
+          <circle cx="60" cy="22" r="11" fill="currentColor"/>
+          <text x="60" y="54" text-anchor="middle" fill="currentColor" font-family="Arial, Helvetica, sans-serif" font-weight="900" font-size="25" letter-spacing="1.5">SENA</text>
+          <path d="M18 60H53L32 104H21L38 69H18V60Z" fill="currentColor"/>
+          <path d="M102 60H67L88 104H99L82 69H102V60Z" fill="currentColor"/>
+          <path d="M60 66L41 104H52L60 87L68 104H79L60 66Z" fill="currentColor"/>
+        </svg>
+      </span>
     </div>
-    <div class="footer-note">Proyecto formativo · Análisis y Desarrollo de Software</div>
   </nav>
 </footer>
 
 <script type="module" src="auth.js"></script>
+<script type="module" src="/principal interfaz/landing-motion.js"></script>
+<script src="/principal interfaz/landing-motion.js" defer></script>
 
 <script>
 document.addEventListener("DOMContentLoaded", () => {
